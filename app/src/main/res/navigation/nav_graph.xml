@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph.xml"
+    app:startDestination="@id/splashFragment">
+
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.codecoy.mvpflycollab.ui.fragments.SplashFragment"
+        android:label="fragment_splash"
+        tools:layout="@layout/fragment_splash" >
+        <action
+            android:id="@+id/action_splashFragment_to_welcomeFragment"
+            app:destination="@id/welcomeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/welcomeFragment"
+        android:name="com.codecoy.mvpflycollab.ui.fragments.WelcomeFragment"
+        android:label="fragment_welcome"
+        tools:layout="@layout/fragment_welcome" >
+        <action
+            android:id="@+id/action_welcomeFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment" />
+        <action
+            android:id="@+id/action_welcomeFragment_to_signInFragment"
+            app:destination="@id/signInFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/signUpFragment"
+        android:name="com.codecoy.mvpflycollab.ui.fragments.SignUpFragment"
+        android:label="fragment_sign_up"
+        tools:layout="@layout/fragment_sign_up">
+        <action
+            android:id="@+id/action_signUpFragment_to_interestsFragment"
+            app:destination="@id/interestsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/signInFragment"
+        android:name="com.codecoy.mvpflycollab.ui.fragments.SignInFragment"
+        android:label="fragment_sign_in"
+        tools:layout="@layout/fragment_sign_in">
+        <action
+            android:id="@+id/action_signInFragment_to_interestsFragment"
+            app:destination="@id/interestsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/interestsFragment"
+        android:name="com.codecoy.mvpflycollab.ui.fragments.InterestsFragment"
+        android:label="fragment_interests"
+        tools:layout="@layout/fragment_interests">
+        <action
+            android:id="@+id/action_interestsFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.codecoy.mvpflycollab.ui.fragments.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" />
+    <fragment
+        android:id="@+id/calendarFragment"
+        android:name="com.codecoy.mvpflycollab.ui.fragments.CalendarFragment"
+        android:label="fragment_calendar"
+        tools:layout="@layout/fragment_calendar" />
+    <fragment
+        android:id="@+id/commentsFragment"
+        android:name="com.codecoy.mvpflycollab.ui.fragments.CommentsFragment"
+        android:label="fragment_comments"
+        tools:layout="@layout/fragment_comments" >
+        <action
+            android:id="@+id/action_commentsFragment_to_likesFragment"
+            app:destination="@id/likesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/likesFragment"
+        android:name="com.codecoy.mvpflycollab.ui.fragments.LikesFragment"
+        android:label="fragment_likes"
+        tools:layout="@layout/fragment_likes" />
+    <fragment
+        android:id="@+id/playListFragment"
+        android:name="com.codecoy.mvpflycollab.ui.fragments.PlayListViewFragment"
+        android:label="fragment_play_list"
+        tools:layout="@layout/fragment_play_list_view" />
+    <fragment
+        android:id="@+id/scheduleFragment"
+        android:name="com.codecoy.mvpflycollab.ui.fragments.ScheduleFragment"
+        android:label="fragment_schedule"
+        tools:layout="@layout/fragment_schedule" />
+    <fragment
+        android:id="@+id/viewStoryFragment"
+        android:name="com.codecoy.mvpflycollab.ui.fragments.ViewStoryFragment"
+        android:label="fragment_view_story"
+        tools:layout="@layout/fragment_view_story" />
+    <fragment
+        android:id="@+id/aboutProfileFragment"
+        android:name="com.codecoy.mvpflycollab.ui.fragments.AboutProfileFragment"
+        android:label="fragment_about_profile"
+        tools:layout="@layout/fragment_about_profile" />
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.codecoy.mvpflycollab.ui.fragments.ChatFragment"
+        android:label="fragment_chat"
+        tools:layout="@layout/fragment_chat" />
+    <fragment
+        android:id="@+id/chatMembersFragment"
+        android:name="com.codecoy.mvpflycollab.ui.fragments.ChatMembersFragment"
+        android:label="fragment_chat_members"
+        tools:layout="@layout/fragment_chat_members" />
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.codecoy.mvpflycollab.ui.fragments.EditProfileFragment"
+        android:label="fragment_edit_profile"
+        tools:layout="@layout/fragment_edit_profile" />
+    <fragment
+        android:id="@+id/journeyFragment"
+        android:name="com.codecoy.mvpflycollab.ui.fragments.JourneyFragment"
+        android:label="fragment_journey"
+        tools:layout="@layout/fragment_journey" />
+    <fragment
+        android:id="@+id/membersFragment"
+        android:name="com.codecoy.mvpflycollab.ui.fragments.MembersFragment"
+        android:label="fragment_members"
+        tools:layout="@layout/fragment_members" />
+    <fragment
+        android:id="@+id/playListFragment2"
+        android:name="com.codecoy.mvpflycollab.ui.fragments.PlayListFragment"
+        android:label="fragment_play_list"
+        tools:layout="@layout/fragment_play_list" />
+    <fragment
+        android:id="@+id/playListNameFragment"
+        android:name="com.codecoy.mvpflycollab.ui.fragments.PlayListNameFragment"
+        android:label="fragment_play_list_name"
+        tools:layout="@layout/fragment_play_list_name" />
+    <fragment
+        android:id="@+id/profileDetailFragment"
+        android:name="com.codecoy.mvpflycollab.ui.fragments.ProfileDetailFragment"
+        android:label="fragment_profile_detail"
+        tools:layout="@layout/fragment_profile_detail" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.codecoy.mvpflycollab.ui.fragments.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.codecoy.mvpflycollab.ui.fragments.MainFragment"
+        android:label="fragment_main"
+        tools:layout="@layout/fragment_main" >
+        <action
+            android:id="@+id/action_mainFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_commentsFragment"
+            app:destination="@id/commentsFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_levelsFragment"
+            app:destination="@id/levelsFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_viewStoryFragment"
+            app:destination="@id/viewStoryFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_profileDetailFragment"
+            app:destination="@id/profileDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/levelsFragment"
+        android:name="com.codecoy.mvpflycollab.ui.fragments.LevelsFragment"
+        android:label="fragment_levels"
+        tools:layout="@layout/fragment_levels" />
+
+</navigation>

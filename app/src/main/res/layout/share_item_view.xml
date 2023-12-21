@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/ivShareItem"
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginStart="@dimen/_5sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:src="@drawable/img"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <TextView
+        android:id="@+id/tvShareitemName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:text="@string/joshua_l"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:fontFamily="@font/lato"
+        app:layout_constraintStart_toEndOf="@id/ivShareItem"
+        app:layout_constraintTop_toTopOf="@+id/ivShareItem" />
+
+    <TextView
+        android:id="@+id/tv_sms"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:text="@string/lorem_ipsum"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:fontFamily="@font/lato"
+        app:layout_constraintBottom_toBottomOf="@+id/ivShareItem"
+        app:layout_constraintStart_toEndOf="@id/ivShareItem"
+        app:layout_constraintTop_toBottomOf="@+id/tvShareitemName" />
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/_10sdp"
+        android:backgroundTint="@android:color/transparent"
+        android:text="@string/sent"
+        android:textSize="14sp"
+        app:cornerRadius="@dimen/_20sdp"
+        android:fontFamily="@font/lato_bold"
+        app:layout_constraintBottom_toBottomOf="@+id/ivShareItem"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/ivShareItem"
+        app:strokeColor="@color/d_purple"
+        app:strokeWidth="@dimen/_1sdp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,12 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <!-- Default state -->
+    <item android:state_pressed="false" android:state_selected="false" android:drawable="@drawable/save_outline" />
+
+    <item android:state_pressed="true" android:drawable = "@drawable/save_filled" />
+
+    <!-- Selected state -->
+    <item android:state_selected="true" android:drawable="@drawable/save_filled" />
+
+</selector>

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/ic_background">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:context=".ui.fragments.AboutProfileFragment">
+
+        <com.codecoy.mvpflycollab.utils.shapes.PolygonImageView
+            android:id="@+id/ivAboutProfileImage"
+            android:layout_width="@dimen/_70sdp"
+            android:layout_height="@dimen/_70sdp"
+            android:layout_marginTop="@dimen/_30sdp"
+            android:src="@drawable/img3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:poly_border="true"
+            app:poly_border_color="@android:color/white"
+            app:poly_border_width="5dp"
+            app:poly_corner_radius="25"
+            app:poly_rotation_angle="55"
+            app:poly_shadow="true"
+            app:poly_shadow_color="#f01"
+            app:poly_vertices="5" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:fontFamily="@font/lato"
+            android:text="@string/waqas_schedule"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="@+id/ivAboutProfileImage"
+            app:layout_constraintStart_toStartOf="@+id/ivAboutProfileImage"
+            app:layout_constraintTop_toBottomOf="@id/ivAboutProfileImage" />
+
+        <TextView
+            android:id="@+id/tvAboutMe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_15sdp"
+            android:layout_marginTop="@dimen/_30sdp"
+            android:text="@string/about_me"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:fontFamily="@font/lato"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_15sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginEnd="@dimen/_15sdp"
+            android:fontFamily="@font/poppins"
+            android:text="@string/lorem_ipsum_is_simply_dummy_text_of_the_printing_and_typesetting_industry_lorem_ipsum_has_been_the_industry_s_standard_dummy_text_ever_since_the_1500s_when_an_unknown_printer_took_a_galley_of_type_and_scrambled_it_to_make_a_type_specimen_book_it_has_survived_not_only_five_centuries_but_also_the_leap_into_electronic_typesetting_remaining_essentially_unchanged_it_was_popularised_in_the_1960s_with_the_release_of_letraset_sheets_containing_lorem_ipsum_passages_and_more_recently_with_desktop"
+            android:textColor="@color/black2"
+            android:textSize="12sp"
+            android:lineSpacingExtra="@dimen/_2sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvAboutMe" />
+
+        <View
+            android:id="@+id/View"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="@dimen/_15sdp"
+            android:layout_marginEnd="@dimen/_15sdp"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:background="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:drawablePadding="@dimen/_5sdp"
+            android:text="@string/www_sitename_com"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:fontFamily="@font/poppins"
+            app:layout_constraintStart_toStartOf="@+id/tvAboutMe"
+            app:layout_constraintTop_toBottomOf="@+id/View"
+            app:drawableStartCompat="@drawable/ic_home" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAddJourney"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_20sdp"
+            android:layout_marginEnd="@dimen/_20sdp"
+            android:layout_marginTop="@dimen/_40sdp"
+            android:backgroundTint="@color/white"
+            android:padding="@dimen/_15sdp"
+            android:text="@string/add_a_journey_photo"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:fontFamily="@font/lato"
+            app:cornerRadius="10dp"
+            app:iconGravity="start"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/View"
+            app:strokeColor="@color/white"
+            app:strokeWidth="2dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAddPlaylist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_20sdp"
+            android:layout_marginEnd="@dimen/_20sdp"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:backgroundTint="@color/white"
+            android:padding="@dimen/_15sdp"
+            android:text="@string/add_a_playlist_video"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:fontFamily="@font/lato"
+            app:cornerRadius="10dp"
+            app:iconGravity="start"
+            app:layout_constraintEnd_toEndOf="@+id/btnAddJourney"
+            app:layout_constraintHorizontal_bias="0.524"
+            app:layout_constraintStart_toStartOf="@+id/btnAddJourney"
+            app:layout_constraintTop_toBottomOf="@+id/btnAddJourney"
+            app:strokeColor="@color/white"
+            app:strokeWidth="2dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_20sdp"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_marginEnd="@dimen/_20sdp"
+            android:backgroundTint="@color/white"
+            android:padding="@dimen/_15sdp"
+            android:text="@string/add_activity_to_calendar"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:fontFamily="@font/lato"
+            app:cornerRadius="10dp"
+            app:layout_constraintEnd_toEndOf="@+id/btnAddPlaylist"
+            app:layout_constraintStart_toStartOf="@+id/btnAddPlaylist"
+            app:layout_constraintTop_toBottomOf="@+id/btnAddPlaylist"
+            app:strokeColor="@color/white"
+            app:strokeWidth="2dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

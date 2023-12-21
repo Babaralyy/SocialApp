@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+        <com.codecoy.mvpflycollab.utils.shapes.PolygonImageView
+            android:id="@+id/ivcollabImages"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerInParent="true"
+            android:padding="@dimen/_3sdp"
+            android:src="@drawable/img2"
+            app:poly_border="true"
+            app:poly_border_color="@android:color/white"
+            app:poly_border_width="5dp"
+            app:poly_corner_radius="25"
+            app:poly_rotation_angle="25"
+            app:poly_shadow="true"
+            app:poly_shadow_color="#f01"
+            app:poly_vertices="6"
+            android:visibility="gone"/>
+
+
+
+</RelativeLayout>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <com.codecoy.mvpflycollab.utils.shapes.PolygonImageView
+        android:id="@+id/ivScheduleImage"
+        android:layout_width="@dimen/_50sdp"
+        android:layout_height="@dimen/_50sdp"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_15sdp"
+        android:src="@drawable/img"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="@dimen/_10sdp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:poly_border="true"
+        app:poly_border_color="@android:color/white"
+        app:poly_border_width="5dp"
+        app:poly_corner_radius="25"
+        app:poly_rotation_angle="55"
+        android:padding="@dimen/_3sdp"
+        app:poly_shadow="true"
+        app:poly_shadow_color="#f01"
+        app:poly_vertices="5"
+        />
+
+    <TextView
+        android:id="@+id/tv_schedule_Name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_5sdp"
+        android:text="joshua_l"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_10sdp"
+        app:layout_constraintStart_toEndOf="@id/ivScheduleImage"
+        app:layout_constraintTop_toTopOf="@+id/ivScheduleImage" />
+
+    <TextView
+        android:id="@+id/tv_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:text="8m"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_10sdp"
+        app:layout_constraintBottom_toBottomOf="@+id/ivScheduleImage"
+        app:layout_constraintStart_toEndOf="@id/ivScheduleImage"
+        app:layout_constraintTop_toBottomOf="@+id/tv_schedule_Name" />
+
+
+    <TextView
+        android:id="@+id/tvView"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/_15sdp"
+        android:background="@drawable/edittext2_shape"
+        android:padding="@dimen/_3sdp"
+        android:text="  View  "
+        android:textColor="@color/white"
+        android:textSize="@dimen/_13sdp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_schedule_Name"
+        app:layout_constraintStart_toEndOf="@+id/tv_schedule_Name"
+        app:layout_constraintTop_toTopOf="@+id/tv_schedule_Name" />
+
+    <TextView
+        android:id="@+id/tvDecline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:background="@drawable/edittext2_shape"
+        android:padding="@dimen/_3sdp"
+        android:text=" Decline "
+        android:textColor="@color/white"
+        android:textSize="@dimen/_13sdp"
+        app:layout_constraintBottom_toBottomOf="@+id/tvView"
+        app:layout_constraintStart_toEndOf="@+id/tvView"
+        app:layout_constraintTop_toTopOf="@+id/tvView"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/tvAccept"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/edittext2_shape"
+        android:backgroundTint="@android:color/white"
+        android:padding="@dimen/_3sdp"
+        android:text=" Accept "
+        android:textSize="@dimen/_13sdp"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="@+id/tvDecline"
+        app:layout_constraintStart_toEndOf="@+id/tvDecline"
+        app:layout_constraintTop_toTopOf="@+id/tvDecline"
+        android:layout_marginStart="@dimen/_10sdp"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

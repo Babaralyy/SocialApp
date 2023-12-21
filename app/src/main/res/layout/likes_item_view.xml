@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/ic_background">
+
+    <com.codecoy.mvpflycollab.utils.shapes.PolygonImageView
+        android:id="@+id/ivLikesImage"
+        android:layout_width="@dimen/_56sdp"
+        android:layout_height="@dimen/_56sdp"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:src="@drawable/img"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:poly_border="true"
+        app:poly_border_color="#f01"
+        app:poly_border_width="5dp"
+        app:poly_corner_radius="25"
+        app:poly_rotation_angle="55"
+        app:poly_shadow="true"
+        app:poly_shadow_color="@color/white"
+        app:poly_vertices="5"/>
+
+    <TextView
+        android:id="@+id/tv_Likes_Name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_8sdp"
+        android:padding="@dimen/_5sdp"
+        android:text="joshua_l"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_13sdp"
+        app:layout_constraintStart_toEndOf="@id/ivLikesImage"
+        app:layout_constraintTop_toTopOf="@+id/ivLikesImage" />
+
+    <TextView
+        android:id="@+id/tv_like_reel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_5sdp"
+        android:text="like your reel"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_10sdp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_Likes_Name"
+        app:layout_constraintStart_toEndOf="@+id/tv_Likes_Name"
+        app:layout_constraintTop_toTopOf="@+id/tv_Likes_Name" />
+
+    <com.codecoy.mvpflycollab.utils.shapes.PolygonImageView
+        android:id="@+id/iv_Like_Photo"
+        android:layout_width="@dimen/_50sdp"
+        android:layout_height="@dimen/_50sdp"
+        android:layout_marginEnd="@dimen/_20sdp"
+        android:src="@drawable/ic_image_rectangle"
+        app:layout_constraintBottom_toBottomOf="@+id/ivLikesImage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_Likes_Name"
+        app:poly_border="true"
+        app:poly_border_color="@android:color/white"
+        app:poly_border_width="5dp"
+        app:poly_corner_radius="25"
+        app:poly_rotation_angle="55"
+        app:poly_shadow="true"
+        app:poly_shadow_color="#f01"
+        app:poly_vertices="5" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
