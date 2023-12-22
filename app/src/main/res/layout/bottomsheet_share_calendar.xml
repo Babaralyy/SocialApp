@@ -31,6 +31,15 @@
                 android:textColor="#222B45"
                 android:textSize="18sp" />
 
+            <ImageView
+                android:id="@+id/ivShare"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_1sdp"
+                android:layout_marginEnd="@dimen/_30sdp"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/ic_share_black"/>
+
         </RelativeLayout>
 
         <EditText
@@ -105,17 +114,7 @@
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tvTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_15sdp"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:layout_marginEnd="@dimen/_15sdp"
-            android:fontFamily="@font/lato"
-            android:text="@string/add_new_video_and_image"
-            android:textColor="@color/purple"
-            android:textSize="16sp" />
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
@@ -136,7 +135,7 @@
             android:backgroundTint="@color/purple"
             android:fontFamily="@font/lato_bold"
             android:padding="@dimen/_15sdp"
-            android:text="@string/create_activity"
+            android:text="@string/add_this_activity_to_my_calendar"
             android:textSize="16sp"
             app:cornerRadius="@dimen/_5sdp" />
     </LinearLayout>

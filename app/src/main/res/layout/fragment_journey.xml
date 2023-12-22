@@ -11,24 +11,29 @@
         android:id="@+id/rvJourney"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_15sdp"
+        android:layout_marginEnd="@dimen/_15sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        tools:listitem="@layout/journey_item_view"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="@dimen/_5sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:listitem="@layout/journey_item_view"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="36dp"
+        android:id="@+id/floatingActionButton"
+        android:layout_width="@dimen/_42sdp"
+        android:layout_height="@dimen/_42sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:layout_marginEnd="@dimen/_10sdp"
         android:clickable="true"
         android:src="@drawable/ic_add"
-        android:backgroundTint="@color/purple"
+        android:background="@drawable/fab_back"
+        android:backgroundTint="@null"
+        app:shapeAppearance="@drawable/fab_back"
+        app:shapeAppearanceOverlay="@drawable/fab_back"
+        android:contentDescription="@string/add_event"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_creat_post" />
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

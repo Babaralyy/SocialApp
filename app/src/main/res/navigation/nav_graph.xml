@@ -162,11 +162,24 @@
         <action
             android:id="@+id/action_mainFragment_to_profileDetailFragment"
             app:destination="@id/profileDetailFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_journeyDetailFragment"
+            app:destination="@id/journeyDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/levelsFragment"
         android:name="com.codecoy.mvpflycollab.ui.fragments.LevelsFragment"
         android:label="fragment_levels"
         tools:layout="@layout/fragment_levels" />
+    <fragment
+        android:id="@+id/shareActivityFragment"
+        android:name="com.codecoy.mvpflycollab.ui.fragments.ShareActivityFragment"
+        android:label="fragment_share_activity"
+        tools:layout="@layout/fragment_share_activity" />
+    <fragment
+        android:id="@+id/journeyDetailFragment"
+        android:name="com.codecoy.mvpflycollab.ui.fragments.JourneyDetailFragment"
+        android:label="fragment_jouney_detail"
+        tools:layout="@layout/fragment_jouney_detail" />
 
 </navigation>

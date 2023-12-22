@@ -89,4 +89,6 @@
     <string name="_12_00pm">12:00pm</string>
     <string name="add_new_video_and_image">+ Add new video and image</string>
     <string name="create_activity">Create Activity</string>
+    <string name="go_back">Go Back</string>
+    <string name="add_new_journey_image">Add New Journey Image</string>
 </resources>

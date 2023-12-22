@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/ic_background"
+    tools:context=".ui.fragments.JourneyDetailFragment">
+
+
+    <TextView
+        android:id="@+id/tvPlaylistitem"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/playlist_name"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_16sdp"
+        app:layout_constraintBottom_toBottomOf="@+id/btnBackpress"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/btnBackpress" />
+
+
+
+    <ImageView
+        android:id="@+id/btnBackpress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:padding="@dimen/_10sdp"
+        android:src="@drawable/ic_backpress"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="@dimen/_15sdp"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvJourneyDetail"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="@dimen/_5sdp"
+        app:layout_constraintTop_toBottomOf="@id/btnBackpress"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:listitem="@layout/journey_detail_item_view"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="@dimen/_42sdp"
+        android:layout_height="@dimen/_42sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:layout_marginEnd="@dimen/_10sdp"
+        android:clickable="true"
+        android:src="@drawable/ic_add"
+        android:background="@drawable/fab_back"
+        android:backgroundTint="@null"
+        app:shapeAppearance="@drawable/fab_back"
+        app:shapeAppearanceOverlay="@drawable/fab_back"
+        android:contentDescription="@string/add_event"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
