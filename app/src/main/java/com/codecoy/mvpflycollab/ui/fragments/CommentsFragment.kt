@@ -44,6 +44,10 @@ class CommentsFragment : Fragment(), LikesCallback{
 
         setUpData()
 
+        mBinding.btnBackpress.setOnClickListener {
+            findNavController().popBackStack()
+        }
+
     }
 
     private fun setUpData() {

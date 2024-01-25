@@ -8,13 +8,13 @@ import android.view.ViewGroup
 import com.codecoy.mvpflycollab.R
 
 
-class PlayListViewFragment : Fragment() {
+class ViewPlayListFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_play_list_view, container, false)
+        return inflater.inflate(R.layout.fragment_view_play_list, container, false)
     }
 }

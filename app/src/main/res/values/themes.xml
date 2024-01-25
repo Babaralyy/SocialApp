@@ -25,4 +25,12 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
+
+    <style name="CustomBottomNavigationStyle" parent="Widget.MaterialComponents.BottomNavigationView">
+        <!-- Customize the background color for the selected item -->
+        <item name="itemFillColor">@color/black</item>
+        <!-- Customize the size of the selected item's icon -->
+        <item name="itemIconSize">@dimen/_25sdp</item>
+    </style>
+
 </resources>

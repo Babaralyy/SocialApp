@@ -1,65 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+
+
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/ic_background"
-    tools:context=".ui.fragments.HomeFragment">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/tvHome"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_15sdp"
-        android:text="@string/home"
-        android:textAlignment="center"
-        android:textColor="@color/white"
-        android:textSize="@dimen/_16sdp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="match_parent"
+        android:background="@drawable/ic_background"
+        tools:context=".ui.fragments.HomeFragment">
 
-    <ImageView
-        android:id="@+id/ivMessenger"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/_10sdp"
-        android:src="@drawable/ic_messenger"
-        app:layout_constraintBottom_toBottomOf="@+id/tvHome"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tvHome" />
+        <TextView
+            android:id="@+id/tvHome"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:text="@string/home"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_16sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_notification"
-        app:layout_constraintBottom_toBottomOf="@+id/tvHome"
-        app:layout_constraintEnd_toStartOf="@+id/ivMessenger"
-        app:layout_constraintTop_toTopOf="@+id/tvHome"
-        />
+        <ImageView
+            android:id="@+id/ivMessenger"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:src="@drawable/ic_messenger"
+            app:layout_constraintBottom_toBottomOf="@+id/tvHome"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tvHome" />
 
-    <EditText
-        android:id="@+id/svHome"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_15sdp"
-        android:layout_marginStart="@dimen/_25sdp"
-        android:layout_marginEnd="@dimen/_25sdp"
-        android:paddingStart="@dimen/_10sdp"
-        android:paddingEnd="@dimen/_10sdp"
-        android:minHeight="48dp"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:background="@drawable/search_back"
-        android:hint="Search"
-        android:textColorHint="@color/solid"
-        android:drawableStart="@drawable/ic_search"
-        android:drawablePadding="@dimen/_5sdp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvHome" />
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_notification"
+            app:layout_constraintBottom_toBottomOf="@+id/tvHome"
+            app:layout_constraintEnd_toStartOf="@+id/ivMessenger"
+            app:layout_constraintTop_toTopOf="@+id/tvHome" />
+
+        <ImageView
+            android:id="@+id/navIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:contentDescription="@string/menu"
+            android:src="@drawable/nav_icons"
+            app:layout_constraintBottom_toBottomOf="@+id/tvHome"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tvHome" />
+
+        <EditText
+            android:id="@+id/svHome"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_25sdp"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:layout_marginEnd="@dimen/_25sdp"
+            android:background="@drawable/search_back"
+            android:drawableStart="@drawable/ic_search"
+            android:drawablePadding="@dimen/_5sdp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:hint="Search"
+            android:minHeight="48dp"
+            android:paddingStart="@dimen/_10sdp"
+            android:paddingEnd="@dimen/_10sdp"
+            android:textColorHint="@color/solid"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvHome" />
 
 
         <androidx.recyclerview.widget.RecyclerView
@@ -69,24 +86,28 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/svHome"
-            tools:listitem="@layout/stories_item_view"
-            />
+            tools:listitem="@layout/stories_item_view" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvPosts"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_margin="@dimen/_10sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            tools:listitem="@layout/post_item_view"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/rvStories" />
+            app:layout_constraintTop_toBottomOf="@id/rvStories"
+            tools:listitem="@layout/post_item_view" />
 
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/drawer_navigation"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        
+        app:menu="@menu/main_drawer_menu" />
 
-
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.drawerlayout.widget.DrawerLayout>

@@ -6,8 +6,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.codecoy.mvpflycollab.R
+import com.codecoy.mvpflycollab.callbacks.PlaylistCallback
 import com.codecoy.mvpflycollab.databinding.BottomsheetNewplaylistBinding
 import com.codecoy.mvpflycollab.databinding.FragmentPlayListBinding
 import com.codecoy.mvpflycollab.ui.activities.MainActivity
@@ -15,7 +18,7 @@ import com.codecoy.mvpflycollab.ui.adapters.playlist.PlayListAdapter
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 
-class PlayListFragment : Fragment() {
+class PlayListFragment : Fragment(), PlaylistCallback {
 
     private lateinit var activity: MainActivity
     private lateinit var playListAdapter: PlayListAdapter
@@ -36,7 +39,7 @@ class PlayListFragment : Fragment() {
     private fun inIt() {
 
         playList = arrayListOf()
-        mBinding.rvPlayList.layoutManager = LinearLayoutManager(activity)
+        mBinding.rvPlayList.layoutManager = GridLayoutManager(activity, 2)
         mBinding.rvPlayList.setHasFixedSize(true)
 
         setUpAdapter()
@@ -68,9 +71,20 @@ class PlayListFragment : Fragment() {
         playList.add("")
         playList.add("")
 
-        playListAdapter = PlayListAdapter(playList, activity)
+        playListAdapter = PlayListAdapter(playList, activity, this)
         mBinding.rvPlayList.adapter = playListAdapter
 
+    }
+
+    override fun onPlaylistClick() {
+        try {
+
+            val action = PlayListFragmentDirections.actionPlayListFragmentToPlayListDetailFragment()
+            findNavController().navigate(action)
+
+        }catch (e: Exception){
+
+        }
     }
 
     override fun onAttach(context: Context) {
@@ -78,4 +92,6 @@ class PlayListFragment : Fragment() {
 
         (context as MainActivity).also { activity = it }
     }
+
+
 }

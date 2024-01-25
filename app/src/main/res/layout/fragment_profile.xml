@@ -71,7 +71,7 @@
         android:id="@+id/drawer_navigation"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_gravity="end"
+        android:layout_gravity="start"
         app:menu="@menu/main_drawer_menu" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

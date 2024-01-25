@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <ImageView
+        android:layout_width="@dimen/_20sdp"
+        android:layout_height="@dimen/_20sdp"
+        android:layout_marginStart="@dimen/_20sdp"
+        android:layout_marginTop="@dimen/_30sdp"
+        android:src="@drawable/keyboard_back"/>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/ivProfile"
+        android:layout_width="@dimen/_70sdp"
+        android:layout_height="@dimen/_70sdp"
+        android:layout_marginTop="@dimen/_30sdp"
+        android:layout_centerHorizontal="true"
+        app:civ_border_width="@dimen/_1sdp"
+        app:civ_border_color="#130418"
+        android:src="@drawable/img"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ivProfile"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:fontFamily="@font/inter_medium"
+        android:text="Stark Jack"
+        android:textSize="20sp" />
+
+</RelativeLayout>

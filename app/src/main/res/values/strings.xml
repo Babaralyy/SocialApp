@@ -41,9 +41,13 @@
     <string name="continue_with_facebook">Continue With Facebook</string>
     <string name="playlist_name">Playlist Name</string>
     <string name="profile">PROFILE</string>
+    <string name="profile_small">Profile</string>
     <string name="journey">JOURNEY</string>
+    <string name="journey_small">Journey</string>
     <string name="playlist">PLAYLIST</string>
+    <string name="playlist_small">Playlist</string>
     <string name="collab">COLLAB</string>
+    <string name="collab_small">Collab</string>
     <string name="joshua_l">joshua_l</string>
     <string name="_8m">8m</string>
     <string name="already_have_an_account">Already have an account?</string>
@@ -91,4 +95,13 @@
     <string name="create_activity">Create Activity</string>
     <string name="go_back">Go Back</string>
     <string name="add_new_journey_image">Add New Journey Image</string>
+    <string name="save">Save</string>
+    <string name="menu">Menu</string>
+    <string name="share_us">Share Us</string>
+    <string name="rate_us">Rate Us</string>
+    <string name="logout">Logout</string>
+    <string name="close_menu_items">Close menu items</string>
+    <string name="feed">Feed</string>
+    <string name="add_post">Add Post</string>
+    <string name="save_post">Save Post</string>
 </resources>

@@ -3,6 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+
 
     <application
         android:allowBackup="true"
@@ -14,7 +18,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MVPFlyCollab"
         tools:targetApi="31"
-        android:windowSoftInputMode="adjustResize">
+        android:windowSoftInputMode="adjustResize"
+        android:requestLegacyExternalStorage="true">
         <activity
             android:name=".ui.activities.MainActivity"
             android:exported="true">
@@ -24,6 +29,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
+
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

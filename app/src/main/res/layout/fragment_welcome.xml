@@ -1,165 +1,173 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/ic_background"
-    tools:context=".ui.fragments.WelcomeFragment">
+    android:fillViewport="true"
+    android:fitsSystemWindows="true">
 
-
-    <ImageView
-        android:id="@+id/ivLogo"
-        android:layout_width="@dimen/_150sdp"
-        android:layout_height="@dimen/_150sdp"
-        android:layout_marginBottom="@dimen/_50sdp"
-        android:contentDescription="@string/app_name"
-        android:layout_centerHorizontal="true"
-        android:layout_above="@id/welcomeLay"
-        android:src="@drawable/app_logo" />
-
-    <LinearLayout
-        android:id="@+id/welcomeLay"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/facebookLay"
-        android:layout_centerInParent="true"
-        android:layout_marginBottom="@dimen/_15sdp"
-        android:gravity="center"
-        android:orientation="vertical">
+        tools:context=".ui.fragments.WelcomeFragment">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/welcome"
-            android:fontFamily="@font/lato"
-            android:textColor="@color/white"
-            android:textSize="30sp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_15sdp"
-            android:layout_marginStart="@dimen/_25sdp"
-            android:layout_marginEnd="@dimen/_25sdp"
-            android:text="@string/the_fly_collab_community_is_here_for_your_journey."
-            android:fontFamily="@font/lato"
-            android:textAlignment="center"
-            android:textColor="@color/white"
-            android:textSize="16sp" />
+        <ImageView
+            android:id="@+id/ivLogo"
+            android:layout_width="@dimen/_120sdp"
+            android:layout_height="@dimen/_120sdp"
+            android:layout_above="@id/welcomeLay"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/_50sdp"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/app_logo" />
 
         <LinearLayout
+            android:id="@+id/welcomeLay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_above="@id/facebookLay"
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="@dimen/_15sdp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/lato"
+                android:text="@string/welcome"
+                android:textColor="@color/white"
+                android:textSize="36sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_25sdp"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:layout_marginEnd="@dimen/_25sdp"
+                android:fontFamily="@font/lato"
+                android:text="@string/the_fly_collab_community_is_here_for_your_journey."
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:layout_marginTop="@dimen/_30sdp"
+                android:layout_marginEnd="@dimen/_15sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnLogin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:layout_weight="1"
+                    android:backgroundTint="@android:color/transparent"
+                    android:fontFamily="@font/lato"
+                    android:paddingTop="@dimen/_10sdp"
+                    android:paddingBottom="@dimen/_10sdp"
+                    android:text="@string/log_in"
+                    android:textSize="17sp"
+                    app:cornerRadius="@dimen/_30sdp"
+                    app:strokeColor="@color/white"
+                    app:strokeWidth="@dimen/_1sdp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSignUp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:layout_weight="1"
+                    android:backgroundTint="@android:color/transparent"
+                    android:fontFamily="@font/lato"
+                    android:paddingTop="@dimen/_10sdp"
+                    android:paddingBottom="@dimen/_10sdp"
+                    android:text="@string/sign_up"
+                    android:textColor="@color/white"
+                    android:textSize="17sp"
+                    app:strokeColor="@color/white"
+                    app:strokeWidth="@dimen/_1sdp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/lato"
+                android:text="@string/or"
+                android:textColor="@color/white"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/facebookLay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/googleLay"
             android:layout_marginStart="@dimen/_15sdp"
-            android:layout_marginTop="@dimen/_30sdp"
             android:layout_marginEnd="@dimen/_15sdp"
-            android:layout_marginBottom="@dimen/_10sdp"
-            android:orientation="horizontal">
+            android:layout_marginBottom="@dimen/_15sdp"
+            android:background="@drawable/btn_back_transparent"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="@dimen/_10sdp">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnLogin"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="@dimen/_10sdp"
-                android:paddingTop="@dimen/_10sdp"
-                android:paddingBottom="@dimen/_10sdp"
-                android:layout_weight="1"
-                android:backgroundTint="@android:color/transparent"
-                android:fontFamily="@font/lato"
-                android:text="@string/log_in"
-                android:textSize="17sp"
-                app:cornerRadius="@dimen/_30sdp"
-                app:strokeColor="@color/white"
-                app:strokeWidth="@dimen/_1sdp" />
+            <ImageView
+                android:layout_width="@dimen/_17sdp"
+                android:layout_height="@dimen/_17sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:contentDescription="@string/login_with_facebook"
+                android:src="@drawable/ic_facebook" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnSignUp"
+            <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/_10sdp"
-                android:paddingTop="@dimen/_10sdp"
-                android:paddingBottom="@dimen/_10sdp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/white"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_5sdp"
                 android:fontFamily="@font/lato"
-                android:text="@string/sign_up"
-                android:textColor="@color/black"
+                android:text="@string/continue_with_facebook"
+                android:textColor="@color/white"
                 android:textSize="17sp" />
 
         </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/googleLay"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/lato"
-            android:text="@string/or"
-            android:textColor="@color/white"
-            android:textSize="15sp" />
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="@dimen/_15sdp"
+            android:layout_marginEnd="@dimen/_15sdp"
+            android:layout_marginBottom="@dimen/_40sdp"
+            android:background="@drawable/btn_back_transparent"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="@dimen/_10sdp">
 
-    </LinearLayout>
+            <ImageView
+                android:layout_width="@dimen/_17sdp"
+                android:layout_height="@dimen/_17sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:contentDescription="@string/login_with_gmail"
+                android:src="@drawable/ic_google" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:fontFamily="@font/lato"
+                android:text="@string/continue_with_google"
+                android:textColor="@color/white"
+                android:textSize="17sp" />
 
-    <LinearLayout
-        android:id="@+id/facebookLay"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/googleLay"
-        android:layout_marginStart="@dimen/_15sdp"
-        android:layout_marginEnd="@dimen/_15sdp"
-        android:layout_marginBottom="@dimen/_15sdp"
-        android:background="@drawable/btn_back_white"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:padding="@dimen/_10sdp">
+        </LinearLayout>
 
-        <ImageView
-            android:layout_width="@dimen/_17sdp"
-            android:layout_height="@dimen/_17sdp"
-            android:layout_marginEnd="@dimen/_5sdp"
-            android:contentDescription="@string/login_with_facebook"
-            android:src="@drawable/ic_facebook" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:fontFamily="@font/lato"
-            android:text="@string/continue_with_facebook"
-            android:textColor="@color/black"
-            android:textSize="17sp"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/googleLay"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="@dimen/_15sdp"
-        android:layout_marginEnd="@dimen/_15sdp"
-        android:layout_marginBottom="@dimen/_40sdp"
-        android:background="@drawable/btn_back_transparent"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:padding="@dimen/_10sdp">
-
-        <ImageView
-            android:layout_width="@dimen/_17sdp"
-            android:layout_height="@dimen/_17sdp"
-            android:layout_marginEnd="@dimen/_5sdp"
-            android:contentDescription="@string/login_with_gmail"
-            android:src="@drawable/ic_google" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:text="@string/continue_with_google"
-            android:fontFamily="@font/lato"
-            android:textColor="@color/white"
-            android:textSize="17sp"/>
-
-    </LinearLayout>
-
-</RelativeLayout>
+    </RelativeLayout>
+</ScrollView>

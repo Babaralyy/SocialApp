@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/ic_background"
     tools:context=".ui.fragments.MainFragment">
 
@@ -19,95 +20,20 @@
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/linearBottom"/>
+        android:layout_above="@id/bottomNavigation"/>
 
-    <LinearLayout
-        android:id="@+id/linearBottom"
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:weightSum="5"
-        android:orientation="horizontal"
-        android:background="@drawable/image_navigation"
-        android:layout_alignParentBottom="true">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center|center_vertical">
-
-            <TextView
-                android:id="@+id/tvHome"
-                android:layout_width="@dimen/_25sdp"
-                android:layout_height="@dimen/_25sdp"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:background="@drawable/home_selector" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center|center_vertical">
-
-            <TextView
-                android:id="@+id/tvCalender"
-                android:layout_width="@dimen/_25sdp"
-                android:layout_height="@dimen/_25sdp"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:background="@drawable/feed_selector" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/create_post" />
-
-            </FrameLayout>
-
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center|center_vertical">
-
-            <TextView
-                android:id="@+id/tvSave"
-                android:layout_width="@dimen/_25sdp"
-                android:layout_height="@dimen/_25sdp"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:background="@drawable/save_selector" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center|center_vertical">
-
-            <TextView
-                android:id="@+id/tvProfile"
-                android:layout_width="@dimen/_25sdp"
-                android:layout_height="@dimen/_25sdp"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:background="@drawable/user_selector"/>
-
-
-        </LinearLayout>
-
-    </LinearLayout>
+        app:menu="@menu/bottom_nav_menu"
+        app:labelVisibilityMode="unlabeled"
+        app:itemIconTint="@drawable/bottom_nav_view_selector"
+        app:itemRippleColor="#E39BFF"
+        app:itemPaddingTop="@dimen/_10sdp"
+        app:itemPaddingBottom="@dimen/_10sdp"
+        app:itemIconSize="@dimen/_22sdp"
+        android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>

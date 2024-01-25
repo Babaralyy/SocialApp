@@ -1,4 +1,4 @@
-package com.codecoy.mvpflycollab.ui.adapters
+package com.codecoy.mvpflycollab.ui.adapters.members
 
 import android.content.Context
 import android.util.Log
@@ -7,10 +7,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.codecoy.mvpflycollab.R
-import com.codecoy.mvpflycollab.databinding.CollabMembersItemViewBinding
 import com.codecoy.mvpflycollab.databinding.MembersItemViewBinding
 import com.codecoy.mvpflycollab.utils.Constant.TAG
-import com.squareup.picasso.Picasso
 
 class MembersAdapter (
     private val membersList: MutableList<String>,

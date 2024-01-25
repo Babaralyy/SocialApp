@@ -7,11 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.codecoy.mvpflycollab.R
 import com.codecoy.mvpflycollab.databinding.FragmentMembersBinding
 import com.codecoy.mvpflycollab.ui.activities.MainActivity
-import com.codecoy.mvpflycollab.ui.adapters.MembersAdapter
+import com.codecoy.mvpflycollab.ui.adapters.members.MembersAdapter
 
 
 class MembersFragment : Fragment() {

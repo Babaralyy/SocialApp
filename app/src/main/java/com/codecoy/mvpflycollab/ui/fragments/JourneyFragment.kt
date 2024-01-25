@@ -77,7 +77,7 @@ class JourneyFragment : Fragment(), JourneyCallback {
     override fun onJourneyClick() {
         try {
 
-            val action = MainFragmentDirections.actionMainFragmentToJourneyDetailFragment()
+            val action = JourneyFragmentDirections.actionJourneyFragmentToJourneyDetailFragment()
             findNavController().navigate(action)
 
         }catch (e: Exception){
@@ -90,7 +90,5 @@ class JourneyFragment : Fragment(), JourneyCallback {
 
         (context as MainActivity).also { activity = it }
     }
-
-
 
 }

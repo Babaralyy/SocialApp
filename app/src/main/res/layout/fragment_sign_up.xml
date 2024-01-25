@@ -54,19 +54,18 @@
                 android:layout_marginTop="@dimen/_5sdp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_profile_pic"
-                app:civ_border_width="@dimen/_1sdp"
+                app:civ_border_width="@dimen/_2sdp"
+                app:civ_border_color="@color/white"
                 app:civ_circle_background_color="@color/solid"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-
-                />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageButton
                 android:id="@+id/ivAddProfile"
-                android:layout_width="@dimen/_30sdp"
-                android:layout_height="@dimen/_30sdp"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="@dimen/_40sdp"
                 android:layout_gravity="end"
                 android:layout_marginTop="@dimen/_45sdp"
                 android:backgroundTint="@android:color/transparent"
@@ -119,14 +118,15 @@
                 android:layout_height="wrap_content"
                 android:background="@null"
                 android:hint="@string/full_name"
-                android:padding="@dimen/_10sdp"
+                android:inputType="text"
                 android:minHeight="48dp"
+                android:padding="@dimen/_10sdp"
                 android:textColor="@color/solid2"
                 android:textColorHint="@color/solid2"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/view1"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <View
                 android:layout_width="0dp"
@@ -181,11 +181,12 @@
                 android:layout_height="wrap_content"
                 android:background="@null"
                 android:hint="@string/username"
-                android:padding="@dimen/_10sdp"
+                android:inputType="text"
                 android:minHeight="48dp"
+                android:padding="@dimen/_10sdp"
                 android:textColor="@color/solid2"
                 android:textColorHint="@color/solid2"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/view2"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -244,11 +245,11 @@
                 android:background="@null"
                 android:hint="@string/mobile_number"
                 android:inputType="phone"
-                android:padding="@dimen/_10sdp"
                 android:minHeight="48dp"
+                android:padding="@dimen/_10sdp"
                 android:textColor="@color/solid2"
                 android:textColorHint="@color/solid2"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/view3"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -307,11 +308,12 @@
                 android:layout_height="wrap_content"
                 android:background="@null"
                 android:hint="@string/email"
-                android:padding="@dimen/_10sdp"
+                android:inputType="textEmailAddress"
                 android:minHeight="48dp"
+                android:padding="@dimen/_10sdp"
                 android:textColor="@color/solid2"
                 android:textColorHint="@color/solid2"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/view4"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -372,11 +374,11 @@
                 android:drawableEnd="@drawable/ic_show"
                 android:hint="@string/password"
                 android:inputType="textPassword"
-                android:padding="@dimen/_10sdp"
                 android:minHeight="48dp"
+                android:padding="@dimen/_10sdp"
                 android:textColor="@color/solid2"
                 android:textColorHint="@color/solid2"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/view5"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -409,9 +411,9 @@
                 android:layout_height="@dimen/_15sdp"
                 android:layout_marginStart="@dimen/_15sdp"
                 android:src="@drawable/ic_lock"
-                app:layout_constraintBottom_toBottomOf="@id/etCPassword"
+                app:layout_constraintBottom_toBottomOf="@id/etConfirmPassword"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/etCPassword"
+                app:layout_constraintTop_toTopOf="@id/etConfirmPassword"
                 android:contentDescription="@string/confirm_password" />
 
             <View
@@ -423,23 +425,23 @@
                 android:layout_marginBottom="@dimen/_10sdp"
                 android:background="#FF000000"
                 android:backgroundTint="@color/white"
-                app:layout_constraintBottom_toBottomOf="@id/etCPassword"
+                app:layout_constraintBottom_toBottomOf="@id/etConfirmPassword"
                 app:layout_constraintStart_toEndOf="@id/ivEditImageCPassword"
-                app:layout_constraintTop_toTopOf="@id/etCPassword" />
+                app:layout_constraintTop_toTopOf="@id/etConfirmPassword" />
 
             <EditText
-                android:id="@+id/etCPassword"
+                android:id="@+id/etConfirmPassword"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@null"
                 android:drawableEnd="@drawable/ic_show"
                 android:hint="@string/confirm_password"
                 android:inputType="textPassword"
-                android:padding="@dimen/_10sdp"
                 android:minHeight="48dp"
+                android:padding="@dimen/_10sdp"
                 android:textColor="@color/solid2"
                 android:textColorHint="@color/solid2"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/view6"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -452,7 +454,7 @@
                 android:background="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/etCPassword" />
+                app:layout_constraintTop_toBottomOf="@id/etConfirmPassword" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -480,6 +482,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginBottom="@dimen/_5sdp"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -505,8 +508,6 @@
                 android:textColor="@color/purple" />
 
         </LinearLayout>
-
-
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

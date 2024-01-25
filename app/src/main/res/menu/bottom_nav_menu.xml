@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_home"
+        android:title="@string/home"
+        android:icon="@drawable/home_outline" />
+    <item
+        android:id="@+id/navigation_calendar"
+        android:title="@string/feed"
+        android:icon="@drawable/calendar_outline" />
+    <item
+        android:id="@+id/navigation_add_post"
+        android:title="@string/add_post"
+        android:icon="@drawable/make_post" />
+    <item
+        android:id="@+id/navigation_save_post"
+        android:title="@string/save_post"
+        android:icon="@drawable/save_outline" />
+    <item
+        android:id="@+id/navigation_notification"
+        android:title="@string/profile"
+        android:icon="@drawable/not_outline" />
+</menu>

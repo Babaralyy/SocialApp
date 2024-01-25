@@ -27,8 +27,9 @@ class AboutProfileFragment : Fragment() {
     private fun inIt() {
         mBinding.ivAboutProfileImage.setOnClickListener {
             try {
-                val action = MainFragmentDirections.actionMainFragmentToProfileDetailFragment()
-                findNavController().navigate(action)
+//                val action = MainFragmentDirections.actionMainFragmentToProfileDetailFragment()
+//                findNavController().navigate(action)
+
             }catch (e: Exception){
 
             }

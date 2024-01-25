@@ -12,7 +12,19 @@
         tools:layout="@layout/fragment_splash" >
         <action
             android:id="@+id/action_splashFragment_to_welcomeFragment"
-            app:destination="@id/welcomeFragment" />
+            app:destination="@id/welcomeFragment"
+            app:popUpTo="@id/nav_graph.xml"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_splashFragment_to_interestsFragment"
+            app:destination="@id/interestsFragment"
+            app:popUpTo="@id/nav_graph.xml"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_splashFragment_to_mainFragment"
+            app:destination="@id/mainFragment"
+            app:popUpTo="@id/nav_graph.xml"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/welcomeFragment"
@@ -32,8 +44,10 @@
         android:label="fragment_sign_up"
         tools:layout="@layout/fragment_sign_up">
         <action
-            android:id="@+id/action_signUpFragment_to_interestsFragment"
-            app:destination="@id/interestsFragment" />
+            android:id="@+id/action_signUpFragment_to_signInFragment"
+            app:destination="@id/signInFragment"
+            app:popUpTo="@id/signUpFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/signInFragment"
@@ -42,7 +56,15 @@
         tools:layout="@layout/fragment_sign_in">
         <action
             android:id="@+id/action_signInFragment_to_interestsFragment"
-            app:destination="@id/interestsFragment" />
+            app:destination="@id/interestsFragment"
+            app:popUpTo="@id/nav_graph.xml"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_signInFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment"
+            app:launchSingleTop="false"
+            app:popUpTo="@id/signInFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/interestsFragment"
@@ -78,10 +100,10 @@
         android:label="fragment_likes"
         tools:layout="@layout/fragment_likes" />
     <fragment
-        android:id="@+id/playListFragment"
-        android:name="com.codecoy.mvpflycollab.ui.fragments.PlayListViewFragment"
+        android:id="@+id/viewPlayListFragment"
+        android:name="com.codecoy.mvpflycollab.ui.fragments.ViewPlayListFragment"
         android:label="fragment_play_list"
-        tools:layout="@layout/fragment_play_list_view" />
+        tools:layout="@layout/fragment_view_play_list" />
     <fragment
         android:id="@+id/scheduleFragment"
         android:name="com.codecoy.mvpflycollab.ui.fragments.ScheduleFragment"
@@ -116,22 +138,30 @@
         android:id="@+id/journeyFragment"
         android:name="com.codecoy.mvpflycollab.ui.fragments.JourneyFragment"
         android:label="fragment_journey"
-        tools:layout="@layout/fragment_journey" />
+        tools:layout="@layout/fragment_journey" >
+        <action
+            android:id="@+id/action_journeyFragment_to_journeyDetailFragment"
+            app:destination="@id/journeyDetailFragment" />
+    </fragment>
     <fragment
         android:id="@+id/membersFragment"
         android:name="com.codecoy.mvpflycollab.ui.fragments.MembersFragment"
         android:label="fragment_members"
         tools:layout="@layout/fragment_members" />
     <fragment
-        android:id="@+id/playListFragment2"
+        android:id="@+id/playListFragment"
         android:name="com.codecoy.mvpflycollab.ui.fragments.PlayListFragment"
         android:label="fragment_play_list"
-        tools:layout="@layout/fragment_play_list" />
+        tools:layout="@layout/fragment_play_list" >
+        <action
+            android:id="@+id/action_playListFragment_to_playListDetailFragment"
+            app:destination="@id/playListDetailFragment" />
+    </fragment>
     <fragment
-        android:id="@+id/playListNameFragment"
-        android:name="com.codecoy.mvpflycollab.ui.fragments.PlayListNameFragment"
+        android:id="@+id/playListDetailFragment"
+        android:name="com.codecoy.mvpflycollab.ui.fragments.PlayListDetailFragment"
         android:label="fragment_play_list_name"
-        tools:layout="@layout/fragment_play_list_name" />
+        tools:layout="@layout/fragment_play_list_detail" />
     <fragment
         android:id="@+id/profileDetailFragment"
         android:name="com.codecoy.mvpflycollab.ui.fragments.ProfileDetailFragment"
@@ -154,17 +184,23 @@
             android:id="@+id/action_mainFragment_to_commentsFragment"
             app:destination="@id/commentsFragment" />
         <action
-            android:id="@+id/action_mainFragment_to_levelsFragment"
-            app:destination="@id/levelsFragment" />
-        <action
             android:id="@+id/action_mainFragment_to_viewStoryFragment"
             app:destination="@id/viewStoryFragment" />
         <action
-            android:id="@+id/action_mainFragment_to_profileDetailFragment"
-            app:destination="@id/profileDetailFragment" />
+            android:id="@+id/action_mainFragment_to_editProfileFragment"
+            app:destination="@id/editProfileFragment" />
         <action
-            android:id="@+id/action_mainFragment_to_journeyDetailFragment"
-            app:destination="@id/journeyDetailFragment" />
+            android:id="@+id/action_mainFragment_to_aboutProfileFragment"
+            app:destination="@id/aboutProfileFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_playListFragment"
+            app:destination="@id/playListFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_journeyFragment"
+            app:destination="@id/journeyFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_membersFragment"
+            app:destination="@id/membersFragment" />
     </fragment>
     <fragment
         android:id="@+id/levelsFragment"

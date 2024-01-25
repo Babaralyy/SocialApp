@@ -2,19 +2,25 @@ package com.codecoy.mvpflycollab.ui.fragments
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.Toast
+import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.codecoy.mvpflycollab.R
 import com.codecoy.mvpflycollab.callbacks.HomeCallback
 import com.codecoy.mvpflycollab.callbacks.StoryCallback
 import com.codecoy.mvpflycollab.databinding.FragmentHomeBinding
 import com.codecoy.mvpflycollab.ui.activities.MainActivity
 import com.codecoy.mvpflycollab.ui.adapters.PostsAdapter
-import com.codecoy.mvpflycollab.ui.adapters.ViewPagerAdapter
 import com.codecoy.mvpflycollab.ui.adapters.stories.StoriesAdapter
+import com.codecoy.mvpflycollab.utils.Constant.TAG
 
 
 class HomeFragment : Fragment(), HomeCallback, StoryCallback {
@@ -58,9 +64,104 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
             try {
                 val action = MainFragmentDirections.actionMainFragmentToChatFragment()
                 findNavController().navigate(action)
-            }catch (e: Exception){
+            } catch (e: Exception) {
 
             }
+        }
+
+
+
+        mBinding.drawerNavigation.itemIconTintList = null // To allow custom icon colors
+
+        // Inflate the custom layout for navigation items
+//        for (i in 0 until mBinding.drawerNavigation.menu.size()) {
+//            val menuItem = mBinding.drawerNavigation.menu.getItem(i)
+            val actionView = layoutInflater.inflate(R.layout.custom_nav_layout, null)
+            // You can customize the content of the item if needed
+
+            mBinding.drawerNavigation.addView(actionView)
+//        }
+
+
+        mBinding.navIcon.setOnClickListener {
+            if (!mBinding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                mBinding.drawerLayout.openDrawer(GravityCompat.START)
+            } else {
+                mBinding.drawerLayout.closeDrawer(GravityCompat.START)
+            }
+        }
+
+        mBinding.drawerLayout.findViewById<ImageView>(R.id.ivCloseDrawer).setOnClickListener {
+            mBinding.drawerLayout.closeDrawer(GravityCompat.START)
+        }
+
+        mBinding.drawerLayout.findViewById<LinearLayout>(R.id.iProfile).setOnClickListener {
+
+            mBinding.drawerLayout.closeDrawer(GravityCompat.START)
+
+            try {
+                val action = MainFragmentDirections.actionMainFragmentToAboutProfileFragment()
+                findNavController().navigate(action)
+            }catch (e: Exception){
+                Log.i(TAG, "inIt: ${e.message}")
+            }
+
+
+        }
+
+        mBinding.drawerLayout.findViewById<LinearLayout>(R.id.iJourney).setOnClickListener {
+
+            mBinding.drawerLayout.closeDrawer(GravityCompat.START)
+
+            try {
+                val action = MainFragmentDirections.actionMainFragmentToJourneyFragment()
+                findNavController().navigate(action)
+            }catch (e: Exception){
+                Log.i(TAG, "inIt: ${e.message}")
+            }
+
+        }
+
+        mBinding.drawerLayout.findViewById<LinearLayout>(R.id.iPlaylist).setOnClickListener {
+
+            mBinding.drawerLayout.closeDrawer(GravityCompat.START)
+
+            try {
+                val action = MainFragmentDirections.actionMainFragmentToPlayListFragment()
+                findNavController().navigate(action)
+            }catch (e: Exception){
+                Log.i(TAG, "inIt: ${e.message}")
+            }
+
+        }
+
+
+        mBinding.drawerLayout.findViewById<LinearLayout>(R.id.iCollab).setOnClickListener {
+
+            mBinding.drawerLayout.closeDrawer(GravityCompat.START)
+
+            try {
+                val action = MainFragmentDirections.actionMainFragmentToMembersFragment()
+                findNavController().navigate(action)
+            }catch (e: Exception){
+                Log.i(TAG, "inIt: ${e.message}")
+            }
+
+        }
+
+        mBinding.drawerLayout.findViewById<LinearLayout>(R.id.iShareUs).setOnClickListener {
+            Toast.makeText(activity, "Clicked", Toast.LENGTH_SHORT).show()
+            mBinding.drawerLayout.closeDrawer(GravityCompat.START)
+        }
+
+        mBinding.drawerLayout.findViewById<LinearLayout>(R.id.iRateUs).setOnClickListener {
+            Toast.makeText(activity, "Clicked", Toast.LENGTH_SHORT).show()
+            mBinding.drawerLayout.closeDrawer(GravityCompat.START)
+        }
+
+        mBinding.drawerLayout.findViewById<LinearLayout>(R.id.iLogout).setOnClickListener {
+            Toast.makeText(activity, "Clicked", Toast.LENGTH_SHORT).show()
+            mBinding.drawerLayout.closeDrawer(GravityCompat.START)
         }
 
     }
@@ -113,7 +214,7 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
         try {
             val action = MainFragmentDirections.actionMainFragmentToCommentsFragment()
             findNavController().navigate(action)
-        }catch (e: Exception){
+        } catch (e: Exception) {
 
         }
     }
@@ -122,7 +223,7 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
         try {
             val action = MainFragmentDirections.actionMainFragmentToViewStoryFragment()
             findNavController().navigate(action)
-        }catch (e: Exception){
+        } catch (e: Exception) {
 
         }
     }
@@ -132,8 +233,6 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
 
         (context as MainActivity).also { activity = it }
     }
-
-
 
 
 }

@@ -12,6 +12,8 @@
     <color name="red">#F0365B</color>
     <color name="d_purple">#46255C</color>
 
+    <color name="textColorOne">#C1C7D0</color>
+
     <color name="search_back_color">#F5F5F5</color>
     <color name="search_text_color">#BEBEBE</color>
 </resources>

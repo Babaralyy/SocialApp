@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/ic_background"
-    tools:context=".ui.fragments.PlayListNameFragment">
+    tools:context=".ui.fragments.PlayListDetailFragment">
 
     <TextView
         android:id="@+id/tvPlaylistitem"
@@ -34,7 +34,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_playlistitem"
+        android:id="@+id/rvPlayListDetail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/_5sdp"
@@ -52,7 +52,6 @@
         android:layout_marginBottom="36dp"
         android:clickable="true"
         android:src="@drawable/ic_add"
-
         android:backgroundTint="@color/purple"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
