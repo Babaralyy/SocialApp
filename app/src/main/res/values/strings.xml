@@ -104,4 +104,8 @@
     <string name="feed">Feed</string>
     <string name="add_post">Add Post</string>
     <string name="save_post">Save Post</string>
+    <string name="no_data_found">No data found</string>
+    <string name="dummy">---</string>
+    <string name="add_journey_details">Add journey details</string>
+    <string name="add_new_image">+ Add New Image</string>
 </resources>

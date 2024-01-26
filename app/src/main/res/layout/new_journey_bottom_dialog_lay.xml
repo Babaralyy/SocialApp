@@ -22,12 +22,25 @@
             android:layout_marginTop="@dimen/_20sdp"
             android:fontFamily="@font/lato_bold"
             android:layout_gravity="center_horizontal"
-            android:text="@string/abdul_activity"
+            android:text="@string/dummy"
             android:textColor="#222B45"
             android:textSize="18sp" />
 
 
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/ivJourneyImg"
+            android:layout_width="@dimen/_70sdp"
+            android:layout_height="@dimen/_70sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:src="@drawable/ic_profile_pic"
+            app:civ_border_width="@dimen/_2sdp"
+            app:civ_border_color="@color/white"
+            android:layout_gravity="center_horizontal"
+            app:civ_circle_background_color="@color/solid" />
+
+
         <EditText
+            android:id="@+id/etTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_15sdp"
@@ -41,6 +54,7 @@
             android:textSize="16sp" />
 
         <EditText
+            android:id="@+id/etDes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_15sdp"
@@ -55,6 +69,7 @@
             android:textSize="16sp" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCreate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

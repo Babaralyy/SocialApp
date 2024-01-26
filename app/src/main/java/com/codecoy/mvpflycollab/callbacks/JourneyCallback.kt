@@ -1,5 +1,7 @@
 package com.codecoy.mvpflycollab.callbacks
 
+import com.codecoy.mvpflycollab.datamodels.AllJourneyData
+
 interface JourneyCallback {
-    fun onJourneyClick()
+    fun onJourneyClick(journeyData: AllJourneyData)
 }

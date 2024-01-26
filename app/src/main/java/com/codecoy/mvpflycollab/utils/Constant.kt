@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import com.codecoy.mvpflycollab.R
+import com.codecoy.mvpflycollab.datamodels.UserLoginData
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
@@ -20,6 +21,8 @@ object Constant {
     const val TAG = "TAG"
     private const val BASE_URL = "https://codecoyapps.com/fly_colab/"
     const val MEDIA_BASE_URL = "https://codecoyapps.com/fly_colab/public/storage/"
+
+     var currentUser: UserLoginData? = null
 
     private var httpClient: OkHttpClient = OkHttpClient.Builder()
         .hostnameVerifier { _, _ ->

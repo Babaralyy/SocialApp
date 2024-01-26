@@ -51,9 +51,7 @@ class InterestsFragment : Fragment() {
             } catch (e: Exception){
 
             }
-
         }
-
     }
 
     private fun setDataList() {

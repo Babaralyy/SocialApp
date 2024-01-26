@@ -28,6 +28,7 @@
 
 
         <EditText
+            android:id="@+id/etEventName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_15sdp"
@@ -38,9 +39,11 @@
             android:hint="@string/event_name"
             android:padding="@dimen/_15sdp"
             android:textColor="@color/black"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:inputType="text"/>
 
         <EditText
+            android:id="@+id/etEventDes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_15sdp"
@@ -56,6 +59,7 @@
 
 
         <TextView
+            android:id="@+id/tvDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_15sdp"
@@ -68,7 +72,27 @@
             app:drawableEndCompat="@drawable/ic_calendar_gray" />
 
 
+        <TextView
+            android:id="@+id/tvNewImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_15sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_15sdp"
+            android:text="@string/add_new_image"
+            android:textSize="14sp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:textColor="@color/purple" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvJourneyDetailsImages"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAddJourneyDetails"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -79,7 +103,7 @@
             android:backgroundTint="@color/purple"
             android:fontFamily="@font/lato_bold"
             android:padding="@dimen/_15sdp"
-            android:text="@string/add_this_activity_to_my_calendar"
+            android:text="@string/add_journey_details"
             android:textSize="16sp"
             app:cornerRadius="@dimen/_5sdp" />
     </LinearLayout>

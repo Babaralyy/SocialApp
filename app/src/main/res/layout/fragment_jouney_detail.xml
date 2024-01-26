@@ -9,22 +9,22 @@
 
 
     <TextView
-        android:id="@+id/tvPlaylistitem"
+        android:id="@+id/tvName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="@string/playlist_name"
+        android:text="@string/dummy"
         android:textColor="@color/white"
         android:textSize="@dimen/_16sdp"
-        app:layout_constraintBottom_toBottomOf="@+id/btnBackpress"
+        app:layout_constraintBottom_toBottomOf="@+id/ivBack"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/btnBackpress" />
+        app:layout_constraintTop_toTopOf="@+id/ivBack" />
 
 
 
     <ImageView
-        android:id="@+id/btnBackpress"
+        android:id="@+id/ivBack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_10sdp"
@@ -39,10 +39,11 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_margin="@dimen/_5sdp"
-        app:layout_constraintTop_toBottomOf="@id/btnBackpress"
+        android:layout_marginBottom="@dimen/_5sdp"
+        app:layout_constraintTop_toBottomOf="@id/ivBack"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/floatingActionButton"
         tools:listitem="@layout/journey_detail_item_view"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

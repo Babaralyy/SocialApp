@@ -216,6 +216,11 @@
         android:id="@+id/journeyDetailFragment"
         android:name="com.codecoy.mvpflycollab.ui.fragments.JourneyDetailFragment"
         android:label="fragment_jouney_detail"
-        tools:layout="@layout/fragment_jouney_detail" />
+        tools:layout="@layout/fragment_jouney_detail" >
+        <argument
+            android:name="journeyData"
+            app:argType="com.codecoy.mvpflycollab.datamodels.AllJourneyData"
+            app:nullable="true" />
+    </fragment>
 
 </navigation>

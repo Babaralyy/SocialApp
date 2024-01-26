@@ -10,8 +10,7 @@ class MvpViewModelFactory(private val mvpRepository: MvpRepository) : ViewModelP
         return when {
             modelClass.isAssignableFrom(UserRegisterViewModel::class.java) -> UserRegisterViewModel(mvpRepository) as T
             modelClass.isAssignableFrom(UserLoginViewModel::class.java) -> UserLoginViewModel(mvpRepository) as T
-
-            // Add more ViewModel classes as needed
+            modelClass.isAssignableFrom(JourneyViewModel::class.java) -> JourneyViewModel(mvpRepository) as T
 
             else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }

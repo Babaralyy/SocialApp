@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import com.codecoy.mvpflycollab.databinding.FragmentSplashBinding
 import com.codecoy.mvpflycollab.datamodels.UserLoginData
 import com.codecoy.mvpflycollab.ui.activities.MainActivity
+import com.codecoy.mvpflycollab.utils.Constant
 import com.codecoy.mvpflycollab.utils.DataStoreManager
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -46,6 +47,9 @@ class SplashFragment : Fragment() {
                     emailVerifiedAt = "", deviceToken = "", createdAt = "", updatedAt = "", token = "")).collect { user ->
 
                     if (user.id != 0){
+
+                        Constant.currentUser = user
+
                         val action = SplashFragmentDirections.actionSplashFragmentToInterestsFragment()
                         findNavController().navigate(action)
                     } else {
