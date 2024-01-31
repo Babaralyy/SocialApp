@@ -8,6 +8,7 @@ import com.codecoy.mvpflycollab.datamodels.AddJourneyDetailBody
 import com.codecoy.mvpflycollab.datamodels.AddJourneyDetailResponse
 import com.codecoy.mvpflycollab.datamodels.AddJourneyResponse
 import com.codecoy.mvpflycollab.datamodels.AllJourneyResponse
+import com.codecoy.mvpflycollab.datamodels.JourneyDetailsResponse
 import com.codecoy.mvpflycollab.datamodels.UploadImageResponse
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
@@ -45,6 +46,9 @@ class JourneyViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
     val addJourneyResponseLiveData: LiveData<Response<AddJourneyResponse>> get() = addJourneyResponseMutableLiveData
 
 
+    private val journeyDetailsResponseMutableLiveData = MutableLiveData<Response<JourneyDetailsResponse>>()
+    val  journeyDetailsResponseLiveData: LiveData<Response<JourneyDetailsResponse>> get() = journeyDetailsResponseMutableLiveData
+
     private val addJourneyDetailMutableLiveData = MutableLiveData<Response<AddJourneyDetailResponse>>()
     val addJourneyDetailLiveData: LiveData<Response<AddJourneyDetailResponse>> get() = addJourneyDetailMutableLiveData
 
@@ -54,12 +58,12 @@ class JourneyViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
             val response = mvpRepository.allJourneyList(token, userId)
 
             try {
-                _loading.value = false
                 allJourneyResponseMutableLiveData.value = response
 
             } catch (e: Exception) {
-                _loading.value = false
                 allJourneyResponseMutableLiveData.value = response
+            } finally {
+                _loading.value = false
             }
         }
     }
@@ -96,6 +100,24 @@ class JourneyViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
         }
     }
 
+
+    fun allJourneyDetailsList(token: String, journeyId: String) {
+        viewModelScope.launch(handler) {
+            _loading.value = true
+            val response = mvpRepository.allJourneyDetailsList(token, journeyId)
+
+            try {
+                journeyDetailsResponseMutableLiveData.value = response
+
+            } catch (e: Exception) {
+
+                journeyDetailsResponseMutableLiveData.value = response
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
+
      fun addJourneyDetail(token: String, addJourneyDetailBody: AddJourneyDetailBody){
          viewModelScope.launch(handler) {
              _loading.value = true
@@ -108,6 +130,8 @@ class JourneyViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
              } catch (e: Exception) {
                  _loading.value = false
                  addJourneyDetailMutableLiveData.value = response
+             } finally {
+
              }
          }
     }

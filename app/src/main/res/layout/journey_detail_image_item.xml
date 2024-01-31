@@ -7,6 +7,10 @@
     <ImageView
         android:id="@+id/ivImage"
         android:layout_width="@dimen/_50sdp"
-        android:layout_height="@dimen/_50sdp"/>
+        android:layout_height="@dimen/_50sdp"
+        android:layout_marginStart="@dimen/_5sdp"
+        android:layout_marginBottom="@dimen/_5sdp"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:scaleType="fitXY"/>
 
 </LinearLayout>

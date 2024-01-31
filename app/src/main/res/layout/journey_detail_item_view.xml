@@ -12,13 +12,13 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/tvsubitemtitle"
+            android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_15sdp"
             android:layout_marginTop="@dimen/_10sdp"
             android:fontFamily="@font/lato"
-            android:text="Lorem ipsum"
+            android:text="@string/dummy"
             android:textColor="@color/white"
             android:textSize="12sp"
             app:layout_constraintStart_toStartOf="parent"
@@ -26,28 +26,30 @@
 
             />
 
-        <ImageView
-            android:id="@+id/ivsubitem"
-            android:layout_width="@dimen/_70sdp"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvDetailsImages"
+            android:layout_width="match_parent"
             android:layout_height="@dimen/_70sdp"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
             android:layout_marginTop="@dimen/_5sdp"
             android:src="@drawable/img"
-            app:layout_constraintStart_toStartOf="@+id/tvsubitemtitle"
-            app:layout_constraintTop_toBottomOf="@id/tvsubitemtitle" />
+            app:layout_constraintStart_toStartOf="@+id/tvTitle"
+            app:layout_constraintTop_toBottomOf="@id/tvTitle" />
 
         <TextView
-            android:id="@+id/subitemDescription"
+            android:id="@+id/tvDescription"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_10sdp"
             android:layout_marginEnd="@dimen/_10sdp"
             android:fontFamily="@font/lato"
-            android:text="Lorem ipsum dolor sit amet consectetur.Id dolor sed massa dolor volutpat"
+            android:text="@string/dummy"
             android:textColor="@color/white"
             android:textSize="12sp"
-            app:layout_constraintStart_toStartOf="@id/ivsubitem"
-            app:layout_constraintTop_toBottomOf="@id/ivsubitem"
-            app:layout_constraintEnd_toStartOf="@+id/textView5"/>
+            app:layout_constraintEnd_toStartOf="@+id/tvDate"
+            app:layout_constraintStart_toStartOf="@id/rvDetailsImages"
+            app:layout_constraintTop_toBottomOf="@id/rvDetailsImages" />
 
         <View
             android:id="@+id/viewline"
@@ -57,20 +59,20 @@
             android:background="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/subitemDescription" />
+            app:layout_constraintTop_toBottomOf="@id/tvDescription" />
 
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/tvDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/_15sdp"
             android:fontFamily="@font/lato"
-            android:text="6 hours ago"
+            android:text="@string/dummy"
             android:textColor="@color/white"
             android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="@+id/subitemDescription"
+            app:layout_constraintBottom_toBottomOf="@+id/tvDescription"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/subitemDescription" />
+            app:layout_constraintTop_toTopOf="@id/tvDescription" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,6 +4,7 @@ import com.codecoy.mvpflycollab.datamodels.AddJourneyDetailBody
 import com.codecoy.mvpflycollab.datamodels.AddJourneyDetailResponse
 import com.codecoy.mvpflycollab.datamodels.AddJourneyResponse
 import com.codecoy.mvpflycollab.datamodels.AllJourneyResponse
+import com.codecoy.mvpflycollab.datamodels.JourneyDetailsResponse
 import com.codecoy.mvpflycollab.datamodels.UploadImageResponse
 import com.codecoy.mvpflycollab.datamodels.UserLoginBody
 import com.codecoy.mvpflycollab.datamodels.UserLoginResponse
@@ -45,8 +46,13 @@ interface ApiCall {
         @Field("journey_img") journeyImg: String
     ): Response<AddJourneyResponse>
 
+    @GET("api/journey_details_against_journey")
+    suspend fun allJourneyDetailsList(
+        @Header("Authorization") token: String,
+        @Query("journey_id") journeyId: String
+    ): Response<JourneyDetailsResponse>
 
-    @GET("api/add_journey_details")
+    @POST("api/add_journey_details")
     suspend fun addJourneyDetail(
         @Header("Authorization") token: String,
         @Body addJourneyDetailBody: AddJourneyDetailBody

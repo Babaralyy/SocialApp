@@ -5,7 +5,6 @@ import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.pm.PackageManager
-import android.graphics.drawable.GradientDrawable.Orientation
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -22,16 +21,13 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.codecoy.mvpflycollab.R
 import com.codecoy.mvpflycollab.databinding.AddJourneyPicBottomDialogLayBinding
 import com.codecoy.mvpflycollab.databinding.FragmentJouneyDetailBinding
-import com.codecoy.mvpflycollab.databinding.JourneyDetailImageItemBinding
-import com.codecoy.mvpflycollab.databinding.NewJourneyBottomDialogLayBinding
 import com.codecoy.mvpflycollab.datamodels.AddJourneyDetailBody
 import com.codecoy.mvpflycollab.datamodels.AddJourneyDetailData
 import com.codecoy.mvpflycollab.datamodels.AllJourneyData
+import com.codecoy.mvpflycollab.datamodels.ImageBody
+import com.codecoy.mvpflycollab.datamodels.JourneyDetailsData
 import com.codecoy.mvpflycollab.network.ApiCall
 import com.codecoy.mvpflycollab.ui.activities.MainActivity
 import com.codecoy.mvpflycollab.ui.adapters.JourneyDetailImageAdapter
@@ -58,7 +54,7 @@ class JourneyDetailFragment : Fragment() {
     private lateinit var journeyDetailAdapter: JourneyDetailAdapter
     private lateinit var journeyDetailImageAdapter: JourneyDetailImageAdapter
 
-    private lateinit var journeyDetailList: MutableList<String>
+    private lateinit var journeyDetailDataList: MutableList<AddJourneyDetailData>
 
 
     private lateinit var viewModel: JourneyViewModel
@@ -105,26 +101,31 @@ class JourneyDetailFragment : Fragment() {
 
     private fun inIt() {
 
-        journeyDetailList = arrayListOf()
+        journeyDetailDataList = arrayListOf()
 
         setUpViewModel()
         getJourneyData()
-        setUpData()
+
         setUpBottomDialog()
+        clickListeners()
 
         mBinding.rvJourneyDetail.layoutManager = LinearLayoutManager(activity)
+
+    }
+
+    private fun clickListeners() {
 
         mBinding.ivBack.setOnClickListener {
             try {
                 findNavController().popBackStack()
             } catch (e: Exception) {
             }
-
         }
 
         mBinding.floatingActionButton.setOnClickListener {
             showAddJourneyImageBottomDialog()
         }
+
     }
 
     private fun setUpBottomDialog() {
@@ -132,14 +133,15 @@ class JourneyDetailFragment : Fragment() {
         bottomSheetDialog = BottomSheetDialog(activity)
         bottomSheetDialog.setContentView(bottomBinding.root)
 
-        bottomBinding.rvJourneyDetailsImages.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
+        bottomBinding.rvJourneyDetailsImages.layoutManager =
+            LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
         bottomBinding.rvJourneyDetailsImages.setHasFixedSize(true)
     }
 
 
-
     override fun onResume() {
         super.onResume()
+        viewModel.allJourneyDetailsList("Bearer " + Constant.currentUser?.token.toString(), allJourneyData?.id.toString())
         responseFromViewModel()
     }
 
@@ -161,11 +163,54 @@ class JourneyDetailFragment : Fragment() {
 
                     viewModel.imagesList = viewModel.imagesList.distinct().toMutableList()
 
-                    journeyDetailImageAdapter = JourneyDetailImageAdapter(viewModel.imagesList, activity)
+
+                    journeyDetailImageAdapter =
+                        JourneyDetailImageAdapter(viewModel.imagesList, activity)
                     bottomBinding.rvJourneyDetailsImages.adapter = journeyDetailImageAdapter
 
                 } else {
 
+                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                        .show()
+                }
+            } else if (response.code() == 401) {
+
+            } else {
+                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+
+        viewModel.journeyDetailsResponseLiveData.observe(this) { response ->
+            if (response.code() == 200) {
+                val journeyDetailsList = response.body()
+                if (journeyDetailsList != null && journeyDetailsList.success == true) {
+
+                    setUpDetailData(journeyDetailsList.journeyDetailsData)
+
+                } else {
+
+                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                        .show()
+                }
+            } else if (response.code() == 401) {
+
+            } else {
+                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+
+        viewModel.addJourneyDetailLiveData.observe(this) { response ->
+
+            Log.i(TAG, "responseFromViewModel:: $response ")
+
+            if (response.code() == 200) {
+                val journeyDetailData = response.body()
+                if (journeyDetailData != null && journeyDetailData.success == true && journeyDetailData.addJourneyDetailData != null) {
+                    viewModel.allJourneyDetailsList("Bearer " + Constant.currentUser?.token.toString(), allJourneyData?.id.toString())
+                    bottomSheetDialog.dismiss()
+                } else {
                     Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
@@ -205,8 +250,6 @@ class JourneyDetailFragment : Fragment() {
     }
 
     private fun showAddJourneyImageBottomDialog() {
-
-
 
         bottomBinding.btnAddJourneyDetails.setOnClickListener {
             checkBottomCredentials(bottomBinding)
@@ -256,7 +299,6 @@ class JourneyDetailFragment : Fragment() {
         val eventDate = bottomBinding.tvDate.text.toString()
 
 
-
         if (eventName.isEmpty()) {
             bottomBinding.etEventName.error = "Name is required"
             return
@@ -280,6 +322,29 @@ class JourneyDetailFragment : Fragment() {
         eventDate: String
     ) {
 
+        Log.i(TAG, "addNewJourneyDetail:: size ${viewModel.imagesList.size}")
+
+
+        val detailsImages = arrayListOf<ImageBody>()
+
+
+        detailsImages.clear()
+
+        for(item in  viewModel.imagesList){
+            detailsImages.add(ImageBody(item))
+        }
+
+        val addJourneyDetail = AddJourneyDetailBody(
+            allJourneyData?.id,
+            eventName,
+            eventDescription,
+            eventDate,
+            detailsImages
+        )
+
+        viewModel.addJourneyDetail(
+            "Bearer " + Constant.currentUser?.token.toString(), addJourneyDetail
+        )
     }
 
     private fun imagePermission() {
@@ -331,10 +396,9 @@ class JourneyDetailFragment : Fragment() {
         return filePath ?: ""
     }
 
-    private fun setUpData() {
-        journeyDetailAdapter = JourneyDetailAdapter(journeyDetailList, activity)
+    private fun setUpDetailData(journeyDetailsData: ArrayList<JourneyDetailsData>) {
+        journeyDetailAdapter = JourneyDetailAdapter(journeyDetailsData, activity)
         mBinding.rvJourneyDetail.adapter = journeyDetailAdapter
-
     }
 
     override fun onAttach(context: Context) {
