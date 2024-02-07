@@ -3,7 +3,12 @@ package com.codecoy.mvpflycollab.network
 import com.codecoy.mvpflycollab.datamodels.AddJourneyDetailBody
 import com.codecoy.mvpflycollab.datamodels.AddJourneyDetailResponse
 import com.codecoy.mvpflycollab.datamodels.AddJourneyResponse
+import com.codecoy.mvpflycollab.datamodels.AddPlaylistDetailsBody
+import com.codecoy.mvpflycollab.datamodels.AddPlaylistDetailsResponse
+import com.codecoy.mvpflycollab.datamodels.AddPlaylistResponse
 import com.codecoy.mvpflycollab.datamodels.AllJourneyResponse
+import com.codecoy.mvpflycollab.datamodels.AllPlaylistDetailsResponse
+import com.codecoy.mvpflycollab.datamodels.AllPlaylistResponse
 import com.codecoy.mvpflycollab.datamodels.JourneyDetailsResponse
 import com.codecoy.mvpflycollab.datamodels.UploadImageResponse
 import com.codecoy.mvpflycollab.datamodels.UserLoginBody
@@ -57,5 +62,33 @@ interface ApiCall {
         @Header("Authorization") token: String,
         @Body addJourneyDetailBody: AddJourneyDetailBody
     ): Response<AddJourneyDetailResponse>
+
+    @GET("api/playlist_list")
+    suspend fun allPlayList(
+        @Header("Authorization") token: String,
+        @Query("user_id") userId: String
+    ): Response<AllPlaylistResponse>
+
+    @FormUrlEncoded
+    @POST("api/add_playlist")
+    suspend fun addPlaylist(
+        @Header("Authorization") token: String,
+        @Field("user_id") userId: String,
+        @Field("title") title: String,
+        @Field("description") description: String,
+        @Field("playlist_img") playlistImg: String
+    ): Response<AddPlaylistResponse>
+
+    @GET("api/playlist_details_against_playlist")
+    suspend fun allPlaylistDetailsList(
+        @Header("Authorization") token: String,
+        @Query("playlist_id") playlistId: String
+    ): Response<AllPlaylistDetailsResponse>
+
+    @POST("api/add_playlist_details")
+    suspend fun addPlaylistDetails(
+        @Header("Authorization") token: String,
+        @Body addPlaylistDetailsBody: AddPlaylistDetailsBody
+    ): Response<AddPlaylistDetailsResponse>
 
 }

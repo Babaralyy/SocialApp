@@ -88,7 +88,7 @@ class JourneyFragment : Fragment(), JourneyCallback {
     }
 
     private fun inIt() {
-
+        dialog = Constant.getDialog(activity)
         journeyList = arrayListOf()
 
         mBinding.rvJourney.layoutManager = LinearLayoutManager(activity)

@@ -378,7 +378,7 @@ class JourneyDetailFragment : Fragment() {
 
     private fun showSingleImage(imageUri: Uri) {
 
-        val file = File(getRealPathFromURI(imageUri))
+        val file = File(Constant.getRealPathFromURI(activity,imageUri))
         val requestFile = RequestBody.create("image/*".toMediaTypeOrNull(), file)
         val imagePart = MultipartBody.Part.createFormData("img", file.name, requestFile)
 
@@ -386,15 +386,7 @@ class JourneyDetailFragment : Fragment() {
 
     }
 
-    private fun getRealPathFromURI(uri: Uri): String {
-        val projection = arrayOf(MediaStore.Images.Media.DATA)
-        val cursor = activity.contentResolver.query(uri, projection, null, null, null)
-        val columnIndex = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-        cursor?.moveToFirst()
-        val filePath = cursor?.getString(columnIndex!!)
-        cursor?.close()
-        return filePath ?: ""
-    }
+
 
     private fun setUpDetailData(journeyDetailsData: ArrayList<JourneyDetailsData>) {
         journeyDetailAdapter = JourneyDetailAdapter(journeyDetailsData, activity)

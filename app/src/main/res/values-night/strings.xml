@@ -20,4 +20,6 @@
     <string name="dummy">---</string>
     <string name="add_journey_details">Add journey details</string>
     <string name="add_new_image">+ Add New Image</string>
+    <string name="add_play_list">Add Play List</string>
+    <string name="create_playlist">Create Playlist</string>
 </resources>

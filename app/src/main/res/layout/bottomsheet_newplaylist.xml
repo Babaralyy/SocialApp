@@ -2,8 +2,7 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="match_parent">
 
 
     <!-- Bottom Sheet -->
@@ -11,15 +10,11 @@
         android:id="@+id/bottomSheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_20sdp"
-        android:layout_marginStart="@dimen/_10sdp"
-        android:layout_marginEnd="@dimen/_10sdp"
+        android:layout_margin="@dimen/_10sdp"
         android:orientation="vertical"
         app:behavior_hideable="true"
         app:behavior_peekHeight="100dp"
-        android:backgroundTint="@color/white"
-        android:background="@drawable/bottomsheet_shape"
-        >
+        android:backgroundTint="@color/white">
 
         <TextView
             android:layout_width="match_parent"
@@ -33,6 +28,7 @@
             />
 
         <EditText
+            android:id="@+id/etTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/edittext_shape"
@@ -41,10 +37,10 @@
             android:layout_marginTop="@dimen/_10sdp"
             android:layout_marginBottom="@dimen/_10sdp"
             android:textSize="@dimen/_12sdp"
-            android:textColor="@color/black"
-            />
+            android:textColor="@color/black" />
 
         <EditText
+            android:id="@+id/etDes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/edittext_shape"
@@ -55,6 +51,7 @@
             android:textColor="@color/black"
             />
         <TextView
+            android:id="@+id/tvAddImg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/add_title_photo"
@@ -63,16 +60,17 @@
             android:textColor="#222B45"
             />
 
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+        <ImageView
+            android:id="@+id/ivPlayImg"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
             />
+
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCreate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/creat_journey"
+            android:text="@string/create_playlist"
             android:textSize="@dimen/_14sdp"
             app:cornerRadius="@dimen/_5sdp"
             android:backgroundTint="@color/purple"

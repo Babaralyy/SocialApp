@@ -4,6 +4,8 @@ import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
+import android.provider.MediaStore
 import com.codecoy.mvpflycollab.R
 import com.codecoy.mvpflycollab.datamodels.UserLoginData
 import com.google.gson.Gson
@@ -57,6 +59,16 @@ object Constant {
         dialog.setCancelable(false)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         return dialog
+    }
+
+    fun getRealPathFromURI(context: Context, uri: Uri): String {
+        val projection = arrayOf(MediaStore.Images.Media.DATA)
+        val cursor = context.contentResolver.query(uri, projection, null, null, null)
+        val columnIndex = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+        cursor?.moveToFirst()
+        val filePath = cursor?.getString(columnIndex!!)
+        cursor?.close()
+        return filePath ?: ""
     }
 
 }

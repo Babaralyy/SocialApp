@@ -74,12 +74,12 @@ class JourneyViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
             val response = mvpRepository.uploadProfileImage(image)
 
             try {
-                _loading.value = false
                 imageResponseMutableLiveData.value = response
 
             } catch (e: Exception) {
-                _loading.value = false
                 imageResponseMutableLiveData.value = response
+            }finally {
+                _loading.value = false
             }
         }
     }
@@ -90,12 +90,12 @@ class JourneyViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
             val response = mvpRepository.addJourney(token, userId, title, description, journeyImg)
 
             try {
-                _loading.value = false
                 addJourneyResponseMutableLiveData.value = response
 
             } catch (e: Exception) {
-                _loading.value = false
                 addJourneyResponseMutableLiveData.value = response
+            }finally {
+                _loading.value = false
             }
         }
     }
@@ -124,14 +124,12 @@ class JourneyViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
              val response = mvpRepository.addJourneyDetail(token, addJourneyDetailBody)
 
              try {
-                 _loading.value = false
                  addJourneyDetailMutableLiveData.value = response
 
              } catch (e: Exception) {
-                 _loading.value = false
                  addJourneyDetailMutableLiveData.value = response
              } finally {
-
+                 _loading.value = false
              }
          }
     }
