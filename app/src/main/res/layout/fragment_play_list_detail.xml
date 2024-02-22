@@ -8,7 +8,7 @@
     tools:context=".ui.fragments.PlayListDetailFragment">
 
     <TextView
-        android:id="@+id/tvPlaylistitem"
+        android:id="@+id/tvPlaylistName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -36,23 +36,26 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvPlayListDetail"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/_5sdp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/_5sdp"
         app:layout_constraintTop_toBottomOf="@id/btnBackpress"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:listitem="@layout/playlist_sub_item_view"
-        />
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="36dp"
+        android:id="@+id/floatingActionButton"
+        android:layout_width="@dimen/_42sdp"
+        android:layout_height="@dimen/_42sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:layout_marginEnd="@dimen/_10sdp"
+        android:background="@drawable/fab_back"
+        android:backgroundTint="@null"
         android:clickable="true"
+        android:contentDescription="@string/add_event"
         android:src="@drawable/ic_add"
-        android:backgroundTint="@color/purple"
+        app:shapeAppearance="@drawable/fab_back"
+        app:shapeAppearanceOverlay="@drawable/fab_back"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 

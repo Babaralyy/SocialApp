@@ -1,12 +1,18 @@
 package com.codecoy.mvpflycollab.viewmodels
 
+import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.codecoy.mvpflycollab.datamodels.AddJourneyDetailResponse
+import com.codecoy.mvpflycollab.datamodels.AddPlaylistDetailsResponse
 import com.codecoy.mvpflycollab.datamodels.AddPlaylistResponse
+import com.codecoy.mvpflycollab.datamodels.AllPlaylistDetailsResponse
 import com.codecoy.mvpflycollab.datamodels.AllPlaylistResponse
 import com.codecoy.mvpflycollab.datamodels.UploadImageResponse
+import com.codecoy.mvpflycollab.utils.Constant.TAG
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
@@ -21,6 +27,7 @@ class PlaylistViewModel(private val mvpRepository: MvpRepository) : ViewModel() 
 
     private val handler = CoroutineExceptionHandler { _, exception ->
         exceptionMutableLiveData.value = exception
+        Log.i(TAG, "addNewPlaylistDetail:: value $exception")
     }
 
     private val allPlaylistResponseMutableLiveData = MutableLiveData<Response<AllPlaylistResponse>>()
@@ -32,9 +39,16 @@ class PlaylistViewModel(private val mvpRepository: MvpRepository) : ViewModel() 
     private val addPlaylistResponseMutableLiveData = MutableLiveData<Response<AddPlaylistResponse>>()
     val addPlaylistResponseLiveData: LiveData<Response<AddPlaylistResponse>> get() = addPlaylistResponseMutableLiveData
 
+    private val allPlaylistDetailsResponseMutableLiveData = MutableLiveData<Response<AllPlaylistDetailsResponse>>()
+    val allPlaylistDetailsResponseLiveData: LiveData<Response<AllPlaylistDetailsResponse>> get() = allPlaylistDetailsResponseMutableLiveData
+
+    private val addPlaylistDetailsMutableLiveData = MutableLiveData<Response<AddPlaylistDetailsResponse>>()
+    val addPlaylistDetailsLiveData: LiveData<Response<AddPlaylistDetailsResponse>> get() = addPlaylistDetailsMutableLiveData
+
 
     var selectedImage: String? = null
     var imagesList: MutableList<String> = arrayListOf()
+    var videoList: MutableList<Uri> = arrayListOf()
 
     fun allPlayList(token: String,userId: String) {
         viewModelScope.launch(handler) {
@@ -81,4 +95,40 @@ class PlaylistViewModel(private val mvpRepository: MvpRepository) : ViewModel() 
             }
         }
     }
+
+    fun allPlaylistDetailsList(token: String, journeyId: String) {
+        viewModelScope.launch(handler) {
+            _loading.value = true
+            val response = mvpRepository.allPlaylistDetailsList(token, journeyId)
+
+            try {
+                allPlaylistDetailsResponseMutableLiveData.value = response
+
+            } catch (e: Exception) {
+
+                allPlaylistDetailsResponseMutableLiveData.value = response
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
+
+     fun addPlaylistDetails(token: String, playlistId: String, title: String, description: String, date: String, videosPartList: MutableList<MultipartBody.Part>){
+         viewModelScope.launch(handler) {
+             _loading.value = true
+             val response = mvpRepository.addPlaylistDetails(token, playlistId, title, description, date, videosPartList)
+
+             try {
+                 Log.i(TAG, "addNewPlaylistDetail:: $response")
+                 addPlaylistDetailsMutableLiveData.value = response
+
+             } catch (e: Exception) {
+                 Log.i(TAG, "addNewPlaylistDetail:: Exception $response")
+                 addPlaylistDetailsMutableLiveData.value = response
+             } finally {
+                 _loading.value = false
+             }
+         }
+     }
+
 }

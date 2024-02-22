@@ -7,7 +7,6 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/ic_background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -27,9 +26,9 @@
 
             />
 
-        <ImageView
-            android:id="@+id/ivsubitem"
-            android:layout_width="@dimen/_70sdp"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_sub_items"
+            android:layout_width="match_parent"
             android:layout_height="@dimen/_70sdp"
             android:layout_marginTop="@dimen/_5sdp"
             android:src="@drawable/img"
@@ -46,8 +45,8 @@
             android:text="Lorem ipsum dolor sit amet consectetur.Id dolor sed massa dolor volutpat"
             android:textColor="@color/white"
             android:textSize="12sp"
-            app:layout_constraintStart_toStartOf="@id/ivsubitem"
-            app:layout_constraintTop_toBottomOf="@id/ivsubitem"
+            app:layout_constraintStart_toStartOf="@id/rv_sub_items"
+            app:layout_constraintTop_toBottomOf="@id/rv_sub_items"
             app:layout_constraintEnd_toStartOf="@+id/textView5"/>
 
         <View

@@ -18,7 +18,7 @@ import com.codecoy.mvpflycollab.datamodels.UserLoginBody
 import com.codecoy.mvpflycollab.network.ApiCall
 import com.codecoy.mvpflycollab.ui.activities.MainActivity
 import com.codecoy.mvpflycollab.utils.Constant
-import com.codecoy.mvpflycollab.utils.DataStoreManager
+import com.codecoy.mvpflycollab.utils.Utils
 import com.codecoy.mvpflycollab.viewmodels.MvpRepository
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.codecoy.mvpflycollab.viewmodels.UserLoginViewModel
@@ -29,7 +29,6 @@ class SignInFragment : Fragment() {
 
     private lateinit var activity: MainActivity
 
-    private val dataStoreManager: DataStoreManager by lazy { DataStoreManager(activity) }
     private lateinit var viewModel: UserLoginViewModel
 
     private var dialog: Dialog? = null
@@ -127,7 +126,10 @@ class SignInFragment : Fragment() {
                     lifecycleScope.launch {
 
                         try {
-                            dataStoreManager.saveUserData(userData.user!!)
+                            userData.user?.let {
+                                Utils.saveUserToSharedPreferences(activity, it)
+                            }
+
                             val action =
                                 SignInFragmentDirections.actionSignInFragmentToInterestsFragment()
                             findNavController().navigate(action)

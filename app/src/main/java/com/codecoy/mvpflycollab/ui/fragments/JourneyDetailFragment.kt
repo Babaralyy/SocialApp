@@ -28,12 +28,14 @@ import com.codecoy.mvpflycollab.datamodels.AddJourneyDetailData
 import com.codecoy.mvpflycollab.datamodels.AllJourneyData
 import com.codecoy.mvpflycollab.datamodels.ImageBody
 import com.codecoy.mvpflycollab.datamodels.JourneyDetailsData
+import com.codecoy.mvpflycollab.datamodels.UserLoginData
 import com.codecoy.mvpflycollab.network.ApiCall
 import com.codecoy.mvpflycollab.ui.activities.MainActivity
 import com.codecoy.mvpflycollab.ui.adapters.JourneyDetailImageAdapter
 import com.codecoy.mvpflycollab.ui.adapters.journey.JourneyDetailAdapter
 import com.codecoy.mvpflycollab.utils.Constant
 import com.codecoy.mvpflycollab.utils.Constant.TAG
+import com.codecoy.mvpflycollab.utils.Utils
 import com.codecoy.mvpflycollab.viewmodels.JourneyViewModel
 import com.codecoy.mvpflycollab.viewmodels.MvpRepository
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
@@ -49,7 +51,6 @@ import java.util.Locale
 
 class JourneyDetailFragment : Fragment() {
 
-
     private lateinit var activity: MainActivity
     private lateinit var journeyDetailAdapter: JourneyDetailAdapter
     private lateinit var journeyDetailImageAdapter: JourneyDetailImageAdapter
@@ -59,6 +60,7 @@ class JourneyDetailFragment : Fragment() {
 
     private lateinit var viewModel: JourneyViewModel
     private var dialog: Dialog? = null
+    private var currentUser: UserLoginData? = null
 
     private var allJourneyData: AllJourneyData? = null
     private val calendar = Calendar.getInstance()
@@ -102,6 +104,7 @@ class JourneyDetailFragment : Fragment() {
     private fun inIt() {
 
         journeyDetailDataList = arrayListOf()
+        currentUser = Utils.getUserFromSharedPreferences(activity)
 
         setUpViewModel()
         getJourneyData()
@@ -141,7 +144,7 @@ class JourneyDetailFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.allJourneyDetailsList("Bearer " + Constant.currentUser?.token.toString(), allJourneyData?.id.toString())
+        viewModel.allJourneyDetailsList("Bearer " + currentUser?.token.toString(), allJourneyData?.id.toString())
         responseFromViewModel()
     }
 
@@ -208,7 +211,7 @@ class JourneyDetailFragment : Fragment() {
             if (response.code() == 200) {
                 val journeyDetailData = response.body()
                 if (journeyDetailData != null && journeyDetailData.success == true && journeyDetailData.addJourneyDetailData != null) {
-                    viewModel.allJourneyDetailsList("Bearer " + Constant.currentUser?.token.toString(), allJourneyData?.id.toString())
+                    viewModel.allJourneyDetailsList("Bearer " + currentUser?.token.toString(), allJourneyData?.id.toString())
                     bottomSheetDialog.dismiss()
                 } else {
                     Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
@@ -343,7 +346,7 @@ class JourneyDetailFragment : Fragment() {
         )
 
         viewModel.addJourneyDetail(
-            "Bearer " + Constant.currentUser?.token.toString(), addJourneyDetail
+            "Bearer " + currentUser?.token.toString(), addJourneyDetail
         )
     }
 

@@ -161,7 +161,12 @@
         android:id="@+id/playListDetailFragment"
         android:name="com.codecoy.mvpflycollab.ui.fragments.PlayListDetailFragment"
         android:label="fragment_play_list_name"
-        tools:layout="@layout/fragment_play_list_detail" />
+        tools:layout="@layout/fragment_play_list_detail" >
+        <argument
+            android:name="playlistData"
+            app:argType="com.codecoy.mvpflycollab.datamodels.AllPlaylistData"
+            app:nullable="true" />
+    </fragment>
     <fragment
         android:id="@+id/profileDetailFragment"
         android:name="com.codecoy.mvpflycollab.ui.fragments.ProfileDetailFragment"

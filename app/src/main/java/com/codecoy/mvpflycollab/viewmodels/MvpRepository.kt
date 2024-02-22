@@ -20,4 +20,6 @@ class MvpRepository(private val apiCall: ApiCall) {
     suspend fun addJourneyDetail(token: String, addJourneyDetailBody: AddJourneyDetailBody) = apiCall.addJourneyDetail(token, addJourneyDetailBody)
     suspend fun allPlayList(token: String, userId: String) = apiCall.allPlayList(token, userId)
     suspend fun addPlaylist(token: String, userId: String, title: String, description: String, playListImg: String) = apiCall.addPlaylist(token, userId, title, description, playListImg)
+    suspend fun allPlaylistDetailsList(token: String, playlistId: String) = apiCall.allPlaylistDetailsList(token, playlistId)
+    suspend fun addPlaylistDetails(token: String, playlistId: MultipartBody.Part, title: MultipartBody.Part, description: MultipartBody.Part, date: MultipartBody.Part, videosPartList: MutableList<MultipartBody.Part>) = apiCall.addPlaylistDetails(token, playlistId, title, description, date, videosPartList)
 }

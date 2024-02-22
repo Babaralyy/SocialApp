@@ -24,7 +24,6 @@ object Constant {
     private const val BASE_URL = "https://codecoyapps.com/fly_colab/"
     const val MEDIA_BASE_URL = "https://codecoyapps.com/fly_colab/public/storage/"
 
-     var currentUser: UserLoginData? = null
 
     private var httpClient: OkHttpClient = OkHttpClient.Builder()
         .hostnameVerifier { _, _ ->
@@ -70,5 +69,8 @@ object Constant {
         cursor?.close()
         return filePath ?: ""
     }
+
+
+
 
 }

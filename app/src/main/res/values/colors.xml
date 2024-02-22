@@ -16,4 +16,5 @@
 
     <color name="search_back_color">#F5F5F5</color>
     <color name="search_text_color">#BEBEBE</color>
+    <color name="add_media_color">#735BF2</color>
 </resources>

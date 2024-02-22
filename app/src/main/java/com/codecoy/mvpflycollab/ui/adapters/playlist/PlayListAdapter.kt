@@ -41,7 +41,7 @@ class PlayListAdapter(
         holder.mBinding.tvDes.text = playData.description
 
         holder.itemView.setOnClickListener {
-            playlistCallback.onPlaylistClick()
+            playlistCallback.onPlaylistClick(playData)
         }
     }
 

@@ -25,13 +25,11 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.codecoy.mvpflycollab.R
 import com.codecoy.mvpflycollab.databinding.FragmentSignUpBinding
-import com.codecoy.mvpflycollab.datamodels.UserLoginData
 import com.codecoy.mvpflycollab.datamodels.UserRegisterBody
 import com.codecoy.mvpflycollab.network.ApiCall
 import com.codecoy.mvpflycollab.ui.activities.MainActivity
 import com.codecoy.mvpflycollab.utils.Constant
 import com.codecoy.mvpflycollab.utils.Constant.TAG
-import com.codecoy.mvpflycollab.utils.DataStoreManager
 import com.codecoy.mvpflycollab.viewmodels.MvpRepository
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.codecoy.mvpflycollab.viewmodels.UserRegisterViewModel

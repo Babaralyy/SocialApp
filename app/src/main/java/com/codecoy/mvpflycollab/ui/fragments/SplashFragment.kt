@@ -11,17 +11,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.codecoy.mvpflycollab.databinding.FragmentSplashBinding
-import com.codecoy.mvpflycollab.datamodels.UserLoginData
 import com.codecoy.mvpflycollab.ui.activities.MainActivity
 import com.codecoy.mvpflycollab.utils.Constant
-import com.codecoy.mvpflycollab.utils.DataStoreManager
-import kotlinx.coroutines.flow.map
+import com.codecoy.mvpflycollab.utils.Utils
 import kotlinx.coroutines.launch
 
 class SplashFragment : Fragment() {
 
     private lateinit var activity: MainActivity
-    private val dataStoreManager: DataStoreManager by lazy { DataStoreManager(activity) }
 
     private lateinit var mBinding: FragmentSplashBinding
     override fun onCreateView(
@@ -37,29 +34,17 @@ class SplashFragment : Fragment() {
 
     private fun inIt() {
         Handler(Looper.getMainLooper()).postDelayed({
-
-
-
-
             // Retrieve user using Flow
             lifecycleScope.launch {
-                dataStoreManager.getUserData(UserLoginData(id = 0, name = "", username = "", phone = "", email = "",
-                    emailVerifiedAt = "", deviceToken = "", createdAt = "", updatedAt = "", token = "")).collect { user ->
-
-                    if (user.id != 0){
-
-                        Constant.currentUser = user
-
-                        val action = SplashFragmentDirections.actionSplashFragmentToInterestsFragment()
-                        findNavController().navigate(action)
-                    } else {
-                        val action = SplashFragmentDirections.actionSplashFragmentToWelcomeFragment()
-                        findNavController().navigate(action)
-                    }
+                val user = Utils.getUserFromSharedPreferences(activity)
+                if (user?.id != null) {
+                    val action = SplashFragmentDirections.actionSplashFragmentToInterestsFragment()
+                    findNavController().navigate(action)
+                } else {
+                    val action = SplashFragmentDirections.actionSplashFragmentToWelcomeFragment()
+                    findNavController().navigate(action)
                 }
             }
-
-
         }, 1500)
     }
 

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?><!-- Bottom Sheet -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottomSheet"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/_10sdp"
+    android:backgroundTint="@color/white"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:text="@string/add_new_playlist_video"
+        android:textAlignment="center"
+        android:textColor="#222B45"
+        android:textSize="@dimen/_18sdp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/et_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:background="@drawable/edittext_shape"
+        android:hint="@string/title"
+        android:padding="@dimen/_15sdp"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_12sdp" />
+
+    <EditText
+        android:id="@+id/et_des"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:background="@drawable/edittext_shape"
+        android:gravity="top"
+        android:hint="@string/description"
+        android:minLines="3"
+        android:padding="@dimen/_15sdp"
+        android:textColor="@color/black"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/tv_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:background="@drawable/edittext_shape"
+        android:padding="@dimen/_15sdp"
+        android:textSize="@dimen/_12sdp"
+        app:drawableEndCompat="@drawable/ic_calendar_gray" />
+
+    <TextView
+        android:id="@+id/tv_add_video"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:text="@string/add_new_video"
+        android:textColor="@color/add_media_color"
+        android:textSize="@dimen/_13sdp" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_play_detail_video"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_60sdp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_add_play_details"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:layout_marginEnd="@dimen/_10sdp"
+        android:backgroundTint="@color/purple"
+        android:text="@string/add_playlist_details"
+        android:textSize="@dimen/_14sdp"
+        app:cornerRadius="@dimen/_5sdp" />
+</LinearLayout>

@@ -25,10 +25,12 @@ import com.codecoy.mvpflycollab.callbacks.PlaylistCallback
 import com.codecoy.mvpflycollab.databinding.BottomsheetNewplaylistBinding
 import com.codecoy.mvpflycollab.databinding.FragmentPlayListBinding
 import com.codecoy.mvpflycollab.datamodels.AllPlaylistData
+import com.codecoy.mvpflycollab.datamodels.UserLoginData
 import com.codecoy.mvpflycollab.network.ApiCall
 import com.codecoy.mvpflycollab.ui.activities.MainActivity
 import com.codecoy.mvpflycollab.ui.adapters.playlist.PlayListAdapter
 import com.codecoy.mvpflycollab.utils.Constant
+import com.codecoy.mvpflycollab.utils.Utils
 import com.codecoy.mvpflycollab.viewmodels.MvpRepository
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.codecoy.mvpflycollab.viewmodels.PlaylistViewModel
@@ -45,6 +47,7 @@ class PlayListFragment : Fragment(), PlaylistCallback {
     private lateinit var bottomSheetDialog: BottomSheetDialog
 
     private var dialog: Dialog? = null
+    private var currentUser: UserLoginData? = null
 
     private lateinit var viewModel: PlaylistViewModel
 
@@ -89,6 +92,9 @@ class PlayListFragment : Fragment(), PlaylistCallback {
     private fun inIt() {
         dialog = Constant.getDialog(activity)
         playList = arrayListOf()
+
+        currentUser = Utils.getUserFromSharedPreferences(activity)
+
         mBinding.rvPlayList.layoutManager = GridLayoutManager(activity, 2)
         mBinding.rvPlayList.setHasFixedSize(true)
 
@@ -97,8 +103,8 @@ class PlayListFragment : Fragment(), PlaylistCallback {
         setUpBottomDialog()
 
         viewModel.allPlayList(
-            "Bearer " + Constant.currentUser?.token.toString(),
-            Constant.currentUser?.id.toString()
+            "Bearer " + currentUser?.token.toString(),
+           currentUser?.id.toString()
         )
 
     }
@@ -155,8 +161,7 @@ class PlayListFragment : Fragment(), PlaylistCallback {
 
     private fun addNewPlaylist(title: String, des: String) {
         viewModel.addPlaylist(
-            "Bearer " + Constant.currentUser?.token.toString(),
-            Constant.currentUser?.id.toString(),
+            "Bearer " + currentUser?.token.toString(), currentUser?.id.toString(),
             title,
             des,
             viewModel.selectedImage.toString()
@@ -287,8 +292,8 @@ class PlayListFragment : Fragment(), PlaylistCallback {
                     Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
 
-                    viewModel.allPlayList("Bearer " + Constant.currentUser?.token.toString(),
-                        Constant.currentUser?.id.toString())
+                    viewModel.allPlayList("Bearer " + currentUser?.token.toString(),
+                        currentUser?.id.toString())
 
                     bottomSheetDialog.dismiss()
 
@@ -324,10 +329,10 @@ class PlayListFragment : Fragment(), PlaylistCallback {
         mBinding.rvPlayList.adapter = playListAdapter
     }
 
-    override fun onPlaylistClick() {
+    override fun onPlaylistClick(playData: AllPlaylistData) {
         try {
 
-            val action = PlayListFragmentDirections.actionPlayListFragmentToPlayListDetailFragment()
+            val action = PlayListFragmentDirections.actionPlayListFragmentToPlayListDetailFragment(playData)
             findNavController().navigate(action)
 
         } catch (e: Exception) {

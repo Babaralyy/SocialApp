@@ -22,4 +22,7 @@
     <string name="add_new_image">+ Add New Image</string>
     <string name="add_play_list">Add Play List</string>
     <string name="create_playlist">Create Playlist</string>
+    <string name="add_playlist_details">Add playlist details</string>
+    <string name="add_new_video">+ Add new video</string>
+    <string name="add_new_playlist_video">Add New Playlist Video</string>
 </resources>

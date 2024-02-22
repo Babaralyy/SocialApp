@@ -1,5 +1,6 @@
 package com.codecoy.mvpflycollab.network
 
+import android.net.Uri
 import com.codecoy.mvpflycollab.datamodels.AddJourneyDetailBody
 import com.codecoy.mvpflycollab.datamodels.AddJourneyDetailResponse
 import com.codecoy.mvpflycollab.datamodels.AddJourneyResponse
@@ -85,10 +86,26 @@ interface ApiCall {
         @Query("playlist_id") playlistId: String
     ): Response<AllPlaylistDetailsResponse>
 
+
+/*    @Multipart
     @POST("api/add_playlist_details")
     suspend fun addPlaylistDetails(
         @Header("Authorization") token: String,
-        @Body addPlaylistDetailsBody: AddPlaylistDetailsBody
+        @Field("playlist_id") playlistId: String,
+        @Field("title") title: String,
+        @Field("description") description: String,
+        @Field("date") date: String,
+        @Part("videos") videosPartList: MutableList<MultipartBody.Part>
+    ): Response<AddPlaylistDetailsResponse>*/
+    @Multipart
+    @POST("api/add_playlist_details")
+    suspend fun addPlaylistDetails(
+        @Header("Authorization") token: String,
+        @Part("playlist_id") playlistId: MultipartBody.Part,
+        @Part("title") title: MultipartBody.Part,
+        @Part("description") description: MultipartBody.Part,
+        @Part("date") date: MultipartBody.Part,
+        @Part("videos") videosPartList: MutableList<MultipartBody.Part>
     ): Response<AddPlaylistDetailsResponse>
 
 }

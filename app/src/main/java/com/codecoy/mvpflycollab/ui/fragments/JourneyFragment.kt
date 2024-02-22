@@ -26,11 +26,13 @@ import com.codecoy.mvpflycollab.callbacks.JourneyCallback
 import com.codecoy.mvpflycollab.databinding.FragmentJourneyBinding
 import com.codecoy.mvpflycollab.databinding.NewJourneyBottomDialogLayBinding
 import com.codecoy.mvpflycollab.datamodels.AllJourneyData
+import com.codecoy.mvpflycollab.datamodels.UserLoginData
 import com.codecoy.mvpflycollab.network.ApiCall
 import com.codecoy.mvpflycollab.ui.activities.MainActivity
 import com.codecoy.mvpflycollab.ui.adapters.journey.JourneyAdapter
 import com.codecoy.mvpflycollab.utils.Constant
 import com.codecoy.mvpflycollab.utils.Constant.TAG
+import com.codecoy.mvpflycollab.utils.Utils
 import com.codecoy.mvpflycollab.viewmodels.JourneyViewModel
 import com.codecoy.mvpflycollab.viewmodels.MvpRepository
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
@@ -46,6 +48,7 @@ class JourneyFragment : Fragment(), JourneyCallback {
 
     private lateinit var viewModel: JourneyViewModel
     private var dialog: Dialog? = null
+    private var currentUser: UserLoginData? = null
 
     private lateinit var journeyAdapter: JourneyAdapter
     private lateinit var journeyList: MutableList<AllJourneyData>
@@ -90,6 +93,7 @@ class JourneyFragment : Fragment(), JourneyCallback {
     private fun inIt() {
         dialog = Constant.getDialog(activity)
         journeyList = arrayListOf()
+        currentUser = Utils.getUserFromSharedPreferences(activity)
 
         mBinding.rvJourney.layoutManager = LinearLayoutManager(activity)
         mBinding.rvJourney.setHasFixedSize(true)
@@ -100,8 +104,8 @@ class JourneyFragment : Fragment(), JourneyCallback {
         setUpBottomDialog()
 
         viewModel.allJourneyList(
-            "Bearer " + Constant.currentUser?.token.toString(),
-            Constant.currentUser?.id.toString()
+            "Bearer " + currentUser?.token.toString(),
+           currentUser?.id.toString()
         )
 
     }
@@ -209,8 +213,8 @@ class JourneyFragment : Fragment(), JourneyCallback {
                     Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
 
-                    viewModel.allJourneyList("Bearer " + Constant.currentUser?.token.toString(),
-                        Constant.currentUser?.id.toString())
+                    viewModel.allJourneyList("Bearer " + currentUser?.token.toString(),
+                       currentUser?.id.toString())
 
                     bottomSheetDialog.dismiss()
 
@@ -251,7 +255,7 @@ class JourneyFragment : Fragment(), JourneyCallback {
     private fun showAddJourneyBottomDialog() {
 
 
-        bottomBinding.tvActivity.text = "${Constant.currentUser?.name}' Activity"
+        bottomBinding.tvActivity.text = "${currentUser?.name}' Activity"
 
         bottomBinding.ivJourneyImg.setOnClickListener {
             // Launch the photo picker and let the user choose only images.
@@ -294,8 +298,8 @@ class JourneyFragment : Fragment(), JourneyCallback {
         Toast.makeText(activity, "addNewJourney", Toast.LENGTH_SHORT).show()
 
         viewModel.addJourney(
-            "Bearer " + Constant.currentUser?.token.toString(),
-            Constant.currentUser?.id.toString(),
+            "Bearer " + currentUser?.token.toString(),
+            currentUser?.id.toString(),
             title,
             description,
             viewModel.selectedImage.toString()
