@@ -171,7 +171,11 @@
         android:id="@+id/profileDetailFragment"
         android:name="com.codecoy.mvpflycollab.ui.fragments.ProfileDetailFragment"
         android:label="fragment_profile_detail"
-        tools:layout="@layout/fragment_profile_detail" />
+        tools:layout="@layout/fragment_profile_detail" >
+        <action
+            android:id="@+id/action_profileDetailFragment_to_aboutProfileFragment"
+            app:destination="@id/aboutProfileFragment" />
+    </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.codecoy.mvpflycollab.ui.fragments.ProfileFragment"
@@ -195,9 +199,6 @@
             android:id="@+id/action_mainFragment_to_editProfileFragment"
             app:destination="@id/editProfileFragment" />
         <action
-            android:id="@+id/action_mainFragment_to_aboutProfileFragment"
-            app:destination="@id/aboutProfileFragment" />
-        <action
             android:id="@+id/action_mainFragment_to_playListFragment"
             app:destination="@id/playListFragment" />
         <action
@@ -206,6 +207,12 @@
         <action
             android:id="@+id/action_mainFragment_to_membersFragment"
             app:destination="@id/membersFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_levelsFragment"
+            app:destination="@id/levelsFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_profileDetailFragment"
+            app:destination="@id/profileDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/levelsFragment"

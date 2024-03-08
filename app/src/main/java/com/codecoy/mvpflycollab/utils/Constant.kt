@@ -21,8 +21,8 @@ import javax.net.ssl.HttpsURLConnection
 object Constant {
 
     const val TAG = "TAG"
-    private const val BASE_URL = "https://codecoyapps.com/fly_colab/"
-    const val MEDIA_BASE_URL = "https://codecoyapps.com/fly_colab/public/storage/"
+    private const val BASE_URL = "https://wh1309648.ispot.cc/fly_colab/"
+    const val MEDIA_BASE_URL = "https://wh1309648.ispot.cc/fly_colab/public/storage/"
 
 
     private var httpClient: OkHttpClient = OkHttpClient.Builder()
@@ -69,8 +69,5 @@ object Constant {
         cursor?.close()
         return filePath ?: ""
     }
-
-
-
 
 }

@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.codecoy.mvpflycollab.datamodels.UploadImageResponse
 import com.codecoy.mvpflycollab.datamodels.UserRegisterBody
 import com.codecoy.mvpflycollab.datamodels.UserRegisterResponse
+import com.codecoy.mvpflycollab.repo.MvpRepository
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/ic_background"
@@ -31,10 +31,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_15sdp"
-        android:layout_marginEnd="@dimen/_15sdp"
         android:layout_marginTop="@dimen/_30sdp"
+        android:layout_marginEnd="@dimen/_15sdp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/ivprofilefragmentImage"
             android:layout_width="@dimen/_50sdp"
@@ -43,8 +44,8 @@
             android:layout_marginTop="@dimen/_10sdp"
             android:background="@drawable/circular_shape_white"
             android:src="@drawable/img"
-            app:civ_border_width="@dimen/_2sdp"
             app:civ_border_color="@color/white"
+            app:civ_border_width="@dimen/_2sdp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -52,12 +53,12 @@
             android:id="@+id/tvprofilefragmentName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_20sdp"
             android:layout_marginStart="@dimen/_5sdp"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:fontFamily="@font/lato_bold"
             android:text="joshua_l"
             android:textColor="@color/white"
             android:textSize="16sp"
-            android:fontFamily="@font/lato_bold"
             app:layout_constraintStart_toEndOf="@id/ivprofilefragmentImage"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -68,62 +69,60 @@
             android:layout_marginStart="@dimen/_5sdp"
             android:layout_marginTop="@dimen/_5sdp"
             android:drawablePadding="@dimen/_5sdp"
+            android:fontFamily="@font/lato"
             android:gravity="center_horizontal"
             android:text="San Fransico,CA"
             android:textColor="@color/white"
             android:textSize="12sp"
-            android:fontFamily="@font/lato"
-            app:layout_constraintTop_toBottomOf="@id/tvprofilefragmentName"
+            app:drawableStartCompat="@drawable/ic_location"
             app:layout_constraintStart_toEndOf="@id/ivprofilefragmentImage"
-            app:drawableStartCompat="@drawable/ic_location"/>
+            app:layout_constraintTop_toBottomOf="@id/tvprofilefragmentName" />
 
         <View
             android:id="@+id/viewline"
             android:layout_width="0dp"
             android:layout_height="1dp"
-            android:background="@color/white"
             android:layout_marginTop="@dimen/_2sdp"
-            app:layout_constraintStart_toEndOf="@+id/ivprofilefragmentImage"
+            android:background="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ivprofilefragmentImage"/>
+            app:layout_constraintStart_toEndOf="@+id/ivprofilefragmentImage"
+            app:layout_constraintTop_toBottomOf="@id/ivprofilefragmentImage" />
 
         <LinearLayout
             android:id="@+id/linearlayoutprofilefragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/viewline"
-            android:weightSum="3"
             android:layout_marginStart="@dimen/_60sdp"
             android:layout_marginTop="@dimen/_10sdp"
-            app:layout_constraintStart_toEndOf="@+id/ivprofilefragmentImage"
+            android:weightSum="3"
             app:layout_constraintEnd_toEndOf="parent"
-            >
+            app:layout_constraintStart_toEndOf="@+id/ivprofilefragmentImage"
+            app:layout_constraintTop_toBottomOf="@id/viewline">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="56"
-                android:textSize="@dimen/_14sdp"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:textSize="@dimen/_14sdp" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="14"
-                android:textSize="@dimen/_14sdp"
                 android:textColor="@color/white"
-                />
+                android:textSize="@dimen/_14sdp" />
+
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="136"
-                android:textSize="@dimen/_14sdp"
                 android:textAlignment="center"
                 android:textColor="@color/white"
-                />
+                android:textSize="@dimen/_14sdp" />
 
 
         </LinearLayout>
@@ -133,39 +132,37 @@
             android:id="@+id/linearlayoutprofilefragment2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/linearlayoutprofilefragment"
-            android:weightSum="3"
             android:layout_marginStart="@dimen/_60sdp"
             android:layout_marginTop="@dimen/_3sdp"
-            app:layout_constraintStart_toStartOf="parent"
+            android:weightSum="3"
             app:layout_constraintEnd_toEndOf="parent"
-            >
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/linearlayoutprofilefragment">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Journey"
-                android:textSize="@dimen/_8sdp"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:textSize="@dimen/_8sdp" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Playlist"
-                android:textSize="@dimen/_8sdp"
                 android:textColor="@color/white"
-                />
+                android:textSize="@dimen/_8sdp" />
+
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Collaborators"
-                android:textSize="@dimen/_8sdp"
                 android:textAlignment="center"
                 android:textColor="@color/white"
-                />
+                android:textSize="@dimen/_8sdp" />
 
 
         </LinearLayout>
@@ -174,37 +171,46 @@
             android:id="@+id/tvsharedcontent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_20sdp"
             android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:fontFamily="@font/lato"
             android:text="Shared Content"
             android:textColor="@color/white"
             android:textSize="14sp"
-            android:fontFamily="@font/lato"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/linearlayoutprofilefragment2"
-            />
+            app:layout_constraintTop_toBottomOf="@id/linearlayoutprofilefragment2" />
+
         <View
             android:id="@+id/viewline2"
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:layout_marginTop="@dimen/_5sdp"
             android:background="@color/white"
-            app:layout_constraintTop_toBottomOf="@id/tvsharedcontent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintTop_toBottomOf="@id/tvsharedcontent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/Likes_recyclerview"
+        android:id="@+id/rv_users"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/_15sdp"
         android:layout_marginStart="@dimen/_15sdp"
         android:layout_marginTop="@dimen/_5sdp"
-        app:layout_constraintTop_toBottomOf="@id/layoutprofilefragment"
+        android:layout_marginEnd="@dimen/_15sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        />
+        app:layout_constraintTop_toBottomOf="@id/layoutprofilefragment" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_user_posts"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="@dimen/_15sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rv_users"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

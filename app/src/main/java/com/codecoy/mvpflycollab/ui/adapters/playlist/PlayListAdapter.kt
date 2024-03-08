@@ -35,7 +35,7 @@ class PlayListAdapter(
             .with(context)
             .load(Constant.MEDIA_BASE_URL + playData.playlistImg)
             .placeholder(R.drawable.img)
-            .into(holder.mBinding.imageView2)
+            .into(holder.mBinding.ivPlayImg)
 
         holder.mBinding.tvName.text = playData.title
         holder.mBinding.tvDes.text = playData.description

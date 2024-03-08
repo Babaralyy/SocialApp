@@ -2,7 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:id="@+id/bottomSheet"
@@ -13,7 +13,6 @@
         android:orientation="vertical"
         app:behavior_hideable="true"
         app:behavior_peekHeight="100dp">
-
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -30,10 +29,10 @@
                 android:text="@string/abdul_activity"
                 android:textColor="#222B45"
                 android:textSize="18sp" />
-
         </RelativeLayout>
 
         <EditText
+            android:id="@+id/et_event_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_15sdp"
@@ -47,6 +46,7 @@
             android:textSize="16sp" />
 
         <EditText
+            android:id="@+id/et_note"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_15sdp"
@@ -60,6 +60,7 @@
 
 
         <TextView
+            android:id="@+id/et_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_15sdp"
@@ -80,6 +81,7 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/et_start_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/_10sdp"
@@ -92,6 +94,7 @@
                 app:drawableEndCompat="@drawable/ic_clock" />
 
             <TextView
+                android:id="@+id/et_end_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_10sdp"
@@ -106,26 +109,47 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/tvTitle"
+            android:id="@+id/tv_media_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_15sdp"
             android:layout_marginTop="@dimen/_10sdp"
             android:layout_marginEnd="@dimen/_15sdp"
             android:fontFamily="@font/lato"
-            android:text="@string/add_new_video_and_image"
+            android:text="@string/add_image"
             android:textColor="@color/purple"
             android:textSize="16sp" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view"
+            android:id="@+id/rv_media_image"
             android:layout_width="match_parent"
+            android:layout_height="@dimen/_55sdp"
+            android:layout_marginStart="@dimen/_15sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_15sdp" />
+
+        <TextView
+            android:id="@+id/tv_media_video"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_15sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_15sdp"
+            android:fontFamily="@font/lato"
+            android:text="@string/add_video"
+            android:textColor="@color/purple"
+            android:textSize="16sp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_media_video"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_55sdp"
             android:layout_marginStart="@dimen/_15sdp"
             android:layout_marginTop="@dimen/_10sdp"
             android:layout_marginEnd="@dimen/_15sdp" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_add_activity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

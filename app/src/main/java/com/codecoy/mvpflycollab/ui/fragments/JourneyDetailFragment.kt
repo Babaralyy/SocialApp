@@ -8,7 +8,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -21,12 +20,17 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.codecoy.mvpflycollab.R
+import com.codecoy.mvpflycollab.callbacks.JourneyDetailCallback
 import com.codecoy.mvpflycollab.databinding.AddJourneyPicBottomDialogLayBinding
 import com.codecoy.mvpflycollab.databinding.FragmentJouneyDetailBinding
+import com.codecoy.mvpflycollab.databinding.ShowImageDialogBinding
 import com.codecoy.mvpflycollab.datamodels.AddJourneyDetailBody
 import com.codecoy.mvpflycollab.datamodels.AddJourneyDetailData
 import com.codecoy.mvpflycollab.datamodels.AllJourneyData
 import com.codecoy.mvpflycollab.datamodels.ImageBody
+import com.codecoy.mvpflycollab.datamodels.JourneyDetailImages
 import com.codecoy.mvpflycollab.datamodels.JourneyDetailsData
 import com.codecoy.mvpflycollab.datamodels.UserLoginData
 import com.codecoy.mvpflycollab.network.ApiCall
@@ -37,7 +41,7 @@ import com.codecoy.mvpflycollab.utils.Constant
 import com.codecoy.mvpflycollab.utils.Constant.TAG
 import com.codecoy.mvpflycollab.utils.Utils
 import com.codecoy.mvpflycollab.viewmodels.JourneyViewModel
-import com.codecoy.mvpflycollab.viewmodels.MvpRepository
+import com.codecoy.mvpflycollab.repo.MvpRepository
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -49,7 +53,7 @@ import java.util.Date
 import java.util.Locale
 
 
-class JourneyDetailFragment : Fragment() {
+class JourneyDetailFragment : Fragment(), JourneyDetailCallback {
 
     private lateinit var activity: MainActivity
     private lateinit var journeyDetailAdapter: JourneyDetailAdapter
@@ -102,7 +106,7 @@ class JourneyDetailFragment : Fragment() {
     }
 
     private fun inIt() {
-
+        dialog = Constant.getDialog(activity)
         journeyDetailDataList = arrayListOf()
         currentUser = Utils.getUserFromSharedPreferences(activity)
 
@@ -165,7 +169,6 @@ class JourneyDetailFragment : Fragment() {
                     viewModel.imagesList.add(imageData.response.toString())
 
                     viewModel.imagesList = viewModel.imagesList.distinct().toMutableList()
-
 
                     journeyDetailImageAdapter =
                         JourneyDetailImageAdapter(viewModel.imagesList, activity)
@@ -389,15 +392,44 @@ class JourneyDetailFragment : Fragment() {
 
     }
 
-
-
     private fun setUpDetailData(journeyDetailsData: ArrayList<JourneyDetailsData>) {
-        journeyDetailAdapter = JourneyDetailAdapter(journeyDetailsData, activity)
+        journeyDetailAdapter = JourneyDetailAdapter(journeyDetailsData, activity, this)
         mBinding.rvJourneyDetail.adapter = journeyDetailAdapter
+    }
+
+    override fun onImgClick(imageData: String) {
+        showImageDialog(imageData)
+    }
+
+    private fun showImageDialog(imageUrl: String? = null) {
+
+        val imageBinding = ShowImageDialogBinding.inflate(layoutInflater)
+
+        val dialog = Dialog(activity)
+        dialog.setContentView(imageBinding.root)
+        dialog.setCancelable(true)
+
+        val window = dialog.window
+        val height =
+            (activity.resources.displayMetrics.widthPixels * 01.4).toInt() // 80% of screen width
+        window?.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, height)
+
+
+        if (imageUrl != null) {
+            Glide
+                .with(activity)
+                .load(imageUrl)
+                .placeholder(R.drawable.img)
+                .into(imageBinding.imageView)
+        }
+
+        dialog.show()
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         (context as MainActivity).also { activity = it }
     }
+
+
 }

@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.codecoy.mvpflycollab.R
+import com.codecoy.mvpflycollab.callbacks.JourneyDetailCallback
 import com.codecoy.mvpflycollab.databinding.JourneyDetailImageItemBinding
 import com.codecoy.mvpflycollab.databinding.JourneyDetailItemViewBinding
 import com.codecoy.mvpflycollab.datamodels.JourneyDetailImages
@@ -16,7 +17,8 @@ import com.codecoy.mvpflycollab.utils.Constant
 
 class JourneyDetailAdapter(
     private val journeyDetailList: MutableList<JourneyDetailsData>,
-    var context: Context
+    var context: Context,
+    private val journeyDetailCallback: JourneyDetailCallback
 ) : RecyclerView.Adapter<JourneyDetailAdapter.ViewHolder>() {
 
 
@@ -27,7 +29,7 @@ class JourneyDetailAdapter(
                 parent,
                 false
             ),
-            context
+            context, journeyDetailCallback
         )
     }
 
@@ -45,12 +47,16 @@ class JourneyDetailAdapter(
         return journeyDetailList.size
     }
 
-    class ViewHolder(val mBinding: JourneyDetailItemViewBinding, private val mContext: Context) :
+    class ViewHolder(
+        val mBinding: JourneyDetailItemViewBinding,
+        private val mContext: Context,
+        private val journeyDetailCallback: JourneyDetailCallback
+    ) :
         RecyclerView.ViewHolder(mBinding.root) {
         fun bind(journeyDetails: JourneyDetailsData) {
             // Initialize inner RecyclerView
             val innerAdapter =
-                JourneyDetailImagesAdapter(journeyDetails.journeyDetailImages, mContext)
+                JourneyDetailImagesAdapter(journeyDetails.journeyDetailImages, mContext, journeyDetailCallback)
             mBinding.rvDetailsImages.apply {
                 layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
                 adapter = innerAdapter
@@ -61,7 +67,8 @@ class JourneyDetailAdapter(
 
 class JourneyDetailImagesAdapter(
     private val journeyDetailImages: MutableList<JourneyDetailImages>,
-    var context: Context
+    var context: Context,
+    private var journeyDetailCallback: JourneyDetailCallback
 ) : RecyclerView.Adapter<JourneyDetailImagesAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -82,6 +89,10 @@ class JourneyDetailImagesAdapter(
             .load(Constant.MEDIA_BASE_URL + imageData.image)
             .placeholder(R.drawable.img)
             .into(holder.mBinding.ivImage)
+
+        holder.itemView.setOnClickListener {
+            journeyDetailCallback.onImgClick(Constant.MEDIA_BASE_URL + imageData.image)
+        }
     }
 
     override fun getItemCount(): Int {

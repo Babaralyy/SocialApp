@@ -28,20 +28,25 @@
         android:hint="@string/title"
         android:padding="@dimen/_15sdp"
         android:textColor="@color/black"
-        android:textSize="@dimen/_12sdp" />
+        android:textSize="@dimen/_12sdp"
+        android:inputType="text"
+        android:importantForAutofill="no" />
 
     <EditText
         android:id="@+id/et_des"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_10sdp"
+        android:padding="@dimen/_15sdp"
         android:background="@drawable/edittext_shape"
+        android:inputType="textMultiLine"
         android:gravity="top"
         android:hint="@string/description"
-        android:minLines="3"
-        android:padding="@dimen/_15sdp"
         android:textColor="@color/black"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:lines="3"
+        android:maxLines="10"
+        android:scrollbars="vertical"
+        android:importantForAutofill="no" />
 
     <TextView
         android:id="@+id/tv_date"
@@ -67,7 +72,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_play_detail_video"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_60sdp" />
+        android:layout_height="@dimen/_60sdp"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_add_play_details"
@@ -81,4 +86,5 @@
         android:text="@string/add_playlist_details"
         android:textSize="@dimen/_14sdp"
         app:cornerRadius="@dimen/_5sdp" />
+
 </LinearLayout>

@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_8sdp"
             android:layout_marginTop="@dimen/_5sdp"
-            android:text="joshua_l"
+            android:text="@string/dummy"
             android:fontFamily="@font/lato"
             android:textColor="@color/white"
             android:textSize="@dimen/_13sdp"
@@ -51,7 +51,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_8sdp"
             android:layout_marginTop="@dimen/_5sdp"
-            android:text="Tokyo, Japan"
+            android:text="@string/dummy"
             android:textColor="@color/white"
             android:fontFamily="@font/lato"
             android:textSize="12sp"
@@ -86,8 +86,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_10sdp"
         app:cardMaxElevation="@dimen/_6sdp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginEnd="@dimen/_10sdp"
         app:cardCornerRadius="@dimen/_8sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -98,8 +98,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scaleType="fitXY"
-            android:src="@drawable/ic_image_rectangle"
-            />
+            android:src="@drawable/ic_image_rectangle"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -121,6 +120,7 @@
         android:id="@+id/linearlayout_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+
         android:gravity="center"
         android:padding="@dimen/_5sdp"
         app:layout_constraintTop_toBottomOf="@id/content_cardview"
@@ -140,7 +140,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="44,389"
+            android:text="@string/dummy"
             android:textSize="13sp"
             android:textColor="@color/white"
             />
@@ -157,7 +157,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="26,376"
+            android:text="@string/dummy"
             android:textSize="13sp"
             android:textColor="@color/white"
             />
@@ -180,12 +180,14 @@
 
     <TextView
         android:id="@+id/tvComments"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/_10sdp"
         android:layout_marginTop="@dimen/_5sdp"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginEnd="@dimen/_10sdp"
         app:layout_constraintTop_toBottomOf="@id/linearlayout_content"
-        android:text="@string/joshua_l_the_game_in_japan_was_amazing_and_i_want_to_share_some_photos"
+        android:text="@string/dummy"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

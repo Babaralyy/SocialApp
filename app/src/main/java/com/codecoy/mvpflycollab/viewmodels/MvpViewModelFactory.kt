@@ -2,6 +2,7 @@ package com.codecoy.mvpflycollab.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.codecoy.mvpflycollab.repo.MvpRepository
 
 class MvpViewModelFactory(private val mvpRepository: MvpRepository) :
     ViewModelProvider.NewInstanceFactory() {
@@ -21,6 +22,16 @@ class MvpViewModelFactory(private val mvpRepository: MvpRepository) :
             )
 
             modelClass.isAssignableFrom(PlaylistViewModel::class.java) -> PlaylistViewModel(
+                mvpRepository
+            )
+
+            modelClass.isAssignableFrom(ActivityViewModel::class.java) -> ActivityViewModel(
+                mvpRepository
+            )
+            modelClass.isAssignableFrom(UserViewModel::class.java) -> UserViewModel(
+                mvpRepository
+            )
+            modelClass.isAssignableFrom(PostsViewModel::class.java) -> PostsViewModel(
                 mvpRepository
             )
             else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")

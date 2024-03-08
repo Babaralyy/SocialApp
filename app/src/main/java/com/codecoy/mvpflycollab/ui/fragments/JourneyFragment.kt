@@ -7,7 +7,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -34,7 +33,7 @@ import com.codecoy.mvpflycollab.utils.Constant
 import com.codecoy.mvpflycollab.utils.Constant.TAG
 import com.codecoy.mvpflycollab.utils.Utils
 import com.codecoy.mvpflycollab.viewmodels.JourneyViewModel
-import com.codecoy.mvpflycollab.viewmodels.MvpRepository
+import com.codecoy.mvpflycollab.repo.MvpRepository
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -176,7 +175,7 @@ class JourneyFragment : Fragment(), JourneyCallback {
         }
 
 
-        viewModel.profileImageResponseLiveData.observe(this) { response ->
+        viewModel.imageResponseLiveData.observe(this) { response ->
             if (response.code() == 200) {
                 val imageData = response.body()
                 if (imageData != null && imageData.success == true && imageData.response != null) {
@@ -339,22 +338,12 @@ class JourneyFragment : Fragment(), JourneyCallback {
 
     private fun showSingleImage(imageUri: Uri) {
 
-        val file = File(getRealPathFromURI(imageUri))
+        val file = File(Utils.getRealPathFromImgURI(activity,imageUri))
         val requestFile = RequestBody.create("image/*".toMediaTypeOrNull(), file)
         val imagePart = MultipartBody.Part.createFormData("img", file.name, requestFile)
 
         viewModel.uploadImage(imagePart)
 
-    }
-
-    private fun getRealPathFromURI(uri: Uri): String {
-        val projection = arrayOf(MediaStore.Images.Media.DATA)
-        val cursor = activity.contentResolver.query(uri, projection, null, null, null)
-        val columnIndex = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-        cursor?.moveToFirst()
-        val filePath = cursor?.getString(columnIndex!!)
-        cursor?.close()
-        return filePath ?: ""
     }
 
 

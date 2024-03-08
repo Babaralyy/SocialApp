@@ -1,5 +1,6 @@
 package com.codecoy.mvpflycollab.ui.fragments
 
+import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -11,25 +12,38 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.codecoy.mvpflycollab.R
 import com.codecoy.mvpflycollab.callbacks.HomeCallback
 import com.codecoy.mvpflycollab.callbacks.StoryCallback
 import com.codecoy.mvpflycollab.databinding.FragmentHomeBinding
+import com.codecoy.mvpflycollab.datamodels.UserLoginData
+import com.codecoy.mvpflycollab.datamodels.UserPostsData
+import com.codecoy.mvpflycollab.network.ApiCall
+import com.codecoy.mvpflycollab.repo.MvpRepository
 import com.codecoy.mvpflycollab.ui.activities.MainActivity
 import com.codecoy.mvpflycollab.ui.adapters.PostsAdapter
 import com.codecoy.mvpflycollab.ui.adapters.stories.StoriesAdapter
+import com.codecoy.mvpflycollab.utils.Constant
 import com.codecoy.mvpflycollab.utils.Constant.TAG
+import com.codecoy.mvpflycollab.utils.Utils
+import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
+import com.codecoy.mvpflycollab.viewmodels.PostsViewModel
 
 
 class HomeFragment : Fragment(), HomeCallback, StoryCallback {
 
+    private lateinit var viewModel: PostsViewModel
+    private var dialog: Dialog? = null
+
+    private var currentUser: UserLoginData? = null
+
     private lateinit var activity: MainActivity
     private lateinit var storiesAdapter: StoriesAdapter
     private lateinit var postsAdapter: PostsAdapter
-    private lateinit var storiesList: MutableList<String>
-    private lateinit var postsList: MutableList<String>
+
 
     private lateinit var mBinding: FragmentHomeBinding
     override fun onCreateView(
@@ -44,9 +58,8 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
     }
 
     private fun inIt() {
-
-        storiesList = arrayListOf()
-        postsList = arrayListOf()
+        dialog = Constant.getDialog(activity)
+        currentUser = Utils.getUserFromSharedPreferences(activity)
 
         mBinding.rvStories.layoutManager =
             LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
@@ -56,8 +69,9 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
             LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
         mBinding.rvPosts.setHasFixedSize(true)
 
-        setUpStoriesRecyclerView()
-        setUpPostsRecyclerView()
+        setUpViewModel()
+        setUpDrawer()
+        getAllPosts()
 
         mBinding.ivMessenger.setOnClickListener {
 
@@ -65,22 +79,90 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
                 val action = MainFragmentDirections.actionMainFragmentToChatFragment()
                 findNavController().navigate(action)
             } catch (e: Exception) {
+                Log.i(TAG, "inIt: ${e.message}")
+            }
+        }
 
+        mBinding.btnDiscover.setOnClickListener {
+
+            try {
+                val action = MainFragmentDirections.actionMainFragmentToProfileDetailFragment()
+                findNavController().navigate(action)
+            } catch (e: Exception) {
+                Log.i(TAG, "inIt: ${e.message}")
+            }
+        }
+    }
+
+    private fun getAllPosts() {
+        viewModel.allUserPosts("Bearer " + currentUser?.token.toString(), currentUser?.id.toString())
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        responseFromViewModel()
+    }
+
+    private fun responseFromViewModel() {
+        viewModel.loading.observe(this) { isLoading ->
+            if (isLoading) {
+                dialog?.show()
+            } else {
+                dialog?.dismiss()
+            }
+        }
+
+        viewModel.allUsersPostsResponseLiveData.observe(this) { response ->
+
+            Log.i(TAG, "registerUser:: response $response")
+
+            if (response.code() == 200) {
+                val postsResponse = response.body()
+                if (postsResponse != null && postsResponse.success == true) {
+
+                    try {
+                        setUpPostsRecyclerView(postsResponse.userPostsData)
+                    } catch (e: Exception) {
+                        Log.i(TAG, "navControllerException:: ${e.message}")
+                    }
+
+                } else {
+                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                        .show()
+                }
+            } else if (response.code() == 401) {
+
+            } else {
+                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
 
+        viewModel.exceptionLiveData.observe(this) { exception ->
+            if (exception != null) {
+                Log.i(TAG, "addJourneyResponseLiveData:: exception $exception")
+                dialog?.dismiss()
+            }
+        }
+    }
 
+    private fun setUpViewModel() {
+
+        val mApi = Constant.getRetrofitInstance().create(ApiCall::class.java)
+        val userRepository = MvpRepository(mApi)
+
+        viewModel = ViewModelProvider(
+            this,
+            MvpViewModelFactory(userRepository)
+        )[PostsViewModel::class.java]
+    }
+
+    private fun setUpDrawer() {
         mBinding.drawerNavigation.itemIconTintList = null // To allow custom icon colors
+        val actionView = layoutInflater.inflate(R.layout.custom_nav_layout, null)
+        mBinding.drawerNavigation.addView(actionView)
 
-        // Inflate the custom layout for navigation items
-//        for (i in 0 until mBinding.drawerNavigation.menu.size()) {
-//            val menuItem = mBinding.drawerNavigation.menu.getItem(i)
-            val actionView = layoutInflater.inflate(R.layout.custom_nav_layout, null)
-            // You can customize the content of the item if needed
-
-            mBinding.drawerNavigation.addView(actionView)
-//        }
 
 
         mBinding.navIcon.setOnClickListener {
@@ -91,6 +173,10 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
             }
         }
 
+        drawersClicks()
+    }
+
+    private fun drawersClicks() {
         mBinding.drawerLayout.findViewById<ImageView>(R.id.ivCloseDrawer).setOnClickListener {
             mBinding.drawerLayout.closeDrawer(GravityCompat.START)
         }
@@ -100,13 +186,11 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
             mBinding.drawerLayout.closeDrawer(GravityCompat.START)
 
             try {
-                val action = MainFragmentDirections.actionMainFragmentToAboutProfileFragment()
+                val action = MainFragmentDirections.actionMainFragmentToProfileDetailFragment()
                 findNavController().navigate(action)
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 Log.i(TAG, "inIt: ${e.message}")
             }
-
-
         }
 
         mBinding.drawerLayout.findViewById<LinearLayout>(R.id.iJourney).setOnClickListener {
@@ -116,7 +200,7 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
             try {
                 val action = MainFragmentDirections.actionMainFragmentToJourneyFragment()
                 findNavController().navigate(action)
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 Log.i(TAG, "inIt: ${e.message}")
             }
 
@@ -129,12 +213,11 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
             try {
                 val action = MainFragmentDirections.actionMainFragmentToPlayListFragment()
                 findNavController().navigate(action)
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 Log.i(TAG, "inIt: ${e.message}")
             }
 
         }
-
 
         mBinding.drawerLayout.findViewById<LinearLayout>(R.id.iCollab).setOnClickListener {
 
@@ -143,7 +226,20 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
             try {
                 val action = MainFragmentDirections.actionMainFragmentToMembersFragment()
                 findNavController().navigate(action)
-            }catch (e: Exception){
+            } catch (e: Exception) {
+                Log.i(TAG, "inIt: ${e.message}")
+            }
+
+        }
+
+        mBinding.drawerLayout.findViewById<LinearLayout>(R.id.iLevels).setOnClickListener {
+
+            mBinding.drawerLayout.closeDrawer(GravityCompat.START)
+
+            try {
+                val action = MainFragmentDirections.actionMainFragmentToLevelsFragment()
+                findNavController().navigate(action)
+            } catch (e: Exception) {
                 Log.i(TAG, "inIt: ${e.message}")
             }
 
@@ -163,51 +259,24 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
             Toast.makeText(activity, "Clicked", Toast.LENGTH_SHORT).show()
             mBinding.drawerLayout.closeDrawer(GravityCompat.START)
         }
-
     }
 
     private fun setUpStoriesRecyclerView() {
 
-        storiesList.add("https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bW9kZWwlMjBpbWFnZXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60")
-        storiesList.add("https://manofmany.com/wp-content/uploads/2019/04/David-Gandy.jpg")
-        storiesList.add("https://images.unsplash.com/photo-1524504388940-b1c1722653e1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bW9kZWwlMjBpbWFnZXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60")
-        storiesList.add("https://img.freepik.com/free-photo/portrait-handsome-confident-model-sexy-stylish-man-dressed-sweater-jeans-fashion-hipster-male-with-curly-hairstyle-posing-near-blue-wall-studio-isolated_158538-26600.jpg?w=2000")
-        storiesList.add("https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bW9kZWwlMjBpbWFnZXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60")
-        storiesList.add("https://img.freepik.com/free-photo/portrait-handsome-confident-model-sexy-stylish-man-dressed-sweater-jeans-fashion-hipster-male-with-curly-hairstyle-posing-near-blue-wall-studio-isolated_158538-26600.jpg?w=2000")
-        storiesList.add("https://media.photographycourse.net/wp-content/uploads/2022/04/08163010/Fashion-photography-poses-feature-image.png")
-        storiesList.add("https://menshaircuts.com/wp-content/uploads/2022/06/male-models-jon-kortajarena-683x1024.jpg")
-        storiesList.add("https://manofmany.com/wp-content/uploads/2019/04/David-Gandy.jpg")
-        storiesList.add("https://menshaircuts.com/wp-content/uploads/2022/06/male-models-jon-kortajarena-683x1024.jpg")
-        storiesList.add("https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80")
-        storiesList.add("https://fastly.picsum.photos/id/5/200/300.jpg?hmac=1TWjKFT7_MRP0ApEyDUA3eCP0HXaKTWJfHgVjwGNoZU")
-        storiesList.add("https://picsum.photos/200/300/?image=5")
-
-
-        storiesAdapter = StoriesAdapter(storiesList, activity, this)
-        mBinding.rvStories.adapter = storiesAdapter
+    /*    storiesAdapter = StoriesAdapter(storiesList, activity, this)
+        mBinding.rvStories.adapter = storiesAdapter*/
 
 
     }
 
-    private fun setUpPostsRecyclerView() {
-
-        postsList.add("https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bW9kZWwlMjBpbWFnZXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60")
-        postsList.add("https://manofmany.com/wp-content/uploads/2019/04/David-Gandy.jpg")
-        postsList.add("https://images.unsplash.com/photo-1524504388940-b1c1722653e1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bW9kZWwlMjBpbWFnZXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60")
-        postsList.add("https://img.freepik.com/free-photo/portrait-handsome-confident-model-sexy-stylish-man-dressed-sweater-jeans-fashion-hipster-male-with-curly-hairstyle-posing-near-blue-wall-studio-isolated_158538-26600.jpg?w=2000")
-        postsList.add("https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bW9kZWwlMjBpbWFnZXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60")
-        postsList.add("https://img.freepik.com/free-photo/portrait-handsome-confident-model-sexy-stylish-man-dressed-sweater-jeans-fashion-hipster-male-with-curly-hairstyle-posing-near-blue-wall-studio-isolated_158538-26600.jpg?w=2000")
-        postsList.add("https://media.photographycourse.net/wp-content/uploads/2022/04/08163010/Fashion-photography-poses-feature-image.png")
-        postsList.add("https://menshaircuts.com/wp-content/uploads/2022/06/male-models-jon-kortajarena-683x1024.jpg")
-        postsList.add("https://manofmany.com/wp-content/uploads/2019/04/David-Gandy.jpg")
-        postsList.add("https://menshaircuts.com/wp-content/uploads/2022/06/male-models-jon-kortajarena-683x1024.jpg")
-        postsList.add("https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80")
-
-
-        postsAdapter = PostsAdapter(postsList, activity, this)
+    private fun setUpPostsRecyclerView(userPostsData: ArrayList<UserPostsData>) {
+        if (userPostsData.isNotEmpty()){
+            mBinding.group.visibility = View.GONE
+        } else {
+            mBinding.group.visibility = View.VISIBLE
+        }
+        postsAdapter = PostsAdapter(userPostsData, activity, this)
         mBinding.rvPosts.adapter = postsAdapter
-
-
     }
 
     override fun onCommentsClick() {

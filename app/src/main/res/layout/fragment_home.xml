@@ -100,6 +100,41 @@
             tools:listitem="@layout/post_item_view" />
 
 
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="tv_no_post,btn_discover"
+            app:layout_constraintEnd_toEndOf="@id/rvPosts"
+            app:layout_constraintStart_toStartOf="@id/rvPosts"
+            app:layout_constraintTop_toTopOf="@id/rvPosts"
+            app:layout_constraintBottom_toBottomOf="@id/rvPosts"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/tv_no_post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:text="@string/no_post_found"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_16sdp"
+            app:layout_constraintEnd_toEndOf="@id/rvPosts"
+            app:layout_constraintStart_toStartOf="@id/rvPosts"
+            app:layout_constraintTop_toTopOf="@id/rvPosts"
+            app:layout_constraintBottom_toBottomOf="@id/rvPosts"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_discover"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:text="@string/discover_people"
+            app:layout_constraintEnd_toEndOf="@id/rvPosts"
+            app:layout_constraintStart_toStartOf="@id/rvPosts"
+            app:layout_constraintTop_toBottomOf="@+id/tv_no_post"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.navigation.NavigationView
@@ -107,7 +142,6 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        
         app:menu="@menu/main_drawer_menu" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

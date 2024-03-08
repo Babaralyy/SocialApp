@@ -8,4 +8,5 @@ data class AddPlaylistDetailsData(@SerializedName("playlist_id" ) var playlistId
                                   @SerializedName("date"        ) var date        : String? = null,
                                   @SerializedName("updated_at"  ) var updatedAt   : String? = null,
                                   @SerializedName("created_at"  ) var createdAt   : String? = null,
-                                  @SerializedName("id"          ) var id          : Int?    = null)
+                                  @SerializedName("id"          ) var id          : Int?    = null,
+    )

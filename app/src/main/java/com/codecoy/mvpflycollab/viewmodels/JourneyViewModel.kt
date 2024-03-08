@@ -1,5 +1,6 @@
 package com.codecoy.mvpflycollab.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,6 +11,8 @@ import com.codecoy.mvpflycollab.datamodels.AddJourneyResponse
 import com.codecoy.mvpflycollab.datamodels.AllJourneyResponse
 import com.codecoy.mvpflycollab.datamodels.JourneyDetailsResponse
 import com.codecoy.mvpflycollab.datamodels.UploadImageResponse
+import com.codecoy.mvpflycollab.repo.MvpRepository
+import com.codecoy.mvpflycollab.utils.Constant.TAG
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
@@ -72,6 +75,8 @@ class JourneyViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
         viewModelScope.launch(handler) {
             _loading.value = true
             val response = mvpRepository.uploadProfileImage(image)
+
+            Log.i(TAG, "uploadImage:: ${response.body()} ")
 
             try {
                 imageResponseMutableLiveData.value = response

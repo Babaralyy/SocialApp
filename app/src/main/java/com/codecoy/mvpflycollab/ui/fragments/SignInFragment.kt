@@ -19,7 +19,7 @@ import com.codecoy.mvpflycollab.network.ApiCall
 import com.codecoy.mvpflycollab.ui.activities.MainActivity
 import com.codecoy.mvpflycollab.utils.Constant
 import com.codecoy.mvpflycollab.utils.Utils
-import com.codecoy.mvpflycollab.viewmodels.MvpRepository
+import com.codecoy.mvpflycollab.repo.MvpRepository
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.codecoy.mvpflycollab.viewmodels.UserLoginViewModel
 import kotlinx.coroutines.launch
@@ -32,7 +32,6 @@ class SignInFragment : Fragment() {
     private lateinit var viewModel: UserLoginViewModel
 
     private var dialog: Dialog? = null
-
 
     private lateinit var mBinding: FragmentSignInBinding
     override fun onCreateView(
@@ -47,13 +46,14 @@ class SignInFragment : Fragment() {
     }
 
     private fun inIt() {
+
         setUpViewModel()
         clickListeners()
     }
 
     override fun onResume() {
         super.onResume()
-
+        dialog = Constant.getDialog(activity)
         responseFromViewModel()
 
     }

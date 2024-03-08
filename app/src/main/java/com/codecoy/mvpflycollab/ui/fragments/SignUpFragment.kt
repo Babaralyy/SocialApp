@@ -30,7 +30,7 @@ import com.codecoy.mvpflycollab.network.ApiCall
 import com.codecoy.mvpflycollab.ui.activities.MainActivity
 import com.codecoy.mvpflycollab.utils.Constant
 import com.codecoy.mvpflycollab.utils.Constant.TAG
-import com.codecoy.mvpflycollab.viewmodels.MvpRepository
+import com.codecoy.mvpflycollab.repo.MvpRepository
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.codecoy.mvpflycollab.viewmodels.UserRegisterViewModel
 import kotlinx.coroutines.launch

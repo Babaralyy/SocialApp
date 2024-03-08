@@ -113,4 +113,15 @@
     <string name="add_playlist_details">Add playlist details</string>
     <string name="add_new_video">+ Add new video</string>
     <string name="add_new_playlist_video">Add New Playlist Video</string>
+    <string name="levels">Levels</string>
+    <string name="added_image">Added image</string>
+    <string name="add_image">+ Add Image</string>
+    <string name="add_video">+ Add Video</string>
+    <string name="play_list_thumbnail">Play List Thumbnail</string>
+    <string name="play">Play</string>
+    <string name="create_post">Create Post</string>
+    <string name="follow">Follow</string>
+    <string name="no_post_found">No post found</string>
+    <string name="discover_people">Discover people</string>
+    <string name="image_preview">Image preview</string>
 </resources>

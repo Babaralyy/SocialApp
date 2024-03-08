@@ -31,7 +31,7 @@ import com.codecoy.mvpflycollab.ui.activities.MainActivity
 import com.codecoy.mvpflycollab.ui.adapters.playlist.PlayListAdapter
 import com.codecoy.mvpflycollab.utils.Constant
 import com.codecoy.mvpflycollab.utils.Utils
-import com.codecoy.mvpflycollab.viewmodels.MvpRepository
+import com.codecoy.mvpflycollab.repo.MvpRepository
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.codecoy.mvpflycollab.viewmodels.PlaylistViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -153,8 +153,12 @@ class PlayListFragment : Fragment(), PlaylistCallback {
             bottomBinding.etDes.error = "Description is required"
             return
         }
+        if (viewModel.selectedImage.isNullOrEmpty()) {
+            Toast.makeText(activity, "Please attach Playlist image", Toast.LENGTH_SHORT).show()
+            return
+        }
 
-        if (title.isNotEmpty() && des.isNotEmpty()) {
+        if (title.isNotEmpty() && des.isNotEmpty() && !viewModel.selectedImage.isNullOrEmpty()) {
             addNewPlaylist(title, des)
         }
     }
