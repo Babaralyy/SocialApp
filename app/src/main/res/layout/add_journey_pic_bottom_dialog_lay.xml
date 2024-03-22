@@ -22,7 +22,7 @@
             android:layout_marginTop="@dimen/_20sdp"
             android:fontFamily="@font/lato_bold"
             android:layout_gravity="center_horizontal"
-            android:text="@string/add_new_journey_image"
+            android:text="@string/add_journey_details"
             android:textColor="#222B45"
             android:textSize="18sp" />
 
@@ -88,9 +88,33 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvJourneyDetailsImages"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_80sdp"
-            android:layout_marginStart="@dimen/_10sdp"
-            android:layout_marginEnd="@dimen/_10sdp"/>
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_15sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_15sdp"
+            android:minHeight="@dimen/_40sdp"/>
+
+        <TextView
+            android:id="@+id/tv_media_video"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_15sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_15sdp"
+            android:fontFamily="@font/lato"
+            android:text="+ Add New Video"
+            android:textColor="@color/purple"
+            android:textSize="16sp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_media_video"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_15sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_15sdp"
+            android:minHeight="@dimen/_40sdp"/>
+
 
 
         <com.google.android.material.button.MaterialButton

@@ -2,6 +2,7 @@ package com.codecoy.mvpflycollab.ui.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -11,7 +12,7 @@ import com.codecoy.mvpflycollab.databinding.ActivityImgItemBinding
 import com.codecoy.mvpflycollab.datamodels.ActivityDetails
 import com.codecoy.mvpflycollab.utils.Constant
 
-class ShareActivityImageAdapter (
+class ShareActivityImageAdapter(
     private val mediaList: MutableList<ActivityDetails>,
     var context: Context,
     private var toShareImageClickCallback: ToShareImageClickCallback
@@ -19,19 +20,27 @@ class ShareActivityImageAdapter (
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
-        return  ViewHolder(ActivityImgItemBinding.inflate(LayoutInflater.from(context), parent, false))
+        return ViewHolder(
+            ActivityImgItemBinding.inflate(
+                LayoutInflater.from(context),
+                parent,
+                false
+            )
+        )
 
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val img = mediaList[position]
 
-            Glide
-                .with(context)
-                .load(Constant.MEDIA_BASE_URL + img.imgUrl)
-                .placeholder(R.drawable.img)
-                .error(R.drawable.loading_error)
-                .into(holder.mBinding.ivActivityImg)
+        holder.mBinding.ivRemove.visibility = View.GONE
+
+        Glide
+            .with(context)
+            .load(Constant.MEDIA_BASE_URL + img.imgUrl)
+            .placeholder(R.drawable.img)
+            .error(R.drawable.loading_error)
+            .into(holder.mBinding.ivActivityImg)
 
         holder.itemView.setOnClickListener {
             toShareImageClickCallback.onShareImageClick(Constant.MEDIA_BASE_URL + img.imgUrl)

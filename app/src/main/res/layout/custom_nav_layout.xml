@@ -15,7 +15,7 @@
         android:contentDescription="@string/close_menu_items"/>
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/ivProfile"
+        android:id="@+id/ivUserProfile"
         android:layout_width="@dimen/_70sdp"
         android:layout_height="@dimen/_70sdp"
         android:layout_marginTop="@dimen/_30sdp"
@@ -28,11 +28,11 @@
         android:id="@+id/tvProfileName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/ivProfile"
+        android:layout_below="@+id/ivUserProfile"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/_5sdp"
         android:fontFamily="@font/inter_medium"
-        android:text="Stark Jack"
+        android:text="@string/dummy"
         android:textSize="20sp" />
 
     <ScrollView
@@ -45,6 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
 
             <View
                 android:layout_width="match_parent"
@@ -72,6 +73,42 @@
                     android:layout_weight="1"
                     android:fontFamily="@font/inter_medium"
                     android:text="@string/profile_small"
+                    android:textSize="16sp" />
+
+                <ImageView
+                    android:layout_width="@dimen/_15sdp"
+                    android:layout_height="@dimen/_15sdp"
+                    android:src="@drawable/forward_arrow"/>
+
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1sdp"
+                android:background="@color/solid2"/>
+
+            <LinearLayout
+                android:id="@+id/iEditProfile"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="@dimen/_15sdp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="@dimen/_25sdp"
+                    android:layout_height="@dimen/_25sdp"
+                    android:src="@drawable/edit_profile"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_5sdp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/inter_medium"
+                    android:text="@string/edit_profile"
                     android:textSize="16sp" />
 
                 <ImageView
@@ -188,6 +225,7 @@
 
 
             </LinearLayout>
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_1sdp"
@@ -205,7 +243,7 @@
                 <ImageView
                     android:layout_width="@dimen/_25sdp"
                     android:layout_height="@dimen/_25sdp"
-                    android:src="@drawable/collab_svg"/>
+                    android:src="@drawable/levels_"/>
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -315,11 +353,14 @@
 
             </LinearLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1sdp"
+                android:background="@color/solid2"/>
+
 
         </LinearLayout>
 
     </ScrollView>
-
-
 
 </RelativeLayout>

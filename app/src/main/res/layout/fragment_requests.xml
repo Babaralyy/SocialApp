@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/ic_background"
+    tools:context=".ui.fragments.RequestsFragment">
+
+    <TextView
+        android:id="@+id/tv_request"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_22sdp"
+        android:gravity="center"
+        android:text="@string/requests"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:fontFamily="@font/lato"
+        android:layout_centerHorizontal="true"/>
+
+
+    <TextView
+        android:id="@+id/tv_collaborate_request"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:gravity="center"
+        android:layout_below="@+id/tv_request"
+        android:text="Collaborators"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:fontFamily="@font/lato"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_collabrate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_10sdp"
+        android:layout_below="@+id/tv_collaborate_request"
+        android:layout_above="@+id/view"/>
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/transparent"
+        android:layout_centerInParent="true"/>
+
+    <TextView
+        android:id="@+id/tv_followers_request"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:gravity="center"
+        android:layout_below="@+id/view"
+        android:text="Followers"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:fontFamily="@font/lato"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_follower"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_10sdp"
+        android:layout_below="@+id/tv_followers_request"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>

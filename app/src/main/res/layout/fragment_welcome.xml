@@ -102,10 +102,10 @@
                 android:fontFamily="@font/lato"
                 android:text="@string/or"
                 android:textColor="@color/white"
-                android:textSize="15sp" />
+                android:textSize="15sp"
+                android:visibility="gone" />
 
         </LinearLayout>
-
 
         <LinearLayout
             android:id="@+id/facebookLay"

@@ -332,7 +332,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+<!--        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constrainPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -457,6 +457,132 @@
                 app:layout_constraintTop_toBottomOf="@id/etConfirmPassword" />
 
 
+        </androidx.constraintlayout.widget.ConstraintLayout>-->
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constrainPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_15sdp"
+            app:layout_constraintTop_toBottomOf="@id/constrainEmail"
+            tools:layout_editor_absoluteX="13dp">
+
+            <ImageView
+                android:id="@+id/ivEditImagePassword"
+                android:layout_width="@dimen/_15sdp"
+                android:layout_height="@dimen/_15sdp"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:src="@drawable/ic_lock"
+                app:layout_constraintBottom_toBottomOf="@id/etPassword"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/etPassword"
+                android:contentDescription="@string/password" />
+
+            <View
+                android:id="@+id/view5"
+                android:layout_width="1dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:background="#FF000000"
+                android:backgroundTint="@color/white"
+                app:layout_constraintBottom_toBottomOf="@id/etPassword"
+                app:layout_constraintStart_toEndOf="@id/ivEditImagePassword"
+                app:layout_constraintTop_toTopOf="@id/etPassword" />
+
+            <EditText
+                android:id="@+id/etPassword"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:hint="@string/password"
+                android:inputType="textPassword"
+                android:minHeight="48dp"
+                android:padding="@dimen/_10sdp"
+                android:textColor="@color/solid2"
+                android:textColorHint="@color/solid2"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/view5"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:background="@color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/etPassword" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constrainCPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_15sdp"
+            app:layout_constraintTop_toBottomOf="@id/constrainPassword"
+            tools:layout_editor_absoluteX="13dp">
+
+            <ImageView
+                android:id="@+id/ivEditImageCPassword"
+                android:layout_width="@dimen/_15sdp"
+                android:layout_height="@dimen/_15sdp"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:src="@drawable/ic_lock"
+                app:layout_constraintBottom_toBottomOf="@id/etConfirmPassword"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/etConfirmPassword"
+                android:contentDescription="@string/confirm_password" />
+
+            <View
+                android:id="@+id/view6"
+                android:layout_width="1dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:background="#FF000000"
+                android:backgroundTint="@color/white"
+                app:layout_constraintBottom_toBottomOf="@id/etConfirmPassword"
+                app:layout_constraintStart_toEndOf="@id/ivEditImageCPassword"
+                app:layout_constraintTop_toTopOf="@id/etConfirmPassword" />
+
+            <EditText
+                android:id="@+id/etConfirmPassword"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:hint="@string/confirm_password"
+                android:inputType="textPassword"
+                android:minHeight="48dp"
+                android:padding="@dimen/_10sdp"
+                android:textColor="@color/solid2"
+                android:textColorHint="@color/solid2"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/view6"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:background="@color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/etConfirmPassword" />
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.button.MaterialButton
@@ -482,11 +608,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_5sdp"
-            android:layout_marginBottom="@dimen/_5sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnSignUp">
+            app:layout_constraintTop_toBottomOf="@+id/btnSignUp"
+            app:layout_constraintBottom_toBottomOf="parent">
 
 
             <TextView

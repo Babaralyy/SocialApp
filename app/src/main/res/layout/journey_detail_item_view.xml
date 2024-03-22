@@ -29,13 +29,26 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvDetailsImages"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_70sdp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_10sdp"
             android:layout_marginEnd="@dimen/_10sdp"
             android:layout_marginTop="@dimen/_5sdp"
+            android:minHeight="@dimen/_50sdp"
             android:src="@drawable/img"
             app:layout_constraintStart_toStartOf="@+id/tvTitle"
             app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvDetailsVideos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:minHeight="@dimen/_50sdp"
+            android:src="@drawable/img"
+            app:layout_constraintStart_toStartOf="@+id/tvTitle"
+            app:layout_constraintTop_toBottomOf="@id/rvDetailsImages" />
 
         <TextView
             android:id="@+id/tvDescription"
@@ -49,7 +62,7 @@
             android:textSize="12sp"
             app:layout_constraintEnd_toStartOf="@+id/tvDate"
             app:layout_constraintStart_toStartOf="@id/rvDetailsImages"
-            app:layout_constraintTop_toBottomOf="@id/rvDetailsImages" />
+            app:layout_constraintTop_toBottomOf="@id/rvDetailsVideos" />
 
         <View
             android:id="@+id/viewline"

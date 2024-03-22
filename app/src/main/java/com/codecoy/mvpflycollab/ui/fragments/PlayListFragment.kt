@@ -106,6 +106,9 @@ class PlayListFragment : Fragment(), PlaylistCallback {
             "Bearer " + currentUser?.token.toString(),
            currentUser?.id.toString()
         )
+        mBinding.btnBack.setOnClickListener {
+            findNavController().popBackStack()
+        }
 
     }
 

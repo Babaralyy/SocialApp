@@ -1,5 +1,6 @@
 package com.codecoy.mvpflycollab.viewmodels
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,6 +10,7 @@ import com.codecoy.mvpflycollab.datamodels.AddJourneyDetailBody
 import com.codecoy.mvpflycollab.datamodels.AddJourneyDetailResponse
 import com.codecoy.mvpflycollab.datamodels.AddJourneyResponse
 import com.codecoy.mvpflycollab.datamodels.AllJourneyResponse
+import com.codecoy.mvpflycollab.datamodels.DeleteJourneyMessage
 import com.codecoy.mvpflycollab.datamodels.JourneyDetailsResponse
 import com.codecoy.mvpflycollab.datamodels.UploadImageResponse
 import com.codecoy.mvpflycollab.repo.MvpRepository
@@ -16,6 +18,7 @@ import com.codecoy.mvpflycollab.utils.Constant.TAG
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Response
 
 class JourneyViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
@@ -37,7 +40,8 @@ class JourneyViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
     private val allJourneyResponseMutableLiveData = MutableLiveData<Response<AllJourneyResponse>>()
     val allJourneyResponseLiveData: LiveData<Response<AllJourneyResponse>> get() = allJourneyResponseMutableLiveData
 
-    private val profileImageResponseMutableLiveData = MutableLiveData<Response<UploadImageResponse>>()
+    private val profileImageResponseMutableLiveData =
+        MutableLiveData<Response<UploadImageResponse>>()
     val profileImageResponseLiveData: LiveData<Response<UploadImageResponse>> get() = profileImageResponseMutableLiveData
 
 
@@ -49,13 +53,22 @@ class JourneyViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
     val addJourneyResponseLiveData: LiveData<Response<AddJourneyResponse>> get() = addJourneyResponseMutableLiveData
 
 
-    private val journeyDetailsResponseMutableLiveData = MutableLiveData<Response<JourneyDetailsResponse>>()
-    val  journeyDetailsResponseLiveData: LiveData<Response<JourneyDetailsResponse>> get() = journeyDetailsResponseMutableLiveData
+    private val journeyDetailsResponseMutableLiveData =
+        MutableLiveData<Response<JourneyDetailsResponse>>()
+    val journeyDetailsResponseLiveData: LiveData<Response<JourneyDetailsResponse>> get() = journeyDetailsResponseMutableLiveData
 
-    private val addJourneyDetailMutableLiveData = MutableLiveData<Response<AddJourneyDetailResponse>>()
+    private val addJourneyDetailMutableLiveData =
+        MutableLiveData<Response<AddJourneyDetailResponse>>()
     val addJourneyDetailLiveData: LiveData<Response<AddJourneyDetailResponse>> get() = addJourneyDetailMutableLiveData
 
-    fun allJourneyList(token: String,userId: String) {
+    private val deleteJourneyMutableLiveData =
+        MutableLiveData<Response<DeleteJourneyMessage>>()
+    val deleteJourneyLiveData: LiveData<Response<DeleteJourneyMessage>> get() = deleteJourneyMutableLiveData
+
+    var mediaImgList: MutableList<Uri> = arrayListOf()
+    var mediaVidList: MutableList<Uri> = arrayListOf()
+
+    fun allJourneyList(token: String, userId: String) {
         viewModelScope.launch(handler) {
             _loading.value = true
             val response = mvpRepository.allJourneyList(token, userId)
@@ -71,7 +84,7 @@ class JourneyViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
         }
     }
 
-    fun uploadImage(image: MultipartBody.Part){
+    fun uploadImage(image: MultipartBody.Part) {
         viewModelScope.launch(handler) {
             _loading.value = true
             val response = mvpRepository.uploadProfileImage(image)
@@ -83,13 +96,19 @@ class JourneyViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
 
             } catch (e: Exception) {
                 imageResponseMutableLiveData.value = response
-            }finally {
+            } finally {
                 _loading.value = false
             }
         }
     }
 
-    fun addJourney(token: String, userId: String, title: String, description: String, journeyImg: String){
+    fun addJourney(
+        token: String,
+        userId: String,
+        title: String,
+        description: String,
+        journeyImg: String
+    ) {
         viewModelScope.launch(handler) {
             _loading.value = true
             val response = mvpRepository.addJourney(token, userId, title, description, journeyImg)
@@ -99,7 +118,7 @@ class JourneyViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
 
             } catch (e: Exception) {
                 addJourneyResponseMutableLiveData.value = response
-            }finally {
+            } finally {
                 _loading.value = false
             }
         }
@@ -123,19 +142,43 @@ class JourneyViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
         }
     }
 
-     fun addJourneyDetail(token: String, addJourneyDetailBody: AddJourneyDetailBody){
-         viewModelScope.launch(handler) {
-             _loading.value = true
-             val response = mvpRepository.addJourneyDetail(token, addJourneyDetailBody)
+    fun addJourneyDetail(token: String,
+                         journeyId: RequestBody,
+                         title: RequestBody,
+                         description: RequestBody,
+                         date: RequestBody,
+                         imagesPartList: MutableList<MultipartBody.Part>,
+                         videosPartList: MutableList<MultipartBody.Part>) {
+        viewModelScope.launch(handler) {
+            _loading.value = true
+            val response = mvpRepository.addJourneyDetail(token, journeyId, title, description, date, imagesPartList, videosPartList)
 
-             try {
-                 addJourneyDetailMutableLiveData.value = response
+            try {
+                addJourneyDetailMutableLiveData.value = response
 
-             } catch (e: Exception) {
-                 addJourneyDetailMutableLiveData.value = response
-             } finally {
-                 _loading.value = false
-             }
-         }
+            } catch (e: Exception) {
+                addJourneyDetailMutableLiveData.value = response
+            } finally {
+                _loading.value = false
+            }
+        }
     }
+
+    fun deleteJourney(token: String, journeyId: String) {
+        viewModelScope.launch(handler) {
+            _loading.value = true
+            val response = mvpRepository.deleteJourney(token, journeyId)
+
+            try {
+                deleteJourneyMutableLiveData.value = response
+
+            } catch (e: Exception) {
+
+                deleteJourneyMutableLiveData.value = response
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
+
 }

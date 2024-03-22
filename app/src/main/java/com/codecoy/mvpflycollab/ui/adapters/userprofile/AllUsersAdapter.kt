@@ -1,4 +1,4 @@
-package com.codecoy.mvpflycollab.ui.adapters
+package com.codecoy.mvpflycollab.ui.adapters.userprofile
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -8,6 +8,7 @@ import com.bumptech.glide.Glide
 import com.codecoy.mvpflycollab.R
 import com.codecoy.mvpflycollab.callbacks.UserFollowCallback
 import com.codecoy.mvpflycollab.databinding.UserItemViewBinding
+import com.codecoy.mvpflycollab.datamodels.AllJourneyData
 import com.codecoy.mvpflycollab.datamodels.AllUserData
 import com.codecoy.mvpflycollab.utils.Constant
 
@@ -28,7 +29,7 @@ class AllUsersAdapter(
 
         Glide
             .with(context)
-            .load(Constant.MEDIA_BASE_URL + user.profileImg)
+            .load(Constant.MEDIA_BASE_URL + user.profileImg.toString())
             .placeholder(R.drawable.img)
             .into(holder.mBinding.ivUserProfile)
 
@@ -42,6 +43,12 @@ class AllUsersAdapter(
 
     override fun getItemCount(): Int {
         return usersList.size
+    }
+
+    fun setItemList(usersList: ArrayList<AllUserData>) {
+        this.usersList.clear()
+        this.usersList.addAll(usersList)
+        notifyDataSetChanged()
     }
 
     class ViewHolder(val mBinding: UserItemViewBinding) : RecyclerView.ViewHolder(mBinding.root)

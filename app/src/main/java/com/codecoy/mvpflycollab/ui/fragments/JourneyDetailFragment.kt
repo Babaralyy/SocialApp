@@ -13,24 +13,28 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.codecoy.mvpflycollab.R
+import com.codecoy.mvpflycollab.callbacks.ImageClickCallback
 import com.codecoy.mvpflycollab.callbacks.JourneyDetailCallback
+import com.codecoy.mvpflycollab.callbacks.playlistdetailsvideo.VideoClickCallback
 import com.codecoy.mvpflycollab.databinding.AddJourneyPicBottomDialogLayBinding
 import com.codecoy.mvpflycollab.databinding.FragmentJouneyDetailBinding
 import com.codecoy.mvpflycollab.databinding.ShowImageDialogBinding
-import com.codecoy.mvpflycollab.datamodels.AddJourneyDetailBody
+import com.codecoy.mvpflycollab.databinding.ShowVideoDialogBinding
 import com.codecoy.mvpflycollab.datamodels.AddJourneyDetailData
 import com.codecoy.mvpflycollab.datamodels.AllJourneyData
-import com.codecoy.mvpflycollab.datamodels.ImageBody
-import com.codecoy.mvpflycollab.datamodels.JourneyDetailImages
 import com.codecoy.mvpflycollab.datamodels.JourneyDetailsData
 import com.codecoy.mvpflycollab.datamodels.UserLoginData
 import com.codecoy.mvpflycollab.network.ApiCall
@@ -42,25 +46,31 @@ import com.codecoy.mvpflycollab.utils.Constant.TAG
 import com.codecoy.mvpflycollab.utils.Utils
 import com.codecoy.mvpflycollab.viewmodels.JourneyViewModel
 import com.codecoy.mvpflycollab.repo.MvpRepository
+import com.codecoy.mvpflycollab.ui.adapters.journey.ShowJourneyVideoAdapter
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import java.io.File
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
 
-class JourneyDetailFragment : Fragment(), JourneyDetailCallback {
+class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallback,
+    ImageClickCallback {
 
     private lateinit var activity: MainActivity
     private lateinit var journeyDetailAdapter: JourneyDetailAdapter
     private lateinit var journeyDetailImageAdapter: JourneyDetailImageAdapter
+    private lateinit var showJourneyVideoAdapter: ShowJourneyVideoAdapter
 
     private lateinit var journeyDetailDataList: MutableList<AddJourneyDetailData>
 
+    private lateinit var videoPartList: MutableList<MultipartBody.Part>
+    private lateinit var imagePartList: MutableList<MultipartBody.Part>
 
     private lateinit var viewModel: JourneyViewModel
     private var dialog: Dialog? = null
@@ -72,6 +82,15 @@ class JourneyDetailFragment : Fragment(), JourneyDetailCallback {
     private lateinit var bottomBinding: AddJourneyPicBottomDialogLayBinding
     private lateinit var bottomSheetDialog: BottomSheetDialog
 
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        } else {
+            imagePermission()
+        }
+    }
 
     private val pickMedia =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
@@ -83,14 +102,39 @@ class JourneyDetailFragment : Fragment(), JourneyDetailCallback {
             }
         }
 
-    private val requestPermissionLauncher = registerForActivityResult(
+    private fun showSingleImage(imageUri: Uri) {
+        viewModel.mediaImgList.add(imageUri)
+        viewModel.mediaImgList.distinct()
+        journeyDetailImageAdapter = JourneyDetailImageAdapter(viewModel.mediaImgList, activity, this)
+        bottomBinding.rvJourneyDetailsImages.adapter = journeyDetailImageAdapter
+
+    }
+
+    private val requestVidPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (isGranted) {
-            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            pickVidMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly))
         } else {
-            imagePermission()
+            videoPermission()
         }
+    }
+
+    private val pickVidMedia =
+        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            // Callback is invoked after the user selects a media item or closes the photo picker.
+            if (uri != null) {
+                showSingleVideo(uri)
+            } else {
+                Toast.makeText(activity, "No media selected", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+    private fun showSingleVideo(uri: Uri) {
+        viewModel.mediaVidList.add(uri)
+        viewModel.mediaVidList.distinct()
+        showJourneyVideoAdapter = ShowJourneyVideoAdapter(viewModel.mediaVidList, activity, this)
+        bottomBinding.rvMediaVideo.adapter = showJourneyVideoAdapter
     }
 
     private lateinit var mBinding: FragmentJouneyDetailBinding
@@ -106,6 +150,10 @@ class JourneyDetailFragment : Fragment(), JourneyDetailCallback {
     }
 
     private fun inIt() {
+
+        imagePartList = arrayListOf()
+        videoPartList = arrayListOf()
+
         dialog = Constant.getDialog(activity)
         journeyDetailDataList = arrayListOf()
         currentUser = Utils.getUserFromSharedPreferences(activity)
@@ -141,8 +189,12 @@ class JourneyDetailFragment : Fragment(), JourneyDetailCallback {
         bottomSheetDialog.setContentView(bottomBinding.root)
 
         bottomBinding.rvJourneyDetailsImages.layoutManager =
-            LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
+            LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, true)
         bottomBinding.rvJourneyDetailsImages.setHasFixedSize(true)
+
+        bottomBinding.rvMediaVideo.layoutManager =
+            LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, true)
+        bottomBinding.rvMediaVideo.setHasFixedSize(true)
     }
 
 
@@ -158,31 +210,6 @@ class JourneyDetailFragment : Fragment(), JourneyDetailCallback {
                 dialog?.show()
             } else {
                 dialog?.dismiss()
-            }
-        }
-
-        viewModel.imageResponseLiveData.observe(this) { response ->
-            if (response.code() == 200) {
-                val imageData = response.body()
-                if (imageData != null && imageData.success == true && imageData.response != null) {
-
-                    viewModel.imagesList.add(imageData.response.toString())
-
-                    viewModel.imagesList = viewModel.imagesList.distinct().toMutableList()
-
-                    journeyDetailImageAdapter =
-                        JourneyDetailImageAdapter(viewModel.imagesList, activity)
-                    bottomBinding.rvJourneyDetailsImages.adapter = journeyDetailImageAdapter
-
-                } else {
-
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
-                }
-            } else if (response.code() == 401) {
-
-            } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -257,6 +284,10 @@ class JourneyDetailFragment : Fragment(), JourneyDetailCallback {
 
     private fun showAddJourneyImageBottomDialog() {
 
+        bottomBinding.tvMediaVideo.setOnClickListener {
+            videoPermission()
+        }
+
         bottomBinding.btnAddJourneyDetails.setOnClickListener {
             checkBottomCredentials(bottomBinding)
         }
@@ -271,7 +302,34 @@ class JourneyDetailFragment : Fragment(), JourneyDetailCallback {
         bottomSheetDialog.show()
     }
 
+    private fun videoPermission() {
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // If Android version is 13 or above
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.READ_MEDIA_IMAGES
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                requestVidPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES)
+            } else {
+                pickVidMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly))
+            }
+        } else {
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                Toast.makeText(activity, "Permission not granted", Toast.LENGTH_SHORT).show()
+                // Request the permission
+                requestVidPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+
+            } else {
+                pickVidMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly))
+            }
+        }
+    }
     private fun showDatePickerDialog(bottomBinding: AddJourneyPicBottomDialogLayBinding) {
         val datePickerDialog = DatePickerDialog(
             activity,
@@ -293,7 +351,7 @@ class JourneyDetailFragment : Fragment(), JourneyDetailCallback {
     }
 
     private fun formatDate(date: Date): String {
-        val dateFormat = "dd/MM/yyyy"
+        val dateFormat = "yyyy-MM-dd"
         val sdf = java.text.SimpleDateFormat(dateFormat, Locale.getDefault())
         return sdf.format(date)
     }
@@ -317,6 +375,12 @@ class JourneyDetailFragment : Fragment(), JourneyDetailCallback {
             Toast.makeText(activity, "Please select date", Toast.LENGTH_SHORT).show()
             return
         }
+
+        if (viewModel.mediaImgList.isEmpty() && viewModel.mediaVidList.isEmpty()){
+            Toast.makeText(activity, "Please add media", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         if (eventName.isNotEmpty() && eventDescription.isNotEmpty() && eventDate.isNotEmpty()) {
             addNewJourneyDetail(eventName, eventDescription, eventDate)
         }
@@ -328,28 +392,57 @@ class JourneyDetailFragment : Fragment(), JourneyDetailCallback {
         eventDate: String
     ) {
 
-        Log.i(TAG, "addNewJourneyDetail:: size ${viewModel.imagesList.size}")
+        imagePartList.clear()
+
+        for (item in viewModel.mediaImgList) {
+
+            Utils.getRealPathFromImgURI(activity, item)
+                .let {
+                    Log.i(TAG, "mediaImgList:: getRealPathFromURI $it")
+
+                    Utils.getFileFromPath(it)?.let { file ->
+
+                        Log.i(TAG, "mediaImgList:: getFileFromPath $file")
+
+                        val part = Utils.getPartFromFile("image/*", "img_url[]", file)
 
 
-        val detailsImages = arrayListOf<ImageBody>()
+                        Log.i(TAG, "mediaImgList:: getPartFromFile $part")
+
+                        imagePartList.add(part)
+                    }
+                }
+        }
+        videoPartList.clear()
+
+        for (item in viewModel.mediaVidList) {
+
+            Utils.getRealPathFromVidURI(activity, item)
+                .let {
+                    Log.i(TAG, "mediaVidList:: getRealPathFromURI $it")
+
+                    Utils.getFileFromPath(it)?.let { file ->
+
+                        Log.i(TAG, "mediaVidList:: getFileFromPath $file")
+
+                        val part = Utils.getPartFromFile("video/*", "video_url[]", file)
 
 
-        detailsImages.clear()
+                        Log.i(TAG, "mediaVidList:: getPartFromFile $part")
 
-        for(item in  viewModel.imagesList){
-            detailsImages.add(ImageBody(item))
+                        videoPartList.add(part)
+                    }
+                }
         }
 
-        val addJourneyDetail = AddJourneyDetailBody(
-            allJourneyData?.id,
-            eventName,
-            eventDescription,
-            eventDate,
-            detailsImages
-        )
-
         viewModel.addJourneyDetail(
-            "Bearer " + currentUser?.token.toString(), addJourneyDetail
+            "Bearer " + currentUser?.token.toString(),
+            Utils.createTextRequestBody(allJourneyData?.id.toString()),
+            Utils.createTextRequestBody(eventName),
+            Utils.createTextRequestBody(eventDescription),
+            Utils.createTextRequestBody(eventDate),
+            imagePartList,
+            videoPartList
         )
     }
 
@@ -382,38 +475,59 @@ class JourneyDetailFragment : Fragment(), JourneyDetailCallback {
         }
     }
 
-    private fun showSingleImage(imageUri: Uri) {
 
-        val file = File(Constant.getRealPathFromURI(activity,imageUri))
-        val requestFile = RequestBody.create("image/*".toMediaTypeOrNull(), file)
-        val imagePart = MultipartBody.Part.createFormData("img", file.name, requestFile)
-
-        viewModel.uploadImage(imagePart)
-
-    }
 
     private fun setUpDetailData(journeyDetailsData: ArrayList<JourneyDetailsData>) {
+
+        if (journeyDetailsData.isEmpty()) {
+            mBinding.tvNoDataFound.visibility = View.VISIBLE
+        } else {
+            mBinding.tvNoDataFound.visibility = View.GONE
+        }
+
         journeyDetailAdapter = JourneyDetailAdapter(journeyDetailsData, activity, this)
         mBinding.rvJourneyDetail.adapter = journeyDetailAdapter
     }
 
-    override fun onImgClick(imageData: String) {
-        showImageDialog(imageData)
+    override fun onImageClick(imgPath: Uri) {
+//        showImageDialog(imgPath)
+    }
+    override fun onImgRemove(position: Int) {
+        viewModel.mediaImgList.removeAt(position)
+        journeyDetailImageAdapter.notifyDataSetChanged()
+    }
+    override fun onVideoClick(videoPath: Uri) {
+
+    }
+    override fun onVidRemove(position: Int) {
+        viewModel.mediaVidList.removeAt(position)
+        showJourneyVideoAdapter.notifyDataSetChanged()
     }
 
-    private fun showImageDialog(imageUrl: String? = null) {
+    override fun onImgClick(imageData: String) {
+        showImageDialog(imageUrl = imageData)
+    }
+
+    override fun onVidClick(imageData: String) {
+        showVideoDialog(videoUrl = imageData)
+    }
+
+    private fun showImageDialog(image: Uri? = null, imageUrl: String? = null) {
 
         val imageBinding = ShowImageDialogBinding.inflate(layoutInflater)
 
         val dialog = Dialog(activity)
         dialog.setContentView(imageBinding.root)
-        dialog.setCancelable(true)
+        dialog.setCancelable(false)
 
+        // Set window flags to make the dialog full screen
         val window = dialog.window
-        val height =
-            (activity.resources.displayMetrics.widthPixels * 01.4).toInt() // 80% of screen width
-        window?.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, height)
+        window?.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT)
 
+
+        imageBinding.btnClose.setOnClickListener {
+            dialog.dismiss()
+        }
 
         if (imageUrl != null) {
             Glide
@@ -421,15 +535,65 @@ class JourneyDetailFragment : Fragment(), JourneyDetailCallback {
                 .load(imageUrl)
                 .placeholder(R.drawable.img)
                 .into(imageBinding.imageView)
+        } else {
+            imageBinding.imageView.setImageURI(image)
         }
 
         dialog.show()
+    }
+
+    private fun showVideoDialog(videoPath: Uri? = null, videoUrl: String? = null) {
+
+        val videoBinding = ShowVideoDialogBinding.inflate(layoutInflater)
+
+        val dialog = Dialog(activity)
+        dialog.setContentView(videoBinding.root)
+        dialog.setCancelable(false)
+
+        // Set window flags to make the dialog full screen
+        val window = dialog.window
+        window?.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT)
+
+        val player = ExoPlayer.Builder(activity).build()
+        videoBinding.videoPlayer.player = player
+
+        videoBinding.btnClose.setOnClickListener {
+            player.release()
+            dialog.dismiss()
+        }
+
+        if (videoPath != null) {
+            videoBinding.videoView.visibility = View.VISIBLE
+            videoBinding.videoView.setVideoURI(videoPath)
+        } else {
+
+            videoBinding.videoPlayer.visibility = View.VISIBLE
+
+
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val mediaItem = withContext(Dispatchers.IO) {
+                        MediaItem.fromUri(videoUrl.toString())
+                    }
+                    withContext(Dispatchers.Main) {
+                        player.setMediaItem(mediaItem)
+                        player.repeatMode = Player.REPEAT_MODE_ONE
+                        player.prepare()
+                        player.play()
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error preparing video playback: ${e.message}")
+                }
+            }
+        }
+
+        dialog.show()
+
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         (context as MainActivity).also { activity = it }
     }
-
 
 }

@@ -6,18 +6,18 @@
         android:icon="@drawable/home_outline" />
     <item
         android:id="@+id/navigation_calendar"
-        android:title="@string/feed"
+        android:title="@string/activity"
         android:icon="@drawable/calendar_outline" />
     <item
         android:id="@+id/navigation_add_post"
         android:title="@string/add_post"
         android:icon="@drawable/make_post" />
     <item
-        android:id="@+id/navigation_save_post"
-        android:title="@string/save_post"
-        android:icon="@drawable/save_outline" />
+        android:id="@+id/navigation_requests"
+        android:title="@string/requests"
+        android:icon="@drawable/requests" />
     <item
         android:id="@+id/navigation_notification"
-        android:title="@string/profile"
+        android:title="@string/notification"
         android:icon="@drawable/not_outline" />
 </menu>

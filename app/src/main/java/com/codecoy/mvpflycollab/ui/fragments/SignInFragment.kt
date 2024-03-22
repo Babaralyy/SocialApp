@@ -59,6 +59,10 @@ class SignInFragment : Fragment() {
     }
     private fun clickListeners() {
 
+        mBinding.tvForgot.setOnClickListener {
+            Toast.makeText(activity, "Clicked", Toast.LENGTH_SHORT).show()
+        }
+
         mBinding.btnSignIn.setOnClickListener {
             checkCredentials()
         }
@@ -131,7 +135,7 @@ class SignInFragment : Fragment() {
                             }
 
                             val action =
-                                SignInFragmentDirections.actionSignInFragmentToInterestsFragment()
+                                SignInFragmentDirections.actionSignInFragmentToMainFragment()
                             findNavController().navigate(action)
                         } catch (e: Exception) {
                             Log.i(Constant.TAG, "navControllerException:: ${e.message}")

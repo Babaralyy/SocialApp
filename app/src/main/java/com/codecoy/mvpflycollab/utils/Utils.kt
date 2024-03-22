@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
 import android.provider.MediaStore
+import com.codecoy.mvpflycollab.datamodels.AllActivitiesData
+import com.codecoy.mvpflycollab.datamodels.CalendarStoryData
 import com.codecoy.mvpflycollab.datamodels.UserLoginData
 import com.google.gson.Gson
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -21,6 +23,11 @@ object Utils {
 
     private const val PREF_NAME = "userData"
     private const val KEY_USER_DATA = "uData"
+
+    var storyDetail: CalendarStoryData?= null
+    var allActivitiesData: AllActivitiesData?= null
+    var videoUrl: String?= null
+    var isFromProfile: Boolean= false
 
     private lateinit var sharedPreferences: SharedPreferences
 
@@ -114,6 +121,13 @@ object Utils {
         val gson = Gson()
         val json = sharedPreferences.getString(KEY_USER_DATA, null)
         return gson.fromJson(json, UserLoginData::class.java)
+    }
+
+    fun clearSharedPreferences(context: Context) {
+        val sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.clear()
+        editor.apply()
     }
 
 }

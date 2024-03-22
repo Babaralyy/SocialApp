@@ -26,10 +26,20 @@ class ShowActivityVideoAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val video = mediaList[position]
-        holder.mBinding.videoView.setVideoURI(video)
 
-        holder.itemView.setOnClickListener {
+        val videoUri = Uri.parse(video.toString())
+        holder.mBinding.videoView.setVideoURI(videoUri)
+        holder.mBinding.videoView.start()
+
+        holder.mBinding.videoView.setOnPreparedListener { mediaPlayer ->
+            mediaPlayer.setVolume(0f, 0f)
+        }
+
+        holder.mBinding.videoView.setOnClickListener {
             videoClickCallback.onVideoClick(video)
+        }
+        holder.mBinding.ivRemove.setOnClickListener {
+            videoClickCallback.onVidRemove(position)
         }
 
     }

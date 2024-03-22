@@ -32,12 +32,12 @@
             app:poly_vertices="5" />
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/tv_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_5sdp"
             android:fontFamily="@font/lato"
-            android:text="@string/waqas_schedule"
+            android:text="@string/dummy"
             android:textColor="@color/white"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="@+id/ivAboutProfileImage"
@@ -55,17 +55,17 @@
             android:textSize="14sp"
             android:fontFamily="@font/lato"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_name" />
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/tv_about"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_15sdp"
             android:layout_marginTop="@dimen/_5sdp"
             android:layout_marginEnd="@dimen/_15sdp"
             android:fontFamily="@font/poppins"
-            android:text="@string/lorem_ipsum_is_simply_dummy_text_of_the_printing_and_typesetting_industry_lorem_ipsum_has_been_the_industry_s_standard_dummy_text_ever_since_the_1500s_when_an_unknown_printer_took_a_galley_of_type_and_scrambled_it_to_make_a_type_specimen_book_it_has_survived_not_only_five_centuries_but_also_the_leap_into_electronic_typesetting_remaining_essentially_unchanged_it_was_popularised_in_the_1960s_with_the_release_of_letraset_sheets_containing_lorem_ipsum_passages_and_more_recently_with_desktop"
+            android:text="@string/dummy"
             android:textColor="@color/black2"
             android:textSize="12sp"
             android:lineSpacingExtra="@dimen/_2sdp"
@@ -83,7 +83,7 @@
             android:background="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView3" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_about" />
 
         <TextView
             android:id="@+id/textView4"
@@ -91,7 +91,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_10sdp"
             android:drawablePadding="@dimen/_5sdp"
-            android:text="@string/www_sitename_com"
+            android:text="@string/dummy"
             android:textColor="@color/white"
             android:textSize="12sp"
             android:fontFamily="@font/poppins"
@@ -145,6 +145,7 @@
             app:strokeWidth="2dp" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_add_activity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_20sdp"

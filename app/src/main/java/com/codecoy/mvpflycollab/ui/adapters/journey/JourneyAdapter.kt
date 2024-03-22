@@ -9,6 +9,7 @@ import com.codecoy.mvpflycollab.R
 import com.codecoy.mvpflycollab.callbacks.JourneyCallback
 import com.codecoy.mvpflycollab.databinding.JourneyItemViewBinding
 import com.codecoy.mvpflycollab.datamodels.AllJourneyData
+import com.codecoy.mvpflycollab.datamodels.UserPostsData
 import com.codecoy.mvpflycollab.utils.Constant
 
 class JourneyAdapter(
@@ -32,14 +33,24 @@ class JourneyAdapter(
             .into(holder.mBinding.ivFolder)
 
         holder.mBinding.tvName.text = journeyData.title
+        holder.mBinding.tvDes.text = journeyData.description
 
-        holder.itemView.setOnClickListener {
+        holder.mBinding.ivView.setOnClickListener {
             journeyCallback.onJourneyClick(journeyData)
+        }
+        holder.mBinding.ivDel.setOnClickListener {
+            journeyCallback.onJourneyDeleteClick(journeyData)
         }
     }
 
     override fun getItemCount(): Int {
         return journeyList.size
+    }
+
+    fun setItemList(userJourneyData: ArrayList<AllJourneyData>) {
+        journeyList.clear()
+        journeyList.addAll(userJourneyData)
+        notifyDataSetChanged()
     }
 
     class ViewHolder(val mBinding: JourneyItemViewBinding) : RecyclerView.ViewHolder(mBinding.root)

@@ -1,12 +1,14 @@
 package com.codecoy.mvpflycollab.repo
 
-import com.codecoy.mvpflycollab.datamodels.AddActivityBody
 import com.codecoy.mvpflycollab.datamodels.AddJourneyDetailBody
+import com.codecoy.mvpflycollab.datamodels.UpdateProfileBody
 import com.codecoy.mvpflycollab.datamodels.UserLoginBody
 import com.codecoy.mvpflycollab.datamodels.UserRegisterBody
 import com.codecoy.mvpflycollab.network.ApiCall
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import retrofit2.http.Body
+import retrofit2.http.Header
 
 
 class MvpRepository(private val apiCall: ApiCall) {
@@ -27,13 +29,25 @@ class MvpRepository(private val apiCall: ApiCall) {
         journeyImg: String
     ) = apiCall.addJourney(token, userId, title, description, journeyImg)
 
+    suspend fun deleteJourney(token: String, journeyId: String) =
+        apiCall.deleteJourney(token, journeyId)
+
     suspend fun allJourneyDetailsList(token: String, journeyId: String) =
         apiCall.allJourneyDetailsList(token, journeyId)
 
-    suspend fun addJourneyDetail(token: String, addJourneyDetailBody: AddJourneyDetailBody) =
-        apiCall.addJourneyDetail(token, addJourneyDetailBody)
+    suspend fun addJourneyDetail(
+        token: String,
+        journeyId: RequestBody,
+        title: RequestBody,
+        description: RequestBody,
+        date: RequestBody,
+        imagesPartList: MutableList<MultipartBody.Part>,
+        videosPartList: MutableList<MultipartBody.Part>
+    ) =
+        apiCall.addJourneyDetail(token, journeyId, title, description, date, imagesPartList, videosPartList)
 
     suspend fun allPlayList(token: String, userId: String) = apiCall.allPlayList(token, userId)
+
     suspend fun addPlaylist(
         token: String,
         userId: String,
@@ -52,9 +66,10 @@ class MvpRepository(private val apiCall: ApiCall) {
         title: RequestBody,
         description: RequestBody,
         date: RequestBody,
-        videosPartList: MutableList<MultipartBody.Part>
+        videosPartList: MutableList<MultipartBody.Part>,
+        imagesPartList: MutableList<MultipartBody.Part>
     ) =
-        apiCall.addPlaylistDetails(token, playlistId, title, description, date, videosPartList)
+        apiCall.addPlaylistDetails(token, playlistId, title, description, date, videosPartList, imagesPartList)
 
     suspend fun allActivities(token: String, userId: String, activityDate: String) =
         apiCall.allActivities(token, userId, activityDate)
@@ -83,8 +98,10 @@ class MvpRepository(private val apiCall: ApiCall) {
 
     suspend fun allActivitiesDates(token: String, userId: String) =
         apiCall.allActivitiesDates(token, userId)
-    suspend fun allUsers(token: String) =
-        apiCall.allUsers(token)
+
+    suspend fun allUsers(token: String, userId: String) =
+        apiCall.allUsers(token, userId)
+
     suspend fun followUser(
         token: String,
         userId: String,
@@ -95,4 +112,56 @@ class MvpRepository(private val apiCall: ApiCall) {
 
     suspend fun allUserPosts(token: String, userId: String) =
         apiCall.allUserPosts(token, userId)
+
+    suspend fun userProfile(token: String, userId: String) =
+        apiCall.userProfile(token, userId)
+
+    suspend fun updateProfile(token: String, updateProfileBody: UpdateProfileBody) =
+        apiCall.updateProfile(token, updateProfileBody)
+
+    suspend fun addNewPost(
+        token: String,
+        userId: RequestBody,
+        category: RequestBody,
+        subcategory: RequestBody,
+        postDesc: RequestBody,
+        postHashtag: RequestBody,
+        lat: RequestBody,
+        long: RequestBody,
+        imagesPartList: MutableList<MultipartBody.Part>,
+    ) = apiCall.addNewPost(
+        token,
+        userId,
+        category,
+        subcategory,
+        postDesc,
+        postHashtag,
+        lat,
+        long,
+        imagesPartList,
+    )
+
+    suspend fun likePost(
+        token: String,
+        userId: String,
+        postId: String,
+        date: String,
+        time: String
+    ) = apiCall.likePost(token, userId, postId, date, time)
+
+    suspend fun allCommentsAgainstPost(token: String, postId: String) =
+        apiCall.allCommentsAgainstPost(token, postId)
+
+    suspend fun addComment(
+        token: String,
+        userId: String,
+        postId: String,
+        commentTitle: String
+    ) = apiCall.addComment(token, userId, postId, commentTitle)
+
+    suspend fun allStories(token: String, userId: String) =
+        apiCall.allStories(token, userId)
+
+    suspend fun userFollowing(token: String, userId: String) =
+        apiCall.userFollowing(token, userId)
 }

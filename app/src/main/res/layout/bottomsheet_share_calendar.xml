@@ -37,7 +37,8 @@
                 android:layout_marginTop="@dimen/_1sdp"
                 android:layout_marginEnd="@dimen/_30sdp"
                 android:layout_alignParentEnd="true"
-                android:src="@drawable/ic_share_black"/>
+                android:src="@drawable/ic_share_black"
+                android:visibility="invisible"/>
 
         </RelativeLayout>
 
@@ -126,7 +127,8 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_media_image"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_55sdp"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/_55sdp"
             android:layout_marginStart="@dimen/_15sdp"
             android:layout_marginTop="@dimen/_10sdp"
             android:layout_marginEnd="@dimen/_15sdp" />
@@ -134,7 +136,8 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_media_video"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_55sdp"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/_55sdp"
             android:layout_marginStart="@dimen/_15sdp"
             android:layout_marginTop="@dimen/_10sdp"
             android:layout_marginBottom="@dimen/_15sdp"

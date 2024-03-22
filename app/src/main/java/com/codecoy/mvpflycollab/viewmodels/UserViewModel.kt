@@ -7,6 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.codecoy.mvpflycollab.datamodels.AllJourneyResponse
 import com.codecoy.mvpflycollab.datamodels.AllUserResponse
 import com.codecoy.mvpflycollab.datamodels.FollowUserResponse
+import com.codecoy.mvpflycollab.datamodels.UserFollowingResponse
+import com.codecoy.mvpflycollab.datamodels.UserPostsResponse
+import com.codecoy.mvpflycollab.datamodels.UserProfileResponse
 import com.codecoy.mvpflycollab.repo.MvpRepository
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
@@ -31,10 +34,16 @@ class UserViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
     private val followUsersResponseMutableLiveData = MutableLiveData<Response<FollowUserResponse>>()
     val followUsersResponseLiveData: LiveData<Response<FollowUserResponse>> get() = followUsersResponseMutableLiveData
 
-    fun allUsers(token: String) {
+    private val usersProfileResponseMutableLiveData = MutableLiveData<Response<UserProfileResponse>>()
+    val usersProfileResponseLiveData: LiveData<Response<UserProfileResponse>> get() = usersProfileResponseMutableLiveData
+
+    private val usersFollowingResponseMutableLiveData = MutableLiveData<Response<UserFollowingResponse>>()
+    val usersFollowingProfileResponseLiveData: LiveData<Response<UserFollowingResponse>> get() = usersFollowingResponseMutableLiveData
+
+    fun allUsers(token: String, userId: String) {
         viewModelScope.launch(handler) {
             _loading.value = true
-            val response = mvpRepository.allUsers(token)
+            val response = mvpRepository.allUsers(token, userId)
 
             try {
                 allUsersResponseMutableLiveData.value = response
@@ -63,6 +72,39 @@ class UserViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
 
             } catch (e: Exception) {
                 followUsersResponseMutableLiveData.value = response
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
+
+    fun userProfile(token: String, userId: String) {
+        viewModelScope.launch(handler) {
+            _loading.value = true
+            val response = mvpRepository.userProfile(token, userId)
+
+            try {
+                usersProfileResponseMutableLiveData.value = response
+
+            } catch (e: Exception) {
+                usersProfileResponseMutableLiveData.value = response
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
+
+
+    fun userFollowing(token: String, userId: String) {
+        viewModelScope.launch(handler) {
+            _loading.value = true
+            val response = mvpRepository.userFollowing(token, userId)
+
+            try {
+                usersFollowingResponseMutableLiveData.value = response
+
+            } catch (e: Exception) {
+                usersFollowingResponseMutableLiveData.value = response
             } finally {
                 _loading.value = false
             }

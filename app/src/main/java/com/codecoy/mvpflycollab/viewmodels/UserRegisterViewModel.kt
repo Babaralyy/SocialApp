@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.codecoy.mvpflycollab.datamodels.UpdateProfileBody
+import com.codecoy.mvpflycollab.datamodels.UpdateProfileResponse
 import com.codecoy.mvpflycollab.datamodels.UploadImageResponse
 import com.codecoy.mvpflycollab.datamodels.UserRegisterBody
 import com.codecoy.mvpflycollab.datamodels.UserRegisterResponse
@@ -36,6 +38,9 @@ class UserRegisterViewModel(private val mvpRepository: MvpRepository) : ViewMode
     val profileImageResponseLiveData: LiveData<Response<UploadImageResponse>> get()
     = profileImageResponseMutableLiveData
 
+    private val updateProfileResponseMutableLiveData = MutableLiveData<Response<UpdateProfileResponse>>()
+    val updateProfileResponseLiveData: LiveData<Response<UpdateProfileResponse>> get() = updateProfileResponseMutableLiveData
+
 
     fun uploadProfileImage(image: MultipartBody.Part){
         viewModelScope.launch(handler) {
@@ -65,6 +70,22 @@ class UserRegisterViewModel(private val mvpRepository: MvpRepository) : ViewMode
             } catch (e: Exception) {
                 _loading.value = false
                 userRegisterResponseMutableLiveData.value = response
+            }
+        }
+    }
+
+    fun updateProfile(token: String,  updateProfileBody: UpdateProfileBody) {
+        viewModelScope.launch(handler) {
+            _loading.value = true
+            val response = mvpRepository.updateProfile(token, updateProfileBody)
+
+            try {
+                _loading.value = false
+                updateProfileResponseMutableLiveData.value = response
+
+            } catch (e: Exception) {
+                _loading.value = false
+                updateProfileResponseMutableLiveData.value = response
             }
         }
     }

@@ -25,8 +25,11 @@ class ShowActivityImageAdapter(
         val img = mediaList[position]
         holder.mBinding.ivActivityImg.setImageURI(img)
 
-        holder.itemView.setOnClickListener {
+        holder.mBinding.ivActivityImg.setOnClickListener {
             imageClickCallback.onImageClick(img)
+        }
+        holder.mBinding.ivRemove.setOnClickListener {
+            imageClickCallback.onImgRemove(position)
         }
     }
 

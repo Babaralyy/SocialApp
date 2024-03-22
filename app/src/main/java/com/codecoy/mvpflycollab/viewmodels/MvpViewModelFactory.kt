@@ -34,6 +34,9 @@ class MvpViewModelFactory(private val mvpRepository: MvpRepository) :
             modelClass.isAssignableFrom(PostsViewModel::class.java) -> PostsViewModel(
                 mvpRepository
             )
+            modelClass.isAssignableFrom(CommentsViewModel::class.java) -> CommentsViewModel(
+                mvpRepository
+            )
             else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         } as T
     }

@@ -15,7 +15,8 @@
         android:layout_marginEnd="@dimen/_15sdp"
         android:src="@drawable/ic_inbox"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="invisible"/>
 
     <ImageView
         android:layout_width="@dimen/_25sdp"
@@ -24,10 +25,11 @@
         android:src="@drawable/ic_calendar"
         app:layout_constraintBottom_toBottomOf="@+id/ivComment"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/ivComment" />
+        app:layout_constraintTop_toTopOf="@+id/ivComment"
+        android:visibility="invisible"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layoutprofilefragment"
+        android:id="@+id/top_profile_lay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_15sdp"
@@ -37,7 +39,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/ivprofilefragmentImage"
+            android:id="@+id/iv_profile"
             android:layout_width="@dimen/_50sdp"
             android:layout_height="@dimen/_50sdp"
             android:layout_marginStart="@dimen/_6sdp"
@@ -50,20 +52,20 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tvprofilefragmentName"
+            android:id="@+id/tv_profile_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_5sdp"
-            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_marginTop="@dimen/_25sdp"
             android:fontFamily="@font/lato_bold"
-            android:text="joshua_l"
+            android:text="@string/dummy"
             android:textColor="@color/white"
             android:textSize="16sp"
-            app:layout_constraintStart_toEndOf="@id/ivprofilefragmentImage"
+            app:layout_constraintStart_toEndOf="@id/iv_profile"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/profilefragmentlocation"
+            android:id="@+id/tv_profile_location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_5sdp"
@@ -71,137 +73,217 @@
             android:drawablePadding="@dimen/_5sdp"
             android:fontFamily="@font/lato"
             android:gravity="center_horizontal"
-            android:text="San Fransico,CA"
+            android:text="@string/dummy"
             android:textColor="@color/white"
             android:textSize="12sp"
             app:drawableStartCompat="@drawable/ic_location"
-            app:layout_constraintStart_toEndOf="@id/ivprofilefragmentImage"
-            app:layout_constraintTop_toBottomOf="@id/tvprofilefragmentName" />
+            app:layout_constraintStart_toEndOf="@id/iv_profile"
+            app:layout_constraintTop_toBottomOf="@id/tv_profile_name"
+            android:visibility="invisible"/>
 
         <View
             android:id="@+id/viewline"
             android:layout_width="0dp"
             android:layout_height="1dp"
-            android:layout_marginTop="@dimen/_2sdp"
+            android:layout_marginTop="@dimen/_10sdp"
             android:background="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/ivprofilefragmentImage"
-            app:layout_constraintTop_toBottomOf="@id/ivprofilefragmentImage" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_profile" />
 
         <LinearLayout
-            android:id="@+id/linearlayoutprofilefragment"
+            android:id="@+id/profile_lay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_60sdp"
             android:layout_marginTop="@dimen/_10sdp"
-            android:weightSum="3"
+            android:weightSum="4"
+            android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/ivprofilefragmentImage"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/viewline">
 
-            <TextView
-                android:layout_width="0dp"
+            <LinearLayout
+                android:id="@+id/journey_lay"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="56"
-                android:textColor="@color/white"
-                android:textSize="@dimen/_14sdp" />
+                android:gravity="center"
+                android:orientation="vertical">
 
-            <TextView
-                android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/tv_journey_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dummy"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_14sdp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/journey_small"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_8sdp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/playlist_lay"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="14"
-                android:textColor="@color/white"
-                android:textSize="@dimen/_14sdp" />
+                android:gravity="center"
+                android:orientation="vertical">
 
-            <TextView
-                android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/tv_playlist_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dummy"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_14sdp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/playlist_small"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_8sdp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/following_lay"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="136"
-                android:textAlignment="center"
-                android:textColor="@color/white"
-                android:textSize="@dimen/_14sdp" />
+                android:gravity="center"
+                android:orientation="vertical">
 
+                <TextView
+                    android:id="@+id/tv_followers_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dummy"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_14sdp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/following"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_8sdp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/collaborate_lay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_collaborators_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dummy"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_14sdp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/collaborating"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_8sdp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/saved_lay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_saved_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dummy"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_14sdp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/saved"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_8sdp" />
+
+            </LinearLayout>
 
         </LinearLayout>
-
-
-        <LinearLayout
-            android:id="@+id/linearlayoutprofilefragment2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_60sdp"
-            android:layout_marginTop="@dimen/_3sdp"
-            android:weightSum="3"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/linearlayoutprofilefragment">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Journey"
-                android:textColor="@color/white"
-                android:textSize="@dimen/_8sdp" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Playlist"
-                android:textColor="@color/white"
-                android:textSize="@dimen/_8sdp" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Collaborators"
-                android:textAlignment="center"
-                android:textColor="@color/white"
-                android:textSize="@dimen/_8sdp" />
-
-
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/tvsharedcontent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_20sdp"
-            android:fontFamily="@font/lato"
-            android:text="Shared Content"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/linearlayoutprofilefragment2" />
-
-        <View
-            android:id="@+id/viewline2"
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:background="@color/white"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvsharedcontent" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/tv_suggested"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginStart="@dimen/_15sdp"
+        android:fontFamily="@font/lato"
+        android:text="@string/suggested_people"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@+id/top_profile_lay"
+        app:layout_constraintBottom_toTopOf="@+id/rv_users"
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_users"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_15sdp"
-        android:layout_marginTop="@dimen/_5sdp"
         android:layout_marginEnd="@dimen/_15sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_5sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layoutprofilefragment" />
+        app:layout_constraintTop_toBottomOf="@id/tv_suggested"
+        app:layout_constraintBottom_toTopOf="@+id/tv_shared_content"/>
+
+
+    <TextView
+        android:id="@+id/tv_shared_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_marginStart="@dimen/_15sdp"
+        android:fontFamily="@font/lato"
+        android:text="@string/shared_content"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@+id/rv_users"
+        app:layout_constraintBottom_toTopOf="@id/view_line_2"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <View
+        android:id="@+id/view_line_2"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_marginStart="@dimen/_15sdp"
+        android:layout_marginEnd="@dimen/_15sdp"
+        android:background="@color/white"
+        app:layout_constraintTop_toBottomOf="@+id/tv_shared_content"
+        app:layout_constraintBottom_toTopOf="@id/rv_user_posts"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_user_posts"
@@ -210,7 +292,7 @@
         android:layout_margin="@dimen/_15sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rv_users"
+        app:layout_constraintTop_toBottomOf="@id/view_line_2"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

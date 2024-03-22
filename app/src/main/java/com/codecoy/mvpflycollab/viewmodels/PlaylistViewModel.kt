@@ -54,7 +54,7 @@ class PlaylistViewModel(private val mvpRepository: MvpRepository) : ViewModel() 
     var selectedImage: String? = null
     var selectedVideo: String? = null
 
-    var imagesList: MutableList<String> = arrayListOf()
+    var imagesList: MutableList<Uri> = arrayListOf()
     var videoList: MutableList<Uri> = arrayListOf()
 
 
@@ -142,10 +142,10 @@ class PlaylistViewModel(private val mvpRepository: MvpRepository) : ViewModel() 
         }
     }
 
-     fun addPlaylistDetails(token: String, playlistId: RequestBody, title: RequestBody, description: RequestBody, date: RequestBody, videosPartList: MutableList<MultipartBody.Part>){
+     fun addPlaylistDetails(token: String, playlistId: RequestBody, title: RequestBody, description: RequestBody, date: RequestBody, videosPartList: MutableList<MultipartBody.Part>, imagesPartList: MutableList<MultipartBody.Part>){
          viewModelScope.launch(handler) {
              _loading.value = true
-             val response = mvpRepository.addPlaylistDetails(token, playlistId, title, description, date, videosPartList)
+             val response = mvpRepository.addPlaylistDetails(token, playlistId, title, description, date, videosPartList, imagesPartList)
 
              try {
                  Log.i(TAG, "addNewPlaylistDetail:: ${response.body()}")

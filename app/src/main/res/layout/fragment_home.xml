@@ -25,7 +25,8 @@
             android:textSize="@dimen/_16sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
         <ImageView
             android:id="@+id/ivMessenger"
@@ -35,7 +36,7 @@
             android:src="@drawable/ic_messenger"
             app:layout_constraintBottom_toBottomOf="@+id/tvHome"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tvHome" />
+            app:layout_constraintTop_toTopOf="@+id/tvHome"/>
 
         <ImageView
             android:id="@+id/imageView"
@@ -44,7 +45,8 @@
             android:src="@drawable/ic_notification"
             app:layout_constraintBottom_toBottomOf="@+id/tvHome"
             app:layout_constraintEnd_toStartOf="@+id/ivMessenger"
-            app:layout_constraintTop_toTopOf="@+id/tvHome" />
+            app:layout_constraintTop_toTopOf="@+id/tvHome"
+            android:visibility="invisible"/>
 
         <ImageView
             android:id="@+id/navIcon"
@@ -68,6 +70,7 @@
             android:drawableStart="@drawable/ic_search"
             android:drawablePadding="@dimen/_5sdp"
             android:focusable="true"
+            android:textColor="@color/white"
             android:focusableInTouchMode="true"
             android:hint="Search"
             android:minHeight="48dp"

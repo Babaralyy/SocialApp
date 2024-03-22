@@ -32,29 +32,9 @@
         android:src="@drawable/ic_backpress"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="@string/go_back" />
+        android:contentDescription="@string/go_back"
+        android:visibility="invisible"/>
 
-    <ImageView
-        android:id="@+id/ivdots"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/_10sdp"
-        android:src="@drawable/ic_3dots"
-        app:layout_constraintBottom_toBottomOf="@+id/tvCalendar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tvCalendar" />
-
-<!--    <CalendarView
-        android:id="@+id/CalendarView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_10sdp"
-        android:theme="@style/CalenderViewCustom"
-        android:dateTextAppearance="@style/CalenderViewDateCustomText"
-        android:weekDayTextAppearance="@style/CalenderViewWeekCustomText"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvCalendar" />-->
 
     <com.applandeo.materialcalendarview.CalendarView
         android:id="@+id/calendarView"
@@ -78,6 +58,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/calendarView"
         app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <TextView
+        android:id="@+id/does_not_exist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/no_data_found"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="@id/rvEvents"
+        app:layout_constraintStart_toStartOf="@id/rvEvents"
+        app:layout_constraintTop_toTopOf="@id/rvEvents"
+        app:layout_constraintBottom_toBottomOf="@id/rvEvents"
+        android:visibility="gone"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton"

@@ -2,23 +2,58 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
-    <VideoView
-        android:id="@+id/videoView"
-        android:layout_width="@dimen/_50sdp"
-        android:layout_height="@dimen/_50sdp"
-        android:layout_marginStart="@dimen/_5sdp"
-        android:layout_marginEnd="@dimen/_5sdp"
-        android:layout_marginBottom="@dimen/_5sdp"
-        android:layout_marginTop="@dimen/_5sdp"
-        android:scaleType="fitXY"/>
-
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_5sdp"
-        android:src="@drawable/ic_play"
-        android:layout_centerInParent="true"/>
+        android:id="@+id/iv_remove"
+        android:layout_width="@dimen/_20sdp"
+        android:layout_height="@dimen/_20sdp"
+        android:layout_marginTop="@dimen/_7sdp"
+        android:layout_marginEnd="@dimen/_2sdp"
+        android:src="@drawable/baseline_close"
+        android:elevation="@dimen/_6sdp"
+        android:contentDescription="@string/added_image"
+        android:layout_alignEnd="@id/content_cardview"/>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/content_cardview"
+        android:layout_width="@dimen/_70sdp"
+        android:layout_height="@dimen/_100sdp"
+        android:layout_margin="@dimen/_5sdp"
+        app:cardMaxElevation="@dimen/_5sdp"
+        app:cardCornerRadius="@dimen/_5sdp"
+        app:cardBackgroundColor="@color/search_back_color">
+
+        <VideoView
+            android:id="@+id/videoView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY" />
+
+        <androidx.media3.ui.PlayerView
+            android:id="@+id/videoPlayer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:foregroundGravity="center"
+            android:gravity="center"
+            app:show_buffering="always"
+            app:surface_type="texture_view"
+            app:use_controller="false"
+            android:visibility="gone"/>
+
+        <ImageView
+            android:id="@+id/iv_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_play"
+            android:layout_gravity="center"
+            android:contentDescription="@string/play"
+            android:visibility="gone"/>
+
+    </androidx.cardview.widget.CardView>
+
+
 
 </RelativeLayout>

@@ -7,6 +7,28 @@
     android:background="@drawable/ic_background"
     tools:context=".ui.fragments.JourneyFragment">
 
+    <TextView
+        android:id="@+id/tv_journey"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_22sdp"
+        android:gravity="center"
+        android:text="@string/journey_small"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:fontFamily="@font/lato"
+        android:layout_centerHorizontal="true"/>
+
+
+    <ImageView
+        android:id="@+id/btn_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_15sdp"
+        android:padding="@dimen/_10sdp"
+        android:src="@drawable/ic_backpress" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvJourney"
         android:layout_width="match_parent"
@@ -15,7 +37,8 @@
         android:layout_marginTop="@dimen/_10sdp"
         android:layout_marginEnd="@dimen/_15sdp"
         android:layout_marginBottom="@dimen/_10sdp"
-        tools:listitem="@layout/journey_item_view" />
+        tools:listitem="@layout/journey_item_view"
+        android:layout_below="@id/btn_back"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton"

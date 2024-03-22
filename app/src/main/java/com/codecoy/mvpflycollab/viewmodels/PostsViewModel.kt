@@ -1,13 +1,19 @@
 package com.codecoy.mvpflycollab.viewmodels
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.codecoy.mvpflycollab.datamodels.AddNewPostResponse
+import com.codecoy.mvpflycollab.datamodels.CalendarStoryResponse
+import com.codecoy.mvpflycollab.datamodels.LikePostResponse
 import com.codecoy.mvpflycollab.datamodels.UserPostsResponse
 import com.codecoy.mvpflycollab.repo.MvpRepository
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Response
 
 class PostsViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
@@ -25,6 +31,17 @@ class PostsViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
     private val allUsersPostsResponseMutableLiveData = MutableLiveData<Response<UserPostsResponse>>()
     val allUsersPostsResponseLiveData: LiveData<Response<UserPostsResponse>> get() = allUsersPostsResponseMutableLiveData
 
+    private val addNewPostResponseMutableLiveData = MutableLiveData<Response<AddNewPostResponse>>()
+    val addNewPostResponseLiveData: LiveData<Response<AddNewPostResponse>> get() = addNewPostResponseMutableLiveData
+
+    private val likePostResponseMutableLiveData = MutableLiveData<Response<LikePostResponse>>()
+    val likePostResponseLiveData: LiveData<Response<LikePostResponse>> get() = likePostResponseMutableLiveData
+
+    private val allStoriesResponseMutableLiveData = MutableLiveData<Response<CalendarStoryResponse>>()
+    val allStoriesResponseLiveData: LiveData<Response<CalendarStoryResponse>> get() = allStoriesResponseMutableLiveData
+
+
+    var mediaImgList: MutableList<Uri> = arrayListOf()
 
     fun allUserPosts(token: String, userId: String) {
         viewModelScope.launch(handler) {
@@ -42,4 +59,76 @@ class PostsViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
         }
     }
 
+     fun addNewPost(
+        token: String,
+        userId: RequestBody,
+        category: RequestBody,
+        subcategory: RequestBody,
+        postDesc: RequestBody,
+        postHashtag: RequestBody,
+        lat: RequestBody,
+        long: RequestBody,
+        imagesPartList: MutableList<MultipartBody.Part>,
+    ) {
+        viewModelScope.launch(handler) {
+            _loading.value = true
+            val response = mvpRepository.addNewPost(
+                token,
+                userId,
+                category,
+                subcategory,
+                postDesc,
+                postHashtag,
+                lat,
+                long,
+                imagesPartList,
+            )
+            try {
+                addNewPostResponseMutableLiveData.value = response
+
+            } catch (e: Exception) {
+                addNewPostResponseMutableLiveData.value = response
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
+
+     fun likePost(
+        token: String,
+        userId: String,
+        postId: String,
+        date: String,
+        time: String
+    ) {
+        viewModelScope.launch(handler) {
+            _loading.value = true
+            val response = mvpRepository.likePost(token, userId, postId, date, time)
+
+            try {
+                likePostResponseMutableLiveData.value = response
+
+            } catch (e: Exception) {
+                likePostResponseMutableLiveData.value = response
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
+
+    fun allStories(token: String, userId: String) {
+        viewModelScope.launch(handler) {
+            _loading.value = true
+            val response = mvpRepository.allStories(token, userId)
+
+            try {
+                allStoriesResponseMutableLiveData.value = response
+
+            } catch (e: Exception) {
+                allStoriesResponseMutableLiveData.value = response
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
 }

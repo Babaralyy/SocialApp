@@ -8,7 +8,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.util.Patterns
 import androidx.fragment.app.Fragment
@@ -31,6 +30,7 @@ import com.codecoy.mvpflycollab.ui.activities.MainActivity
 import com.codecoy.mvpflycollab.utils.Constant
 import com.codecoy.mvpflycollab.utils.Constant.TAG
 import com.codecoy.mvpflycollab.repo.MvpRepository
+import com.codecoy.mvpflycollab.utils.Utils
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.codecoy.mvpflycollab.viewmodels.UserRegisterViewModel
 import kotlinx.coroutines.launch
@@ -301,7 +301,7 @@ class SignUpFragment : Fragment() {
 
     private fun showSingleImage(imageUri: Uri) {
 
-        val file = File(getRealPathFromURI(imageUri))
+        val file = File(Utils.getRealPathFromImgURI(activity, imageUri))
         val requestFile = RequestBody.create("image/*".toMediaTypeOrNull(), file)
         val imagePart = MultipartBody.Part.createFormData("img", file.name, requestFile)
 
@@ -309,15 +309,7 @@ class SignUpFragment : Fragment() {
 
     }
 
-    private fun getRealPathFromURI(uri: Uri): String {
-        val projection = arrayOf(MediaStore.Images.Media.DATA)
-        val cursor = activity.contentResolver.query(uri, projection, null, null, null)
-        val columnIndex = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-        cursor?.moveToFirst()
-        val filePath = cursor?.getString(columnIndex!!)
-        cursor?.close()
-        return filePath ?: ""
-    }
+
 
     override fun onStop() {
         super.onStop()

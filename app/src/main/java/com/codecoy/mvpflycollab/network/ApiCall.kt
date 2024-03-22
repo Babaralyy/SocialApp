@@ -3,9 +3,11 @@ package com.codecoy.mvpflycollab.network
 import android.net.Uri
 import com.codecoy.mvpflycollab.datamodels.AddActivityBody
 import com.codecoy.mvpflycollab.datamodels.AddActivityResponse
+import com.codecoy.mvpflycollab.datamodels.AddCommentResponse
 import com.codecoy.mvpflycollab.datamodels.AddJourneyDetailBody
 import com.codecoy.mvpflycollab.datamodels.AddJourneyDetailResponse
 import com.codecoy.mvpflycollab.datamodels.AddJourneyResponse
+import com.codecoy.mvpflycollab.datamodels.AddNewPostResponse
 import com.codecoy.mvpflycollab.datamodels.AddPlaylistDetailsBody
 import com.codecoy.mvpflycollab.datamodels.AddPlaylistDetailsResponse
 import com.codecoy.mvpflycollab.datamodels.AddPlaylistResponse
@@ -15,13 +17,22 @@ import com.codecoy.mvpflycollab.datamodels.AllJourneyResponse
 import com.codecoy.mvpflycollab.datamodels.AllPlaylistDetailsResponse
 import com.codecoy.mvpflycollab.datamodels.AllPlaylistResponse
 import com.codecoy.mvpflycollab.datamodels.AllUserResponse
+import com.codecoy.mvpflycollab.datamodels.CalendarStoryResponse
+import com.codecoy.mvpflycollab.datamodels.CommentsResponse
+import com.codecoy.mvpflycollab.datamodels.DeleteJourneyMessage
 import com.codecoy.mvpflycollab.datamodels.FollowUserResponse
 import com.codecoy.mvpflycollab.datamodels.JourneyDetailsResponse
+import com.codecoy.mvpflycollab.datamodels.LikePostResponse
+import com.codecoy.mvpflycollab.datamodels.UpdateProfileBody
+import com.codecoy.mvpflycollab.datamodels.UpdateProfileResponse
 import com.codecoy.mvpflycollab.datamodels.UploadImageResponse
 import com.codecoy.mvpflycollab.datamodels.UploadVideoResponse
+import com.codecoy.mvpflycollab.datamodels.UserFollowingResponse
 import com.codecoy.mvpflycollab.datamodels.UserLoginBody
 import com.codecoy.mvpflycollab.datamodels.UserLoginResponse
 import com.codecoy.mvpflycollab.datamodels.UserPostsResponse
+import com.codecoy.mvpflycollab.datamodels.UserProfileData
+import com.codecoy.mvpflycollab.datamodels.UserProfileResponse
 import com.codecoy.mvpflycollab.datamodels.UserRegisterBody
 import com.codecoy.mvpflycollab.datamodels.UserRegisterResponse
 import okhttp3.MultipartBody
@@ -42,18 +53,23 @@ interface ApiCall {
     @Multipart
     @POST("api/upload_img")
     suspend fun uploadImage(@Part img: MultipartBody.Part): Response<UploadImageResponse>
+
     @Multipart
     @POST("api/upload_vedio")
     suspend fun uploadVideo(@Part video: MultipartBody.Part): Response<UploadVideoResponse>
+
     @POST("api/register")
     suspend fun registerUserResponse(@Body userRegisterBody: UserRegisterBody): Response<UserRegisterResponse>
+
     @POST("api/login")
     suspend fun userLogin(@Body userLoginBody: UserLoginBody): Response<UserLoginResponse>
+
     @GET("api/journey_list")
     suspend fun allJourneyList(
         @Header("Authorization") token: String,
         @Query("user_id") userId: String
     ): Response<AllJourneyResponse>
+
     @FormUrlEncoded
     @POST("api/add_journey")
     suspend fun addJourney(
@@ -64,16 +80,28 @@ interface ApiCall {
         @Field("journey_img") journeyImg: String
     ): Response<AddJourneyResponse>
 
+    @GET("api/journey_delete")
+    suspend fun deleteJourney(
+        @Header("Authorization") token: String,
+        @Query("journey_id") journeyId: String,
+    ): Response<DeleteJourneyMessage>
+
     @GET("api/journey_details_against_journey")
     suspend fun allJourneyDetailsList(
         @Header("Authorization") token: String,
         @Query("journey_id") journeyId: String
     ): Response<JourneyDetailsResponse>
 
+    @Multipart
     @POST("api/add_journey_details")
     suspend fun addJourneyDetail(
         @Header("Authorization") token: String,
-        @Body addJourneyDetailBody: AddJourneyDetailBody
+        @Part("journey_id") journeyId: RequestBody,
+        @Part("title") title: RequestBody,
+        @Part("description") description: RequestBody,
+        @Part("date") date: RequestBody,
+        @Part imagesPartList: MutableList<MultipartBody.Part>,
+        @Part videosPartList: MutableList<MultipartBody.Part>
     ): Response<AddJourneyDetailResponse>
 
     @GET("api/playlist_list")
@@ -101,12 +129,13 @@ interface ApiCall {
     @Multipart
     @POST("api/add_playlist_details")
     suspend fun addPlaylistDetails(
-            @Header("Authorization") token: String,
-            @Part("playlist_id") playlistId: RequestBody,
-            @Part("title") title: RequestBody,
-            @Part("description") description: RequestBody,
-            @Part("date") date: RequestBody,
-            @Part videosPartList: MutableList<MultipartBody.Part>
+        @Header("Authorization") token: String,
+        @Part("playlist_id") playlistId: RequestBody,
+        @Part("title") title: RequestBody,
+        @Part("description") description: RequestBody,
+        @Part("date") date: RequestBody,
+        @Part videosPartList: MutableList<MultipartBody.Part>,
+        @Part imagesPartList: MutableList<MultipartBody.Part>,
     ): Response<AddPlaylistDetailsResponse>
 
     @GET("api/user_activity_againt_date")
@@ -139,11 +168,12 @@ interface ApiCall {
 
     @GET("api/get_user")
     suspend fun allUsers(
-        @Header("Authorization") token: String
+        @Header("Authorization") token: String,
+        @Query("user_id") userId: String
     ): Response<AllUserResponse>
 
     @FormUrlEncoded
-    @POST("api/follow")
+    @POST("api/sent_follow_request")
     suspend fun followUser(
         @Header("Authorization") token: String,
         @Field("user_id") userId: String,
@@ -152,10 +182,72 @@ interface ApiCall {
         @Field("time") time: String,
     ): Response<FollowUserResponse>
 
+    @GET("api/user_profile_data")
+    suspend fun userProfile(
+        @Header("Authorization") token: String,
+        @Query("user_id") userId: String,
+    ): Response<UserProfileResponse>
+
+    @POST("api/update_profile")
+    suspend fun updateProfile(
+        @Header("Authorization") token: String,
+        @Body updateProfileBody: UpdateProfileBody
+    ): Response<UpdateProfileResponse>
+
     @GET("api/multiple_posts_user")
     suspend fun allUserPosts(
         @Header("Authorization") token: String,
         @Query("user_id") userId: String,
     ): Response<UserPostsResponse>
+
+    @Multipart
+    @POST("api/user_post")
+    suspend fun addNewPost(
+        @Header("Authorization") token: String,
+        @Part("user_id") userId: RequestBody,
+        @Part("category") category: RequestBody,
+        @Part("subcategory") subcategory: RequestBody,
+        @Part("post_desc") postDesc: RequestBody,
+        @Part("post_hashtag") postHashtag: RequestBody,
+        @Part("lat") lat: RequestBody,
+        @Part("long") long: RequestBody,
+        @Part imagesPartList: MutableList<MultipartBody.Part>,
+    ): Response<AddNewPostResponse>
+
+    @FormUrlEncoded
+    @POST("api/add_like")
+    suspend fun likePost(
+        @Header("Authorization") token: String,
+        @Field("user_id") userId: String,
+        @Field("post_id") postId: String,
+        @Field("date") date: String,
+        @Field("time") time: String,
+    ): Response<LikePostResponse>
+
+    @FormUrlEncoded
+    @POST("api/add_comment")
+    suspend fun addComment(
+        @Header("Authorization") token: String,
+        @Field("user_id") userId: String,
+        @Field("post_id") postId: String,
+        @Field("comment_title") commentTitle: String,
+    ): Response<AddCommentResponse>
+
+    @GET("api/comment_list_against_post")
+    suspend fun allCommentsAgainstPost(
+        @Header("Authorization") token: String,
+        @Query("post_id") postId: String,
+    ): Response<CommentsResponse>
+
+    @GET("api/user_following_calender_list")
+    suspend fun allStories(
+        @Header("Authorization") token: String,
+        @Query("user_id") userId: String,
+    ): Response<CalendarStoryResponse>
+    @GET("api/user_follower_list")
+    suspend fun userFollowing(
+        @Header("Authorization") token: String,
+        @Query("user_id") userId: String,
+    ): Response<UserFollowingResponse>
 
 }

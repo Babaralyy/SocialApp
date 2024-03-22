@@ -4,4 +4,5 @@ import android.net.Uri
 
 interface VideoClickCallback {
     fun onVideoClick(videoPath: Uri)
+    fun onVidRemove(position: Int){}
 }

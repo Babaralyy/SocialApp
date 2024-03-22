@@ -67,6 +67,7 @@
             android:layout_marginTop="@dimen/_10sdp"
             android:layout_marginEnd="@dimen/_15sdp"
             android:background="@drawable/edittext_shape"
+            android:focusable="false"
             android:hint="@string/date"
             android:padding="@dimen/_15sdp"
             android:textSize="16sp"
@@ -88,6 +89,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/edittext_shape"
                 android:drawablePadding="@dimen/_5sdp"
+                android:focusable="false"
                 android:hint="@string/_09_00am"
                 android:padding="@dimen/_15sdp"
                 android:textSize="16sp"
@@ -101,6 +103,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/edittext_shape"
                 android:drawablePadding="@dimen/_5sdp"
+                android:focusable="false"
                 android:hint="@string/_12_00pm"
                 android:padding="@dimen/_15sdp"
                 android:textSize="16sp"
@@ -123,7 +126,8 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_media_image"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_55sdp"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/_55sdp"
             android:layout_marginStart="@dimen/_15sdp"
             android:layout_marginTop="@dimen/_10sdp"
             android:layout_marginEnd="@dimen/_15sdp" />
@@ -143,10 +147,11 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_media_video"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_55sdp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_15sdp"
             android:layout_marginTop="@dimen/_10sdp"
-            android:layout_marginEnd="@dimen/_15sdp" />
+            android:layout_marginEnd="@dimen/_15sdp"
+            android:minHeight="@dimen/_55sdp"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_add_activity"

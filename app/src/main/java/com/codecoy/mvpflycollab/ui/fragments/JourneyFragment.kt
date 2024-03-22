@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -97,16 +98,29 @@ class JourneyFragment : Fragment(), JourneyCallback {
         mBinding.rvJourney.layoutManager = LinearLayoutManager(activity)
         mBinding.rvJourney.setHasFixedSize(true)
 
+        journeyAdapter = JourneyAdapter(mutableListOf(), activity, this)
+        mBinding.rvJourney.adapter = journeyAdapter
+
         clickListeners()
         setUpViewModel()
 
         setUpBottomDialog()
 
+        getAllJourney()
+
+
+
+        mBinding.btnBack.setOnClickListener {
+            findNavController().popBackStack()
+        }
+
+    }
+
+    private fun getAllJourney() {
         viewModel.allJourneyList(
             "Bearer " + currentUser?.token.toString(),
-           currentUser?.id.toString()
+            currentUser?.id.toString()
         )
-
     }
 
     private fun setUpBottomDialog() {
@@ -163,10 +177,11 @@ class JourneyFragment : Fragment(), JourneyCallback {
                         Log.i(TAG, "navControllerException:: ${e.message}")
                     }
 
-                } else {
+                }
+            /*    else {
                     Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
-                }
+                }*/
             } else if (response.code() == 401) {
 
             } else {
@@ -209,18 +224,33 @@ class JourneyFragment : Fragment(), JourneyCallback {
                 if (addJourneyResponse != null && addJourneyResponse.success == true) {
 
                     viewModel.selectedImage = null
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
-
                     viewModel.allJourneyList("Bearer " + currentUser?.token.toString(),
                        currentUser?.id.toString())
 
                     bottomSheetDialog.dismiss()
 
-                } else {
+                }
+               /* else {
                     Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
+                }*/
+            } else if (response.code() == 401) {
+
+            } else {
+                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        viewModel.deleteJourneyLiveData.observe(this) { response ->
+
+            Log.i(TAG, "addJourneyResponseLiveData:: response $response")
+
+            if (response.code() == 200) {
+                val deleteJourneyResponse = response.body()
+                if (deleteJourneyResponse != null && deleteJourneyResponse.success == true) {
+                    getAllJourney()
                 }
+
             } else if (response.code() == 401) {
 
             } else {
@@ -244,8 +274,7 @@ class JourneyFragment : Fragment(), JourneyCallback {
             mBinding.tvNoDataFound.visibility = View.GONE
         }
 
-        journeyAdapter = JourneyAdapter(allJourneyData, activity, this)
-        mBinding.rvJourney.adapter = journeyAdapter
+        journeyAdapter.setItemList(allJourneyData)
 
     }
 
@@ -294,7 +323,6 @@ class JourneyFragment : Fragment(), JourneyCallback {
 
     private fun addNewJourney(title: String, description: String) {
 
-        Toast.makeText(activity, "addNewJourney", Toast.LENGTH_SHORT).show()
 
         viewModel.addJourney(
             "Bearer " + currentUser?.token.toString(),
@@ -358,9 +386,28 @@ class JourneyFragment : Fragment(), JourneyCallback {
         }
     }
 
+    override fun onJourneyDeleteClick(journeyData: AllJourneyData) {
+        showAlertDialog(journeyData)
+    }
+
+    private fun showAlertDialog(journeyData: AllJourneyData) {
+        val builder = AlertDialog.Builder(activity)
+        builder.setTitle(journeyData.title)
+        builder.setMessage("Are you sure you want to delete?")
+        builder.setPositiveButton("Yes") { dialog, which ->
+            viewModel.deleteJourney("Bearer " + currentUser?.token.toString(), journeyData.id.toString())
+            dialog.dismiss()
+        }
+        builder.setNegativeButton("No") { dialog, which ->
+
+            dialog.dismiss()
+        }
+        val dialog = builder.create()
+        dialog.show()
+    }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
-
         (context as MainActivity).also { activity = it }
     }
 
