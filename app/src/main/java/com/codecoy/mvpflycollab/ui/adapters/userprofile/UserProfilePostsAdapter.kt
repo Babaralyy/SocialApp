@@ -8,11 +8,12 @@ import com.bumptech.glide.Glide
 import com.codecoy.mvpflycollab.R
 import com.codecoy.mvpflycollab.callbacks.UserProfilePostCallback
 import com.codecoy.mvpflycollab.databinding.ProfilePostsItemBinding
+import com.codecoy.mvpflycollab.datamodels.UserPostsData
 import com.codecoy.mvpflycollab.datamodels.UserProfilePosts
 import com.codecoy.mvpflycollab.utils.Constant
 
 class UserProfilePostsAdapter (
-    private val postsList: MutableList<UserProfilePosts>,
+    private val postsList: MutableList<UserPostsData>,
     var context: Context,
     private var userProfilePostCallback: UserProfilePostCallback,
 ) : RecyclerView.Adapter<UserProfilePostsAdapter.ViewHolder>() {
@@ -26,17 +27,19 @@ class UserProfilePostsAdapter (
 
         val post = postsList[position]
 
-        if (post.postImages.isNotEmpty()){
+        if (post.images.isNotEmpty()){
             Glide
                 .with(context)
-                .load(Constant.MEDIA_BASE_URL + post.postImages[0].postImg)
+                .load(Constant.MEDIA_BASE_URL + post.images[0].postImg)
                 .placeholder(R.drawable.img)
                 .into(holder.mBinding.ivImage)
         }
 
         holder.itemView.setOnClickListener {
-            userProfilePostCallback.onUserProfilePostClick(post)
+            userProfilePostCallback.onUserProfilePostClick(post, position)
         }
+
+
     }
 
     override fun getItemCount(): Int {

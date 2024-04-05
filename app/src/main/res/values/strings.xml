@@ -151,4 +151,7 @@
     <string name="saved">Saved</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
+    <string name="followers">Followers</string>
+    <string name="people">People</string>
+    <string name="google_maps_key">AIzaSyCtpacCfJuORk4M4n2Kfu6GTKyJ-D35Tzo</string>
 </resources>

@@ -1,24 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
+
     <TextView
+        android:id="@+id/tv_sender"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hi Jake, how are you?"
-        android:textColor="@color/white"
-        android:textSize="@dimen/_11sdp"
-        android:padding="@dimen/_7sdp"
+        android:layout_gravity="start|top"
         android:layout_marginStart="@dimen/_10sdp"
         android:background="@drawable/sender_shape"
         android:backgroundTint="@android:color/secondary_text_light"
-        android:layout_gravity="start|top"
-        />
-
-
+        android:padding="@dimen/_7sdp"
+        android:text="Hi Jake, how are you?"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_11sdp" />
 
 
 </LinearLayout>

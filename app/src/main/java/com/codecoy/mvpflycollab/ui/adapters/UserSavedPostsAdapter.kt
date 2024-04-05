@@ -25,11 +25,11 @@ class UserSavedPostsAdapter (
         val post = postsList[position]
 
         if (post.postImages.isNotEmpty()){
-            Glide
+/*            Glide
                 .with(context)
                 .load(Constant.MEDIA_BASE_URL + post.postImages[0].postImg)
                 .placeholder(R.drawable.img)
-                .into(holder.mBinding.ivPostImage)
+                .into(holder.mBinding.ivPostImage)*/
         }
 
 

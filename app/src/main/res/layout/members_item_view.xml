@@ -20,4 +20,16 @@
             app:poly_shadow_color="#f01"
             app:poly_vertices="6" />
 
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="@dimen/_80sdp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:gravity="center"
+            android:padding="@dimen/_5sdp"
+            android:text="@string/dummy"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_10sdp"
+            android:layout_below="@id/ivItemMember"/>
+
 </RelativeLayout>

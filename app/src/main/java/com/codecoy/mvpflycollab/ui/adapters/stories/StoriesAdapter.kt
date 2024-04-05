@@ -32,7 +32,7 @@ class StoriesAdapter (
             .placeholder(R.drawable.img)
             .into(holder.mBinding.ivStoryImage)
 
-        holder.mBinding.tvStoryName.text = "${storyData.name?.substringBefore(" ")} Schedule"
+        holder.mBinding.tvStoryName.text = "${storyData.name?.substringBefore(" ")}"
 
         holder.mBinding.ivStoryImage.setOnClickListener {
             storyCallback.onStoryClick(storyData)

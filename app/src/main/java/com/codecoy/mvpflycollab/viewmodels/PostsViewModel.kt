@@ -7,7 +7,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codecoy.mvpflycollab.datamodels.AddNewPostResponse
 import com.codecoy.mvpflycollab.datamodels.CalendarStoryResponse
+import com.codecoy.mvpflycollab.datamodels.DeletePostResponse
 import com.codecoy.mvpflycollab.datamodels.LikePostResponse
+import com.codecoy.mvpflycollab.datamodels.SavePostResponse
 import com.codecoy.mvpflycollab.datamodels.UserPostsResponse
 import com.codecoy.mvpflycollab.repo.MvpRepository
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -39,6 +41,12 @@ class PostsViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
 
     private val allStoriesResponseMutableLiveData = MutableLiveData<Response<CalendarStoryResponse>>()
     val allStoriesResponseLiveData: LiveData<Response<CalendarStoryResponse>> get() = allStoriesResponseMutableLiveData
+
+    private val deletePostResponseMutableLiveData = MutableLiveData<Response<DeletePostResponse>>()
+    val deletePostResponseLiveData: LiveData<Response<DeletePostResponse>> get() = deletePostResponseMutableLiveData
+
+    private val savePostResponseMutableLiveData = MutableLiveData<Response<SavePostResponse>>()
+    val savePostResponseLiveData: LiveData<Response<SavePostResponse>> get() = savePostResponseMutableLiveData
 
 
     var mediaImgList: MutableList<Uri> = arrayListOf()
@@ -131,4 +139,37 @@ class PostsViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
             }
         }
     }
+
+    fun deletePost(token: String, postId: String) {
+        viewModelScope.launch(handler) {
+            _loading.value = true
+            val response = mvpRepository.deletePost(token, postId)
+
+            try {
+                deletePostResponseMutableLiveData.value = response
+
+            } catch (e: Exception) {
+                deletePostResponseMutableLiveData.value = response
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
+
+    fun savePost(token: String, userId: String, postId: String) {
+        viewModelScope.launch(handler) {
+            _loading.value = true
+            val response = mvpRepository.savePost(token, userId, postId)
+
+            try {
+                savePostResponseMutableLiveData.value = response
+
+            } catch (e: Exception) {
+                savePostResponseMutableLiveData.value = response
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
+
 }

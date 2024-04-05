@@ -94,6 +94,11 @@ class EditProfileFragment : Fragment() {
             .load(Constant.MEDIA_BASE_URL + currentUser?.profileImg)
             .placeholder(R.drawable.img)
             .into(mBinding.ivProfile)
+
+        mBinding.etName.setText(currentUser?.name)
+        mBinding.etPhone.setText(currentUser?.phone)
+        mBinding.etWebsite.setText(currentUser?.websiteUrl)
+        mBinding.etAbout.setText(currentUser?.aboutMe)
     }
 
     override fun onResume() {
@@ -125,7 +130,7 @@ class EditProfileFragment : Fragment() {
                 val userData = response.body()
                 if (userData != null && userData.success == true && userData.userList != null) {
                     val data = userData.userList
-                    val updatedData= UserLoginData(data?.id, data?.profileImg, data?.name, data?.username, data?.phone, data?.email, data?.emailVerifiedAt, data?.deviceToken, data?.createdAt, data?.updatedAt, currentUser?.token.toString())
+                    val updatedData= UserLoginData(data?.id, data?.profileImg, data?.name, data?.username, data?.phone, data?.email, data?.emailVerifiedAt, data?.deviceToken, data?.websiteUrl, data?.aboutMe, data?.createdAt, data?.updatedAt, currentUser?.token.toString())
                     Utils.saveUserToSharedPreferences(activity, updatedData)
                     lifecycleScope.launch {
                         try {
@@ -208,9 +213,13 @@ class EditProfileFragment : Fragment() {
     private fun checkCredentials() {
         val fullName = mBinding.etName.text.toString()
         val mobileNumber = mBinding.etPhone.text.toString()
+        val url = mBinding.etWebsite.text.toString()
+        val me = mBinding.etAbout.text.toString()
         var img: String? = null
         var name: String? = null
         var number: String? = null
+        var aboutMe: String? = null
+        var webUrl: String? = null
 
 
         if (viewModel.selectedImage == null) {
@@ -233,12 +242,25 @@ class EditProfileFragment : Fragment() {
            number = currentUser?.phone.toString()
         }
 
+        if (url.isEmpty()) {
+            webUrl = currentUser?.websiteUrl.toString()
+        } else {
+            webUrl = url
+        }
+        if (me.isEmpty()) {
+            aboutMe = currentUser?.aboutMe.toString()
+        } else {
+            aboutMe = me
+        }
+
         val updateProfileBody =
             UpdateProfileBody(
                 currentUser?.id.toString(),
                 name,
                 number,
                 img,
+                webUrl,
+                aboutMe
             )
         Log.i(TAG, "checkCredentials:: ${currentUser?.token.toString()} $updateProfileBody")
         viewModel.updateProfile("Bearer " + currentUser?.token.toString(), updateProfileBody)

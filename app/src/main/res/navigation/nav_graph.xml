@@ -158,7 +158,11 @@
         android:id="@+id/membersFragment"
         android:name="com.codecoy.mvpflycollab.ui.fragments.MembersFragment"
         android:label="fragment_members"
-        tools:layout="@layout/fragment_members" />
+        tools:layout="@layout/fragment_members" >
+        <action
+            android:id="@+id/action_membersFragment_to_userProfileDetailsFragment"
+            app:destination="@id/userProfileDetailsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/playListFragment"
         android:name="com.codecoy.mvpflycollab.ui.fragments.PlayListFragment"
@@ -201,6 +205,9 @@
         <action
             android:id="@+id/action_profileDetailFragment_to_savedPostsFragment"
             app:destination="@id/savedPostsFragment" />
+        <action
+            android:id="@+id/action_profileDetailFragment_to_userProfileDetailsFragment"
+            app:destination="@id/userProfileDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
@@ -244,6 +251,12 @@
         <action
             android:id="@+id/action_mainFragment_to_aboutProfileFragment"
             app:destination="@id/aboutProfileFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_userProfileDetailsFragment"
+            app:destination="@id/userProfileDetailsFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_allUserFragment"
+            app:destination="@id/allUserFragment" />
     </fragment>
     <fragment
         android:id="@+id/levelsFragment"
@@ -296,5 +309,31 @@
         android:name="com.codecoy.mvpflycollab.ui.fragments.SavedPostsFragment"
         android:label="fragment_saved_posts"
         tools:layout="@layout/fragment_saved_posts" />
+    <fragment
+        android:id="@+id/userProfileDetailsFragment"
+        android:name="com.codecoy.mvpflycollab.ui.fragments.UserProfileDetailsFragment"
+        android:label="fragment_user_profile_details"
+        tools:layout="@layout/fragment_user_profile_details" >
+        <action
+            android:id="@+id/action_userProfileDetailsFragment_to_userPostsFragment"
+            app:destination="@id/userPostsFragment" />
+        <action
+            android:id="@+id/action_userProfileDetailsFragment_to_membersFragment"
+            app:destination="@id/membersFragment" />
+        <action
+            android:id="@+id/action_userProfileDetailsFragment_to_journeyFragment"
+            app:destination="@id/journeyFragment" />
+        <action
+            android:id="@+id/action_userProfileDetailsFragment_to_playListFragment"
+            app:destination="@id/playListFragment" />
+        <action
+            android:id="@+id/action_userProfileDetailsFragment_to_userFollowingFragment"
+            app:destination="@id/userFollowingFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/allUserFragment"
+        android:name="com.codecoy.mvpflycollab.ui.fragments.AllUserFragment"
+        android:label="fragment_all_user"
+        tools:layout="@layout/fragment_all_user" />
 
 </navigation>

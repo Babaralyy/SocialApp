@@ -100,17 +100,20 @@ class PlayListDetailFragment : Fragment(), VideoClickCallback, PlaylistDetailCal
     }
 
     private val pickVideo =
-        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(2)) { uris ->
             // Callback is invoked after the user selects a media item or closes the photo picker.
-            if (uri != null) {
-                setVideoAdapter(uri)
+            if (uris != null) {
+                setVideoAdapter(uris)
             } else {
                 Toast.makeText(activity, "No media selected", Toast.LENGTH_SHORT).show()
             }
         }
 
-    private fun setVideoAdapter(uri: Uri) {
-        viewModel.videoList.add(0, uri)
+    private fun setVideoAdapter(uris: List<Uri>) {
+        for (item in uris) {
+            viewModel.videoList.add(item)
+        }
+
         playlistDetailVideoAdapter = PlaylistDetailVideoAdapter(viewModel.videoList, activity, this)
         bottomBinding.rvMediaVideo.adapter = playlistDetailVideoAdapter
     }
@@ -126,17 +129,19 @@ class PlayListDetailFragment : Fragment(), VideoClickCallback, PlaylistDetailCal
     }
 
     private val pickMedia =
-        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(5)) { uris ->
             // Callback is invoked after the user selects a media item or closes the photo picker.
-            if (uri != null) {
-                showSingleImage(uri)
+            if (uris != null) {
+                showSingleImage(uris)
             } else {
                 Toast.makeText(activity, "No media selected", Toast.LENGTH_SHORT).show()
             }
         }
-    private fun showSingleImage(imageUri: Uri) {
-        viewModel.imagesList.add(imageUri)
-        viewModel.imagesList.distinct()
+    private fun showSingleImage(uris: List<Uri>) {
+
+        for (item in uris) {
+            viewModel.imagesList.add(item)
+        }
         playlistDetailImageAdapter = PlaylistDetailImageAdapter(viewModel.imagesList, activity, this)
         bottomBinding.rvMediaImage.adapter = playlistDetailImageAdapter
 
@@ -179,7 +184,12 @@ class PlayListDetailFragment : Fragment(), VideoClickCallback, PlaylistDetailCal
             } catch (e: Exception) {
 
             }
+        }
 
+        if (currentUser?.id.toString() != Utils.userId){
+            mBinding.floatingActionButton.visibility = View.GONE
+        } else {
+            mBinding.floatingActionButton.visibility = View.VISIBLE
         }
     }
 

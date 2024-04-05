@@ -164,4 +164,50 @@ class MvpRepository(private val apiCall: ApiCall) {
 
     suspend fun userFollowing(token: String, userId: String) =
         apiCall.userFollowing(token, userId)
+
+    suspend fun collabUser(
+        token: String,
+        userId: String,
+        collabId: String,
+        date: String,
+        time: String
+    ) = apiCall.collabUser(token, userId, collabId, date, time)
+
+    suspend fun userFollowingRequests(token: String, userId: String) =
+        apiCall.userFollowingRequests(token, userId)
+
+    suspend fun userCollabRequests(token: String, userId: String) =
+        apiCall.userColRequests(token, userId)
+
+    suspend fun collaboratorsList(token: String, userId: String) =
+        apiCall.collaboratorsList(token, userId)
+
+    suspend fun deletePost(token: String, postId: String) =
+        apiCall.deletePost(token, postId)
+
+    suspend fun acceptFollowRequest(
+        token: String,
+        userId: String,
+        followerRequestId: String,
+        date: String,
+        time: String
+    ) = apiCall.acceptFollowRequest(token, userId, followerRequestId, date, time)
+
+    suspend fun acceptColRequest(
+        token: String,
+        userId: String,
+        colRequestId: String,
+        date: String,
+        time: String
+    ) = apiCall.acceptColRequest(token, userId, colRequestId, date, time)
+
+    suspend fun declineFollowReq(token: String, userId: String, followerId: String) =
+        apiCall.declineFollowReq(token, userId, followerId)
+
+    suspend fun declineColReq(token: String, userId: String, colId: String) =
+        apiCall.declineColReq(token, userId, colId)
+
+    suspend fun savePost(token: String, userId: String, postId: String) =
+        apiCall.savePost(token, userId, postId)
+
 }

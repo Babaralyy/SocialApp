@@ -7,14 +7,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.codecoy.mvpflycollab.R
 import com.codecoy.mvpflycollab.databinding.FragmentChatBinding
+import com.codecoy.mvpflycollab.datamodels.MessageData
 import com.codecoy.mvpflycollab.ui.activities.MainActivity
+import com.codecoy.mvpflycollab.ui.adapters.ChatAdapter
 
 
 class ChatFragment : Fragment() {
 
     private lateinit var activity: MainActivity
+    private lateinit var chatAdapter: ChatAdapter
+    private lateinit var chatList:MutableList<MessageData>
 
     private lateinit var mBinding: FragmentChatBinding
     override fun onCreateView(
@@ -29,10 +34,24 @@ class ChatFragment : Fragment() {
     }
 
     private fun inIt() {
+
+        chatList = arrayListOf()
+
+        mBinding.rvChat.layoutManager = LinearLayoutManager(activity)
         mBinding.ivBack.setOnClickListener {
-//            activity.replaceFragment(HomeFragment())
             findNavController().popBackStack()
         }
+
+        chatList.add(MessageData("basdnbsnd", true))
+        chatList.add(MessageData("basdnbsnd", true))
+        chatList.add(MessageData("basdnbsnd", false))
+        chatList.add(MessageData("basdnbsnd", true))
+        chatList.add(MessageData("basdnbsnd", false))
+        chatList.add(MessageData("basdnbsnd", true))
+        chatList.add(MessageData("basdnbsnd", false))
+
+        chatAdapter = ChatAdapter(chatList, activity)
+        mBinding.rvChat.adapter = chatAdapter
     }
 
     override fun onAttach(context: Context) {

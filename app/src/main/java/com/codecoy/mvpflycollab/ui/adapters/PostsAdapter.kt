@@ -2,8 +2,10 @@ package com.codecoy.mvpflycollab.ui.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.Glide
 import com.codecoy.mvpflycollab.R
 import com.codecoy.mvpflycollab.callbacks.HomeCallback
@@ -34,21 +36,56 @@ class PostsAdapter(
             .placeholder(R.drawable.img)
             .into(holder.mBinding.ivUser)
 
-        holder.mBinding.tvUserName.text = postsData.userData?.username
+        holder.mBinding.tvUserName.text = postsData.userData?.name
+        holder.mBinding.tvLocation.text = postsData.userData?.username
 
         if (postsData.images.isNotEmpty()) {
-            Glide
-                .with(context)
-                .load(Constant.MEDIA_BASE_URL + postsData.images[0].postImg)
-                .placeholder(R.drawable.img)
-                .into(holder.mBinding.ivPostImage)
+            if (postsData.images.size == 1){
+                holder.mBinding.tvCount.visibility = View.INVISIBLE
+            }else {
+                holder.mBinding.tvCount.visibility = View.VISIBLE
+                holder.mBinding.tvCount.text = "1/${postsData.images.size}"
+            }
+
+
+            val sliderView = holder.mBinding.sliderLay.imageSlider
+            val adapter = ImageSliderAdapter(context, postsData.images)
+            sliderView.adapter = adapter
+
+            sliderView.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+                override fun onPageScrollStateChanged(state: Int) {
+                    // Unused
+                }
+
+                override fun onPageScrolled(
+                    position: Int,
+                    positionOffset: Float,
+                    positionOffsetPixels: Int
+                ) {
+                    // Unused
+                }
+
+                override fun onPageSelected(position: Int) {
+                    // Here you get the position of the currently selected image
+                    holder.mBinding.tvCount.text = "${(position + 1)}/${postsData.images.size}"
+                }
+            })
+
         }
 
 
         if (postsData.userLikeStatus == "liked") {
             holder.mBinding.ivLikeimage.setImageResource(R.drawable.like_post)
-        } else if (postsData.userLikeStatus == "unliked") {
+        }
+        else if (postsData.userLikeStatus == "unliked") {
             holder.mBinding.ivLikeimage.setImageResource(R.drawable.dislike_post)
+        }
+
+        if (postsData.userSaveStatus == "saved") {
+            holder.mBinding.ivSaveImage.setImageResource(R.drawable.save_post_filled)
+        }
+        else if (postsData.userSaveStatus == "unsaved") {
+            holder.mBinding.ivSaveImage.setImageResource(R.drawable.unsaved_post)
         }
 
 //        holder.mBinding.tvLocation.text = "Tokyo, Japan"
@@ -68,6 +105,15 @@ class PostsAdapter(
             homeCallback.onMenuClick(postsData, holder.mBinding)
         }
 
+        holder.mBinding.ivUser.setOnClickListener {
+            homeCallback.onUserClick(postsData, holder.mBinding)
+        }
+        holder.mBinding.tvUserName.setOnClickListener {
+            homeCallback.onUserClick(postsData, holder.mBinding)
+        }
+        holder.mBinding.ivSaveImage.setOnClickListener {
+            homeCallback.onSaveClick(postsData, holder.mBinding)
+        }
     }
 
     override fun getItemCount(): Int {

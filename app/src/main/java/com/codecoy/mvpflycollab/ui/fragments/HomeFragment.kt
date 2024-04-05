@@ -119,6 +119,15 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
         }
 
 
+        mBinding.ivSearch.setOnClickListener {
+            try {
+                val action = MainFragmentDirections.actionMainFragmentToAllUserFragment()
+                findNavController().navigate(action)
+            } catch (e: Exception) {
+                Log.i(TAG, "inIt: ${e.message}")
+            }
+        }
+
         mBinding.svHome.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
@@ -245,6 +254,55 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
             }
         }
 
+        viewModel.deletePostResponseLiveData.observe(this) { response ->
+
+            Log.i(TAG, "registerUser:: response $response")
+
+            if (response.code() == 200) {
+                val postResponse = response.body()
+                if (postResponse != null && postResponse.success == true) {
+
+                    try {
+                        getAllPosts()
+                    } catch (e: Exception) {
+                        Log.i(TAG, "navControllerException:: ${e.message}")
+                    }
+
+                } else {
+                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                        .show()
+                }
+            } else if (response.code() == 401) {
+
+            } else {
+                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        viewModel.savePostResponseLiveData.observe(this) { response ->
+
+            Log.i(TAG, "registerUser:: response $response")
+
+            if (response.code() == 200) {
+                val postResponse = response.body()
+                if (postResponse != null && postResponse.success == true) {
+
+                    try {
+                        getAllPosts()
+                    } catch (e: Exception) {
+                        Log.i(TAG, "navControllerException:: ${e.message}")
+                    }
+
+                } else {
+                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                        .show()
+                }
+            } else if (response.code() == 401) {
+
+            } else {
+                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+            }
+        }
 
         commentsViewModel.allCommentsResponseLiveData.observe(this) { response ->
 
@@ -367,6 +425,7 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
             mBinding.drawerLayout.closeDrawer(GravityCompat.START)
 
             try {
+                Utils.userId = currentUser?.id.toString()
                 val action = MainFragmentDirections.actionMainFragmentToJourneyFragment()
                 findNavController().navigate(action)
             } catch (e: Exception) {
@@ -380,6 +439,7 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
             mBinding.drawerLayout.closeDrawer(GravityCompat.START)
 
             try {
+                Utils.userId = currentUser?.id.toString()
                 val action = MainFragmentDirections.actionMainFragmentToPlayListFragment()
                 findNavController().navigate(action)
             } catch (e: Exception) {
@@ -393,6 +453,7 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
             mBinding.drawerLayout.closeDrawer(GravityCompat.START)
 
             try {
+                Utils.userId = currentUser?.id.toString()
                 val action = MainFragmentDirections.actionMainFragmentToMembersFragment()
                 findNavController().navigate(action)
             } catch (e: Exception) {
@@ -453,15 +514,14 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
         }
 
         postsAdapter.setItemList(userPostsData)
-//        postsAdapter = PostsAdapter(userPostsData, activity, this)
-//        mBinding.rvPosts.adapter = postsAdapter
+
     }
 
     override fun onMenuClick(postsData: UserPostsData, mBinding: PostItemViewBinding) {
-        showPopupMenu(mBinding.ivmenu)
+        showPopupMenu(mBinding.ivmenu, postsData)
     }
 
-    private fun showPopupMenu(view: View) {
+    private fun showPopupMenu(view: View, postsData: UserPostsData) {
         val popupMenu = PopupMenu(activity, view)
         popupMenu.inflate(R.menu.popup_menu) // Inflate the menu resource
         popupMenu.setOnMenuItemClickListener { menuItem: MenuItem ->
@@ -471,13 +531,17 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
                     true
                 }*/
                 R.id.item_delete -> {
-                    // Handle click on menu item 2
+                    deletePost(postsData)
                     true
                 }
                 else -> false
             }
         }
         popupMenu.show()
+    }
+
+    private fun deletePost(postsData: UserPostsData) {
+        viewModel.deletePost("Bearer " + currentUser?.token.toString(), postsData.id.toString())
     }
 
     override fun onCommentsClick(postsData: UserPostsData) {
@@ -599,6 +663,27 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
             postsData.id.toString(),
             currentDate,
             currentTime
+        )
+    }
+
+    override fun onUserClick(postsData: UserPostsData, mBinding: PostItemViewBinding) {
+        try {
+            if(postsData.userId.toString() == currentUser?.id.toString()){
+                findNavController().navigate(MainFragmentDirections.actionMainFragmentToAboutProfileFragment())
+            } else {
+                Utils.userId = postsData.userId.toString()
+                findNavController().navigate(MainFragmentDirections.actionMainFragmentToUserProfileDetailsFragment())
+            }
+        } catch (e: Exception){
+            Log.i(TAG, "clickListeners:: ${e.message}")
+        }
+    }
+
+    override fun onSaveClick(postsData: UserPostsData, mBinding: PostItemViewBinding) {
+        viewModel.savePost(
+            "Bearer " + currentUser?.token.toString(),
+            currentUser?.id.toString(),
+            postsData.id.toString()
         )
     }
 

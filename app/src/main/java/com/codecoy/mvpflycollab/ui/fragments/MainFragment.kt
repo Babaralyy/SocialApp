@@ -7,6 +7,8 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -33,11 +35,18 @@ import com.codecoy.mvpflycollab.utils.Constant
 import com.codecoy.mvpflycollab.utils.Utils
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.codecoy.mvpflycollab.viewmodels.PostsViewModel
+import com.google.android.gms.common.api.Status
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.api.net.PlacesClient
+import com.google.android.libraries.places.api.net.PlacesStatusCodes
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import okhttp3.MultipartBody
 
 
 class MainFragment : Fragment(), ImageClickCallback {
+
+    private lateinit var placesClient: PlacesClient
 
     private lateinit var viewModel: PostsViewModel
     private lateinit var activity: MainActivity
@@ -53,7 +62,7 @@ class MainFragment : Fragment(), ImageClickCallback {
     private var dialog: Dialog? = null
 
     private lateinit var textViewList: ArrayList<TextView>
-    private lateinit var fragmentList : ArrayList<Fragment>
+    private lateinit var fragmentList: ArrayList<Fragment>
 
     private val requestImgPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -66,19 +75,20 @@ class MainFragment : Fragment(), ImageClickCallback {
     }
 
     private val pickImgMedia =
-        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(5)) { uris ->
             // Callback is invoked after the user selects a media item or closes the photo picker.
-            if (uri != null) {
-                showSingleImage(uri)
+            if (uris != null) {
+                showSingleImage(uris)
             } else {
                 Toast.makeText(activity, "No media selected", Toast.LENGTH_SHORT).show()
             }
         }
 
-    private fun showSingleImage(uri: Uri) {
-        viewModel.mediaImgList.clear()
-        viewModel.mediaImgList.add(0, uri)
-        viewModel.mediaImgList.distinct()
+    private fun showSingleImage(uriList: List<Uri>) {
+        for (item in uriList) {
+            viewModel.mediaImgList.add(item)
+        }
+
         showPostImageAdapter = ShowPostImageAdapter(viewModel.mediaImgList, activity, this)
         bottomBinding?.rvMediaImage?.adapter = showPostImageAdapter
     }
@@ -99,12 +109,19 @@ class MainFragment : Fragment(), ImageClickCallback {
         super.onViewCreated(view, savedInstanceState)
         val onBackPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                mBinding.bottomNavigation.selectedItemId = R.id.navigation_home
+                if (mBinding.bottomNavigation.selectedItemId != R.id.navigation_home) {
+                    mBinding.bottomNavigation.selectedItemId = R.id.navigation_home
+                } else {
+                    super.handleOnBackCancelled()
+                }
             }
         }
 
         // Add onBackPressedCallback to the activity
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, onBackPressedCallback)
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            onBackPressedCallback
+        )
     }
 
     private fun inIt() {
@@ -116,18 +133,22 @@ class MainFragment : Fragment(), ImageClickCallback {
         imagePartList = arrayListOf()
         activity.replaceFragment(HomeFragment())
 
+        // Initialize Places API
+        Places.initialize(activity, getString(R.string.google_maps_key))
+        placesClient = Places.createClient(activity)
+
         setUpBottomDialog()
         setUpViewModel()
 
 
-/*
-        setUpBottomNavigation()
-*/
+        /*
+                setUpBottomNavigation()
+        */
 
-    /*    mBinding.ivCreatePost.setOnClickListener {
-            showAddPostBottomDialog()
-        }
-*/
+        /*    mBinding.ivCreatePost.setOnClickListener {
+                showAddPostBottomDialog()
+            }
+    */
 
         mBinding.bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
@@ -162,35 +183,35 @@ class MainFragment : Fragment(), ImageClickCallback {
 
     }
 
-/*    private fun setUpBottomNavigation() {
+    /*    private fun setUpBottomNavigation() {
 
-        mBinding.tvHome.isSelected = true
+            mBinding.tvHome.isSelected = true
 
-        textViewList.clear()
-        textViewList.add(mBinding.tvHome)
-        textViewList.add(mBinding.tvCalendar)
-        textViewList.add( mBinding.tvSavePost)
-        textViewList.add(mBinding.tvProfile)
+            textViewList.clear()
+            textViewList.add(mBinding.tvHome)
+            textViewList.add(mBinding.tvCalendar)
+            textViewList.add( mBinding.tvSavePost)
+            textViewList.add(mBinding.tvProfile)
 
-        fragmentList.clear()
-        fragmentList.add(HomeFragment())
-        fragmentList.add(CalendarFragment())
-        fragmentList.add(SavedPostFragment())
-        fragmentList.add(ProfileDetailFragment())
+            fragmentList.clear()
+            fragmentList.add(HomeFragment())
+            fragmentList.add(CalendarFragment())
+            fragmentList.add(SavedPostFragment())
+            fragmentList.add(ProfileDetailFragment())
 
-        textViewList.forEachIndexed { index, textView ->
-            textView.setOnClickListener {
-                activity.replaceFragment(fragmentList[index])
-                textViewList.forEach { it.isSelected = false }
-                textView.isSelected = true
+            textViewList.forEachIndexed { index, textView ->
+                textView.setOnClickListener {
+                    activity.replaceFragment(fragmentList[index])
+                    textViewList.forEach { it.isSelected = false }
+                    textView.isSelected = true
+                }
             }
-        }
 
-    }*/
+        }*/
 
     override fun onResume() {
         super.onResume()
-        if (Utils.isFromProfile){
+        if (Utils.isFromProfile) {
             mBinding.bottomNavigation.selectedItemId = R.id.navigation_calendar
             Utils.isFromProfile = false
         }
@@ -198,6 +219,7 @@ class MainFragment : Fragment(), ImageClickCallback {
     }
 
     private fun responseFromViewModel() {
+
         viewModel.loading.observe(this) { isLoading ->
             if (isLoading) {
                 dialog?.show()
@@ -212,7 +234,7 @@ class MainFragment : Fragment(), ImageClickCallback {
 
             if (response.code() == 200) {
                 val userResponse = response.body()
-                if ( userResponse?.success == true) {
+                if (userResponse?.success == true) {
 
                     try {
                         bottomSheetDialog?.dismiss()
@@ -245,7 +267,7 @@ class MainFragment : Fragment(), ImageClickCallback {
         bottomBinding?.root?.let { bottomSheetDialog?.setContentView(it) }
 
         bottomBinding?.rvMediaImage?.layoutManager =
-            LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
+            LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, true)
 
     }
 
@@ -264,10 +286,66 @@ class MainFragment : Fragment(), ImageClickCallback {
         bottomBinding?.tvMediaImage?.setOnClickListener {
             imagePermission()
         }
+
+        bottomBinding?.etLoc?.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                searchLocation(s.toString())
+            }
+
+        })
+
         bottomBinding?.btnAddPost?.setOnClickListener {
             checkBottomCredentials()
         }
         bottomSheetDialog?.show()
+    }
+
+    private fun searchLocation(locationName: String) {
+        val fields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
+
+        val request =
+            com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest.builder()
+                .setQuery(locationName)
+                .build()
+
+        placesClient.findAutocompletePredictions(request)
+            .addOnSuccessListener { response ->
+                if (response.autocompletePredictions.isNotEmpty()) {
+                    val placeId = response.autocompletePredictions[0].placeId
+
+                    // Fetch details of the place using Place ID
+                    val placeRequest =
+                        com.google.android.libraries.places.api.net.FetchPlaceRequest.newInstance(
+                            placeId,
+                            fields
+                        )
+                    placesClient.fetchPlace(placeRequest)
+                        .addOnSuccessListener { fetchPlaceResponse ->
+                            val place = fetchPlaceResponse.place
+                            bottomBinding?.etLoc?.setText(place.name)
+                        }
+                        .addOnFailureListener { exception ->
+                            Toast.makeText(
+                                activity,
+                                "Failed to fetch place details: $exception",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                } else {
+                    Toast.makeText(activity, "No results found", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .addOnFailureListener { exception ->
+                Toast.makeText(activity, "Error: ${exception.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun checkBottomCredentials() {
@@ -282,7 +360,7 @@ class MainFragment : Fragment(), ImageClickCallback {
             Toast.makeText(activity, "Please add post image", Toast.LENGTH_SHORT).show()
             return
         }
-        if (des.isNotEmpty() &&  viewModel.mediaImgList.isNotEmpty()) {
+        if (des.isNotEmpty() && viewModel.mediaImgList.isNotEmpty()) {
             addNewPost(des)
         }
     }
@@ -307,20 +385,22 @@ class MainFragment : Fragment(), ImageClickCallback {
 
                         imagePartList.add(part)
 
-                        viewModel.addNewPost(
-                            "Bearer " + currentUser?.token.toString(),
-                            Utils.createTextRequestBody(currentUser?.id.toString()),
-                            Utils.createTextRequestBody("combat_sports"),
-                            Utils.createTextRequestBody("karate"),
-                            Utils.createTextRequestBody(des),
-                            Utils.createTextRequestBody("#Chill #Enjoy #2k24 2"),
-                            Utils.createTextRequestBody("2.345786348789"),
-                            Utils.createTextRequestBody("2.389786348754"),
-                            imagePartList,
-                        )
+
                     }
                 }
         }
+
+        viewModel.addNewPost(
+            "Bearer " + currentUser?.token.toString(),
+            Utils.createTextRequestBody(currentUser?.id.toString()),
+            Utils.createTextRequestBody("combat_sports"),
+            Utils.createTextRequestBody("karate"),
+            Utils.createTextRequestBody(des),
+            Utils.createTextRequestBody("#Chill #Enjoy #2k24 2"),
+            Utils.createTextRequestBody("2.345786348789"),
+            Utils.createTextRequestBody("2.389786348754"),
+            imagePartList,
+        )
 
     }
 
@@ -334,6 +414,7 @@ class MainFragment : Fragment(), ImageClickCallback {
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
                 requestImgPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES)
+
             } else {
                 pickImgMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
             }
@@ -363,4 +444,8 @@ class MainFragment : Fragment(), ImageClickCallback {
 
     }
 
+    override fun onImgRemove(position: Int) {
+        viewModel.mediaImgList.removeAt(position)
+        showPostImageAdapter.notifyDataSetChanged()
+    }
 }

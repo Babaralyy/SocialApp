@@ -93,18 +93,20 @@ class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallba
     }
 
     private val pickMedia =
-        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        registerForActivityResult((ActivityResultContracts.PickMultipleVisualMedia(5))) { uris ->
             // Callback is invoked after the user selects a media item or closes the photo picker.
-            if (uri != null) {
-                showSingleImage(uri)
+            if (uris != null) {
+                showSingleImage(uris)
             } else {
                 Toast.makeText(activity, "No media selected", Toast.LENGTH_SHORT).show()
             }
         }
 
-    private fun showSingleImage(imageUri: Uri) {
-        viewModel.mediaImgList.add(imageUri)
-        viewModel.mediaImgList.distinct()
+    private fun showSingleImage(uris: List<Uri>) {
+
+        for (item in uris) {
+            viewModel.mediaImgList.add(item)
+        }
         journeyDetailImageAdapter = JourneyDetailImageAdapter(viewModel.mediaImgList, activity, this)
         bottomBinding.rvJourneyDetailsImages.adapter = journeyDetailImageAdapter
 
@@ -165,6 +167,12 @@ class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallba
         clickListeners()
 
         mBinding.rvJourneyDetail.layoutManager = LinearLayoutManager(activity)
+
+        if (currentUser?.id.toString() != Utils.userId){
+            mBinding.floatingActionButton.visibility = View.GONE
+        } else {
+            mBinding.floatingActionButton.visibility = View.VISIBLE
+        }
 
     }
 

@@ -14,7 +14,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.MediaController
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -24,7 +23,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.applandeo.materialcalendarview.EventDay
 import com.bumptech.glide.Glide
@@ -57,7 +55,6 @@ import com.codecoy.mvpflycollab.utils.Constant.TAG
 import com.codecoy.mvpflycollab.utils.Utils
 import com.codecoy.mvpflycollab.viewmodels.ActivityViewModel
 import com.codecoy.mvpflycollab.repo.MvpRepository
-import com.codecoy.mvpflycollab.utils.Constant.MEDIA_BASE_URL
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.CoroutineScope
@@ -126,35 +123,39 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
     }
 
     private val pickImgMedia =
-        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(5)) { uris ->
             // Callback is invoked after the user selects a media item or closes the photo picker.
-            if (uri != null) {
-                showSingleImage(uri)
+            if (uris != null) {
+                showSingleImage(uris)
             } else {
                 Toast.makeText(activity, "No media selected", Toast.LENGTH_SHORT).show()
             }
         }
 
-    private fun showSingleImage(uri: Uri) {
-        viewModel.mediaImgList.add(uri)
-        viewModel.mediaImgList.distinct()
+    private fun showSingleImage(uris: List<Uri>) {
+
+        for (item in uris) {
+            viewModel.mediaImgList.add(item)
+        }
         showActivityImageAdapter = ShowActivityImageAdapter(viewModel.mediaImgList, activity, this)
         bottomBinding?.rvMediaImage?.adapter = showActivityImageAdapter
     }
 
     private val pickVidMedia =
-        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(2)) { uris ->
             // Callback is invoked after the user selects a media item or closes the photo picker.
-            if (uri != null) {
-                showSingleVideo(uri)
+            if (uris != null) {
+                showSingleVideo(uris)
             } else {
                 Toast.makeText(activity, "No media selected", Toast.LENGTH_SHORT).show()
             }
         }
 
-    private fun showSingleVideo(uri: Uri) {
-        viewModel.mediaVidList.add(uri)
-        viewModel.mediaVidList.distinct()
+    private fun showSingleVideo(uris: List<Uri>) {
+
+        for (item in uris) {
+            viewModel.mediaVidList.add(item)
+        }
         showActivityVideoAdapter = ShowActivityVideoAdapter(viewModel.mediaVidList, activity, this)
         bottomBinding?.rvMediaVideo?.adapter = showActivityVideoAdapter
     }
@@ -202,7 +203,7 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
 
         onDateClick()
 
-        responseFromViewModel()
+
 //        getActivitiesAgainstDate(formattedDate)
 
     }
@@ -246,7 +247,7 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
 
     override fun onResume() {
         super.onResume()
-
+        responseFromViewModel()
 
     }
 

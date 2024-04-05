@@ -15,7 +15,7 @@ import com.codecoy.mvpflycollab.utils.Constant
 class AllUsersAdapter(
     private val usersList: MutableList<AllUserData>,
     var context: Context,
-    private val followCallback: UserFollowCallback
+    private val followCallback: UserFollowCallback,
 ) : RecyclerView.Adapter<AllUsersAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -35,8 +35,20 @@ class AllUsersAdapter(
 
         holder.mBinding.tvUserName.text = user.name
 
+        if (user.followerDetails != null && user.followerDetails?.followStatus == "sent"){
+            holder.mBinding.btnFollow.text = "Sent"
+        }
         holder.mBinding.btnFollow.setOnClickListener {
             followCallback.onFollowClick(user)
+        }
+        holder.mBinding.btnCollaborate.setOnClickListener {
+            followCallback.onCollabClick(user)
+        }
+        holder.mBinding.ivUserProfile.setOnClickListener {
+            followCallback.onImageClick(user)
+        }
+        holder.mBinding.tvUserName.setOnClickListener {
+            followCallback.onNameClick(user)
         }
 
     }

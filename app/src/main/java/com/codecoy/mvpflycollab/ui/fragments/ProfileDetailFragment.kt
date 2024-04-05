@@ -21,6 +21,7 @@ import com.codecoy.mvpflycollab.databinding.FragmentProfileDetailBinding
 import com.codecoy.mvpflycollab.databinding.ShowImageDialogBinding
 import com.codecoy.mvpflycollab.datamodels.AllUserData
 import com.codecoy.mvpflycollab.datamodels.UserLoginData
+import com.codecoy.mvpflycollab.datamodels.UserPostsData
 import com.codecoy.mvpflycollab.datamodels.UserProfilePosts
 import com.codecoy.mvpflycollab.datamodels.UserProfileResponse
 import com.codecoy.mvpflycollab.network.ApiCall
@@ -79,11 +80,14 @@ class ProfileDetailFragment : Fragment(), UserFollowCallback, UserProfilePostCal
         getAllUsers()
         getProfileData()
         clickListeners()
+
+
     }
 
     private fun clickListeners() {
         mBinding.journeyLay.setOnClickListener {
             try {
+                Utils.userId = currentUser?.id.toString()
                 findNavController().navigate(ProfileDetailFragmentDirections.actionProfileDetailFragmentToJourneyFragment())
             } catch (e: Exception){
                 Log.i(TAG, "clickListeners:: ${e.message}")
@@ -91,6 +95,7 @@ class ProfileDetailFragment : Fragment(), UserFollowCallback, UserProfilePostCal
         }
         mBinding.playlistLay.setOnClickListener {
             try {
+                Utils.userId = currentUser?.id.toString()
                 findNavController().navigate(ProfileDetailFragmentDirections.actionProfileDetailFragmentToPlayListFragment())
             } catch (e: Exception){
                 Log.i(TAG, "clickListeners:: ${e.message}")
@@ -98,6 +103,7 @@ class ProfileDetailFragment : Fragment(), UserFollowCallback, UserProfilePostCal
         }
         mBinding.followingLay.setOnClickListener {
             try {
+                Utils.userId = currentUser?.id.toString()
                 findNavController().navigate(ProfileDetailFragmentDirections.actionProfileDetailFragmentToUserFollowingFragment())
             } catch (e: Exception){
                 Log.i(TAG, "clickListeners:: ${e.message}")
@@ -105,6 +111,7 @@ class ProfileDetailFragment : Fragment(), UserFollowCallback, UserProfilePostCal
         }
         mBinding.collaborateLay.setOnClickListener {
             try {
+                Utils.userId = currentUser?.id.toString()
                 findNavController().navigate(ProfileDetailFragmentDirections.actionProfileDetailFragmentToMembersFragment())
             } catch (e: Exception){
                 Log.i(TAG, "clickListeners:: ${e.message}")
@@ -113,6 +120,7 @@ class ProfileDetailFragment : Fragment(), UserFollowCallback, UserProfilePostCal
 
         mBinding.savedLay.setOnClickListener {
             try {
+                Utils.userId = currentUser?.id.toString()
                 findNavController().navigate(ProfileDetailFragmentDirections.actionProfileDetailFragmentToSavedPostsFragment())
             } catch (e: Exception){
                 Log.i(TAG, "clickListeners:: ${e.message}")
@@ -144,7 +152,7 @@ class ProfileDetailFragment : Fragment(), UserFollowCallback, UserProfilePostCal
 
         viewModel.allUsersResponseLiveData.observe(this) { response ->
 
-            Log.i(TAG, "registerUser:: response $response")
+            Log.i(TAG, "registerUser:: all users response $response")
 
             if (response.code() == 200) {
                 val userResponse = response.body()
@@ -169,6 +177,31 @@ class ProfileDetailFragment : Fragment(), UserFollowCallback, UserProfilePostCal
 
 
         viewModel.followUsersResponseLiveData.observe(this) { response ->
+
+            Log.i(TAG, "registerUser:: response $response")
+
+            if (response.code() == 200) {
+                val userResponse = response.body()
+                if (userResponse != null && userResponse.success == true) {
+
+                    try {
+                        getAllUsers()
+                    } catch (e: Exception) {
+                        Log.i(TAG, "navControllerException:: ${e.message}")
+                    }
+
+                } else {
+                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                        .show()
+                }
+            } else if (response.code() == 401) {
+
+            } else {
+                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        viewModel.collabUsersResponseLiveData.observe(this) { response ->
 
             Log.i(TAG, "registerUser:: response $response")
 
@@ -234,9 +267,12 @@ class ProfileDetailFragment : Fragment(), UserFollowCallback, UserProfilePostCal
             .into(mBinding.ivProfile)
 
         mBinding.tvProfileName.text = userProfileResponse.user?.name
+        mBinding.tvProfileLocation.text = userProfileResponse.user?.username
         mBinding.tvJourneyCount.text = userProfileResponse.journeyCount.toString()
         mBinding.tvPlaylistCount.text = userProfileResponse.playlistCount.toString()
         mBinding.tvFollowersCount.text = userProfileResponse.followersCount.toString()
+        mBinding.tvCollaboratorsCount.text = userProfileResponse.collabCount.toString()
+        mBinding.tvSavedCount.text = userProfileResponse.savePosts.toString()
 
 
         userProfilePostsAdapter = UserProfilePostsAdapter(userProfileResponse.posts, activity, this)
@@ -268,18 +304,48 @@ class ProfileDetailFragment : Fragment(), UserFollowCallback, UserProfilePostCal
     }
 
     override fun onFollowClick(user: AllUserData) {
-        val currentDate = Utils.formatDate(Date())
-        val currentTime = Utils.getCurrentTime(Calendar.getInstance().time)
-        viewModel.followUser("Bearer " + currentUser?.token.toString(), currentUser?.id.toString(),user.id.toString(),currentDate, currentTime)
+        if (user.followerDetails == null){
+            val currentDate = Utils.formatDate(Date())
+            val currentTime = Utils.getCurrentTime(Calendar.getInstance().time)
+            viewModel.followUser("Bearer " + currentUser?.token.toString(), currentUser?.id.toString(),user.id.toString(),currentDate, currentTime)
+        }
     }
 
-    override fun onUserProfilePostClick(post: UserProfilePosts) {
+    override fun onCollabClick(user: AllUserData) {
+        val currentDate = Utils.formatDate(Date())
+        val currentTime = Utils.getCurrentTime(Calendar.getInstance().time)
+        viewModel.collabUser("Bearer " + currentUser?.token.toString(), currentUser?.id.toString(),user.id.toString(),currentDate, currentTime)
+    }
+
+    override fun onImageClick(user: AllUserData) {
         try {
+            Utils.userId = user.id.toString()
+            findNavController().navigate(ProfileDetailFragmentDirections.actionProfileDetailFragmentToUserProfileDetailsFragment())
+        } catch (e: Exception){
+            Log.i(TAG, "clickListeners:: ${e.message}")
+        }
+    }
+
+    override fun onNameClick(user: AllUserData) {
+        try {
+            Utils.userId = user.id.toString()
+            findNavController().navigate(ProfileDetailFragmentDirections.actionProfileDetailFragmentToUserProfileDetailsFragment())
+        } catch (e: Exception){
+            Log.i(TAG, "clickListeners:: ${e.message}")
+        }
+    }
+
+    override fun onUserProfilePostClick(post: UserPostsData, position: Int) {
+        try {
+            Utils.scrollPosition = position
+            Utils.isUserProfile = true
+            Utils.userId = currentUser?.id.toString()
             findNavController().navigate(ProfileDetailFragmentDirections.actionProfileDetailFragmentToUserPostsFragment())
         }catch (e: Exception){
             Log.i(TAG, "onUserProfilePostClick: ${e.message}")
         }
     }
+
 
     private fun showImageDialog(imageUrl: String? = null) {
 
@@ -311,4 +377,6 @@ class ProfileDetailFragment : Fragment(), UserFollowCallback, UserProfilePostCal
         super.onAttach(context)
         (context as MainActivity).also { activity = it }
     }
+
+
 }

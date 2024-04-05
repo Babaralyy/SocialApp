@@ -12,5 +12,6 @@ data class AllUserData(
     @SerializedName("email_verified_at" ) var emailVerifiedAt : String? = null,
     @SerializedName("device_token"      ) var deviceToken     : String? = null,
     @SerializedName("created_at"        ) var createdAt       : String? = null,
-    @SerializedName("updated_at"        ) var updatedAt       : String? = null
+    @SerializedName("updated_at"        ) var updatedAt       : String? = null,
+    @SerializedName("follower_details"  ) var followerDetails : FollowerDetails? = FollowerDetails()
 )

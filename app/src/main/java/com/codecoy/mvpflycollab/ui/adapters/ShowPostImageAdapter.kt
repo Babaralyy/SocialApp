@@ -27,6 +27,9 @@ class ShowPostImageAdapter(
         holder.itemView.setOnClickListener {
             imageClickCallback.onImageClick(img)
         }
+        holder.mBinding.ivRemove.setOnClickListener {
+            imageClickCallback.onImgRemove(position)
+        }
     }
 
     override fun getItemCount(): Int = mediaList.size

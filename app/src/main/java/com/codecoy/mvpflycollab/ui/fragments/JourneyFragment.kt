@@ -58,10 +58,10 @@ class JourneyFragment : Fragment(), JourneyCallback {
 
 
     private val pickMedia =
-        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(2)) { uris ->
             // Callback is invoked after the user selects a media item or closes the photo picker.
-            if (uri != null) {
-                showSingleImage(uri)
+            if (uris != null) {
+                showSingleImage(uris)
             } else {
                 Toast.makeText(activity, "No media selected", Toast.LENGTH_SHORT).show()
             }
@@ -109,9 +109,13 @@ class JourneyFragment : Fragment(), JourneyCallback {
         getAllJourney()
 
 
-
         mBinding.btnBack.setOnClickListener {
             findNavController().popBackStack()
+        }
+        if (currentUser?.id.toString() != Utils.userId){
+           mBinding.floatingActionButton.visibility = View.GONE
+        } else {
+            mBinding.floatingActionButton.visibility = View.VISIBLE
         }
 
     }
@@ -119,7 +123,7 @@ class JourneyFragment : Fragment(), JourneyCallback {
     private fun getAllJourney() {
         viewModel.allJourneyList(
             "Bearer " + currentUser?.token.toString(),
-            currentUser?.id.toString()
+            Utils.userId.toString()
         )
     }
 
@@ -364,9 +368,9 @@ class JourneyFragment : Fragment(), JourneyCallback {
     }
 
 
-    private fun showSingleImage(imageUri: Uri) {
+    private fun showSingleImage(uris: List<Uri>) {
 
-        val file = File(Utils.getRealPathFromImgURI(activity,imageUri))
+        val file = File(Utils.getRealPathFromImgURI(activity, uris[0]))
         val requestFile = RequestBody.create("image/*".toMediaTypeOrNull(), file)
         val imagePart = MultipartBody.Part.createFormData("img", file.name, requestFile)
 

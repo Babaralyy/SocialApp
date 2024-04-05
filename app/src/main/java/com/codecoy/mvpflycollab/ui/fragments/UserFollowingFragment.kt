@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.codecoy.mvpflycollab.R
 import com.codecoy.mvpflycollab.databinding.FragmentUserFollowingBinding
@@ -57,10 +58,17 @@ class UserFollowingFragment : Fragment() {
         responseFromViewModel()
         getFollowers()
 
+        mBinding.btnBackPress.setOnClickListener {
+            try {
+                findNavController().popBackStack()
+            }catch (e: Exception){
+
+            }
+        }
     }
 
     private fun getFollowers() {
-        viewModel.userFollowing("Bearer " + currentUser?.token.toString(), currentUser?.id.toString())
+        viewModel.userFollowing("Bearer " + currentUser?.token.toString(), Utils.userId.toString())
     }
 
     private fun responseFromViewModel() {
@@ -107,6 +115,13 @@ class UserFollowingFragment : Fragment() {
     }
 
     private fun setUpAdapter(userFollowingData: ArrayList<UserFollowingData>) {
+
+        if (userFollowingData.isNotEmpty()){
+            mBinding.tvNoData.visibility = View.GONE
+        } else {
+            mBinding.tvNoData.visibility = View.VISIBLE
+        }
+
         userFollowingAdapter = UserFollowingAdapter(userFollowingData, activity)
         mBinding.rvFollowing.adapter = userFollowingAdapter
     }

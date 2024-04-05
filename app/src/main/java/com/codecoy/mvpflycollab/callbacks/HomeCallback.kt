@@ -7,4 +7,6 @@ interface HomeCallback {
     fun onMenuClick(postsData: UserPostsData, mBinding: PostItemViewBinding)
     fun onCommentsClick(postsData: UserPostsData)
     fun onLikeClick(postsData: UserPostsData, mBinding: PostItemViewBinding)
+    fun onUserClick(postsData: UserPostsData, mBinding: PostItemViewBinding)
+    fun onSaveClick(postsData: UserPostsData, mBinding: PostItemViewBinding)
 }

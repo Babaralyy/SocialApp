@@ -49,6 +49,8 @@ class AboutProfileFragment : Fragment() {
             .into(mBinding.ivAboutProfileImage)
 
         mBinding.tvName.text = currentUser?.name
+        mBinding.tvAbout.text = currentUser?.aboutMe
+        mBinding.tvWeb.text = currentUser?.websiteUrl
     }
 
     private fun clickListeners() {
@@ -65,6 +67,7 @@ class AboutProfileFragment : Fragment() {
 
         mBinding.btnAddJourney.setOnClickListener {
             try {
+                Utils.userId = currentUser?.id.toString()
                 val action =
                     AboutProfileFragmentDirections.actionAboutProfileFragmentToJourneyFragment()
                 findNavController().navigate(action)
@@ -76,6 +79,7 @@ class AboutProfileFragment : Fragment() {
 
         mBinding.btnAddPlaylist.setOnClickListener {
             try {
+                Utils.userId = currentUser?.id.toString()
                 val action =
                     AboutProfileFragmentDirections.actionAboutProfileFragmentToPlayListFragment()
                 findNavController().navigate(action)
@@ -87,6 +91,7 @@ class AboutProfileFragment : Fragment() {
 
         mBinding.btnAddActivity.setOnClickListener {
             try {
+                Utils.userId = currentUser?.id.toString()
                 findNavController().navigate(AboutProfileFragmentDirections.actionAboutProfileFragmentToMainFragment())
                 Utils.isFromProfile = true
             } catch (e: Exception) {

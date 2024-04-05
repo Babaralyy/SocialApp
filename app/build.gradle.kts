@@ -84,8 +84,12 @@ dependencies {
 
     implementation ("com.applandeo:material-calendar-view:1.7.0")
 
-    implementation("androidx.media3:media3-exoplayer:1.2.1")
-    implementation("androidx.media3:media3-exoplayer-dash:1.2.1")
-    implementation("androidx.media3:media3-ui:1.2.1")
+    implementation("androidx.media3:media3-exoplayer:1.3.0")
+    implementation("androidx.media3:media3-exoplayer-dash:1.3.0")
+    implementation("androidx.media3:media3-ui:1.3.0")
+
+    implementation("com.github.smarteist:autoimageslider:1.4.0-appcompat")
+
+    implementation("com.google.android.libraries.places:places:3.4.0")
 
 }
