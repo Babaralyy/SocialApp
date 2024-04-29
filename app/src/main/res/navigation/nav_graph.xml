@@ -220,9 +220,6 @@
         android:label="fragment_main"
         tools:layout="@layout/fragment_main" >
         <action
-            android:id="@+id/action_mainFragment_to_chatFragment"
-            app:destination="@id/chatFragment" />
-        <action
             android:id="@+id/action_mainFragment_to_commentsFragment"
             app:destination="@id/commentsFragment" />
         <action
@@ -257,6 +254,9 @@
         <action
             android:id="@+id/action_mainFragment_to_allUserFragment"
             app:destination="@id/allUserFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_startChatFragment"
+            app:destination="@id/startChatFragment" />
     </fragment>
     <fragment
         android:id="@+id/levelsFragment"
@@ -335,5 +335,26 @@
         android:name="com.codecoy.mvpflycollab.ui.fragments.AllUserFragment"
         android:label="fragment_all_user"
         tools:layout="@layout/fragment_all_user" />
+    <fragment
+        android:id="@+id/startChatFragment"
+        android:name="com.codecoy.mvpflycollab.ui.fragments.StartChatFragment"
+        android:label="fragment_start_chat"
+        tools:layout="@layout/fragment_start_chat" >
+        <action
+            android:id="@+id/action_startChatFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
+        <action
+            android:id="@+id/action_startChatFragment_to_chatListFragment"
+            app:destination="@id/chatListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/chatListFragment"
+        android:name="com.codecoy.mvpflycollab.ui.fragments.ChatListFragment"
+        android:label="fragment_chat_list"
+        tools:layout="@layout/fragment_chat_list" >
+        <action
+            android:id="@+id/action_chatListFragment_to_chatFragment2"
+            app:destination="@id/chatFragment" />
+    </fragment>
 
 </navigation>

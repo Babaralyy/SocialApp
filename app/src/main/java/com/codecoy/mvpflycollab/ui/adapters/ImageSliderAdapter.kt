@@ -31,7 +31,7 @@ class ImageSliderAdapter(private val context: Context, private val images: Array
         Glide
             .with(context)
             .load(Constant.MEDIA_BASE_URL + images[position].postImg)
-            .placeholder(R.drawable.img)
+            .placeholder(R.drawable.loading_svg)
             .into(imageView)
 
         container.addView(imageView)

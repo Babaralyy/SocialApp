@@ -30,7 +30,7 @@ import java.util.Date
 
 class RequestsFragment : Fragment(), RequestsCallback {
 
-    private lateinit var activity: MainActivity
+/*    private lateinit var activity: MainActivity*/
     private lateinit var collaborateRequestsAdapter: CollaborateRequestsAdapter
     private lateinit var followRequestsAdapter: FollowRequestsAdapter
 
@@ -60,16 +60,16 @@ class RequestsFragment : Fragment(), RequestsCallback {
         followList = arrayListOf()
 
 
-        dialog = Constant.getDialog(activity)
-        currentUser = Utils.getUserFromSharedPreferences(activity)
+        dialog = Constant.getDialog(requireContext())
+        currentUser = Utils.getUserFromSharedPreferences(requireContext())
 
-        mBinding.rvCollabrate.layoutManager = LinearLayoutManager(activity)
-        mBinding.rvFollower.layoutManager = LinearLayoutManager(activity)
+        mBinding.rvCollabrate.layoutManager = LinearLayoutManager(requireContext())
+        mBinding.rvFollower.layoutManager = LinearLayoutManager(requireContext())
 
-        collaborateRequestsAdapter = CollaborateRequestsAdapter(mutableListOf(), activity, this)
+        collaborateRequestsAdapter = CollaborateRequestsAdapter(mutableListOf(), requireContext(), this)
         mBinding.rvCollabrate.adapter = collaborateRequestsAdapter
 
-        followRequestsAdapter = FollowRequestsAdapter(mutableListOf(), activity, this)
+        followRequestsAdapter = FollowRequestsAdapter(mutableListOf(), requireContext(), this)
         mBinding.rvFollower.adapter = followRequestsAdapter
 
 
@@ -129,13 +129,13 @@ class RequestsFragment : Fragment(), RequestsCallback {
                     }
 
                 } else {
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -154,13 +154,13 @@ class RequestsFragment : Fragment(), RequestsCallback {
                     }
 
                 } else {
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -180,13 +180,13 @@ class RequestsFragment : Fragment(), RequestsCallback {
                     }
 
                 } else {
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
         viewModel.declineFollowReqLiveData.observe(this) { response ->
@@ -204,13 +204,13 @@ class RequestsFragment : Fragment(), RequestsCallback {
                     }
 
                 } else {
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -229,13 +229,13 @@ class RequestsFragment : Fragment(), RequestsCallback {
                     }
 
                 } else {
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -255,13 +255,13 @@ class RequestsFragment : Fragment(), RequestsCallback {
                     }
 
                 } else {
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -335,10 +335,12 @@ class RequestsFragment : Fragment(), RequestsCallback {
             reqData.id.toString())
     }
 
+/*
     override fun onAttach(context: Context) {
         super.onAttach(context)
         (context as MainActivity).also { activity = it }
     }
+*/
 
 
 }

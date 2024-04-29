@@ -13,14 +13,17 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.codecoy.mvpflycollab.callbacks.HomeCallback
+import com.codecoy.mvpflycollab.databinding.CommentsBottomDialogLayBinding
 import com.codecoy.mvpflycollab.databinding.FragmentUserPostsBinding
 import com.codecoy.mvpflycollab.databinding.PostItemViewBinding
+import com.codecoy.mvpflycollab.datamodels.CommentsData
 import com.codecoy.mvpflycollab.datamodels.UserLoginData
 import com.codecoy.mvpflycollab.datamodels.UserPostsData
 import com.codecoy.mvpflycollab.datamodels.UserProfileResponse
 import com.codecoy.mvpflycollab.network.ApiCall
 import com.codecoy.mvpflycollab.repo.MvpRepository
 import com.codecoy.mvpflycollab.ui.activities.MainActivity
+import com.codecoy.mvpflycollab.ui.adapters.PostCommentsAdapter
 import com.codecoy.mvpflycollab.ui.adapters.UserProfilePostDetailAdapter
 import com.codecoy.mvpflycollab.utils.Constant
 import com.codecoy.mvpflycollab.utils.Constant.TAG
@@ -29,6 +32,7 @@ import com.codecoy.mvpflycollab.viewmodels.CommentsViewModel
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.codecoy.mvpflycollab.viewmodels.PostsViewModel
 import com.codecoy.mvpflycollab.viewmodels.UserViewModel
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import java.util.Calendar
 import java.util.Date
 
@@ -42,6 +46,11 @@ class UserPostsFragment : Fragment(), HomeCallback {
     private var dialog: Dialog? = null
 
     private var currentUser: UserLoginData? = null
+
+    private lateinit var bottomBinding: CommentsBottomDialogLayBinding
+    private lateinit var bottomSheetDialog: BottomSheetDialog
+
+    private lateinit var postCommentsAdapter: PostCommentsAdapter
 
     private lateinit var userProfilePostsAdapter: UserProfilePostDetailAdapter
 
@@ -60,18 +69,19 @@ class UserPostsFragment : Fragment(), HomeCallback {
     private fun inIt() {
 
         mBinding.rvPosts.layoutManager =
-            LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         mBinding.rvPosts.setHasFixedSize(true)
 
-        userProfilePostsAdapter = UserProfilePostDetailAdapter(mutableListOf(), activity, this)
+        userProfilePostsAdapter = UserProfilePostDetailAdapter(mutableListOf(), requireContext(), this)
         mBinding.rvPosts.adapter = userProfilePostsAdapter
 
-        dialog = Constant.getDialog(activity)
-        currentUser = Utils.getUserFromSharedPreferences(activity)
+        dialog = Constant.getDialog(requireContext())
+        currentUser = Utils.getUserFromSharedPreferences(requireContext())
 
 
         setUpViewModel()
         getProfileData()
+        setUpBottomDialog()
 
         mBinding.btnBackPress.setOnClickListener {
             try {
@@ -82,9 +92,18 @@ class UserPostsFragment : Fragment(), HomeCallback {
         }
     }
 
+
     override fun onResume() {
         super.onResume()
         responseFromViewModel()
+    }
+
+    private fun setUpBottomDialog() {
+        bottomBinding = CommentsBottomDialogLayBinding.inflate(layoutInflater)
+        bottomSheetDialog = BottomSheetDialog(requireContext())
+        bottomSheetDialog.setContentView(bottomBinding.root)
+
+        bottomBinding.rvComments.layoutManager = LinearLayoutManager(requireContext())
     }
 
     private fun setUpViewModel() {
@@ -140,7 +159,7 @@ class UserPostsFragment : Fragment(), HomeCallback {
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -159,13 +178,13 @@ class UserPostsFragment : Fragment(), HomeCallback {
                     }
 
                 } else {
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -185,13 +204,13 @@ class UserPostsFragment : Fragment(), HomeCallback {
                     }
 
                 } else {
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -218,9 +237,115 @@ class UserPostsFragment : Fragment(), HomeCallback {
     }
 
     override fun onCommentsClick(postsData: UserPostsData) {
-
+        showBottomCommentDialog(postsData)
     }
 
+    private fun showBottomCommentDialog(postsData: UserPostsData) {
+
+        viewModel.loading.observe(this) { isLoading ->
+            if (isLoading) {
+                bottomBinding.progressBar.visibility = View.VISIBLE
+            } else {
+                bottomBinding.progressBar.visibility = View.GONE
+            }
+        }
+
+
+        commentsViewModel.allCommentsResponseLiveData.observe(this) { response ->
+
+            Log.i(TAG, "registerUser:: response ${response.body()}")
+
+            if (response.code() == 200) {
+                val commentsResponse = response.body()
+                if (commentsResponse != null && commentsResponse.success == true) {
+
+                    try {
+                        setUpCommentsRecyclerView(commentsResponse.commentsData)
+                    } catch (e: Exception) {
+                        Log.i(TAG, "navControllerException:: ${e.message}")
+                    }
+
+                } else {
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
+                        .show()
+                }
+            } else if (response.code() == 401) {
+
+            } else {
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        commentsViewModel.addCommentsResponseLiveData.observe(this) { response ->
+
+            Log.i(TAG, "registerUser:: response ${response.body()}")
+
+            if (response.code() == 200) {
+                val commentsResponse = response.body()
+                if (commentsResponse != null && commentsResponse.success == true) {
+
+                    try {
+                        commentsViewModel.allCommentsAgainstPost(
+                            "Bearer " + currentUser?.token.toString(),
+                            postsData.id.toString()
+                        )
+
+                        getProfileData()
+
+                    } catch (e: Exception) {
+                        Log.i(TAG, "navControllerException:: ${e.message}")
+                    }
+
+                } else {
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
+                        .show()
+                }
+            } else if (response.code() == 401) {
+
+            } else {
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        viewModel.exceptionLiveData.observe(this) { exception ->
+            if (exception != null) {
+                Log.i(TAG, "addJourneyResponseLiveData:: exception $exception")
+                bottomBinding.progressBar.visibility = View.GONE
+            }
+        }
+
+        commentsViewModel.allCommentsAgainstPost(
+            "Bearer " + currentUser?.token.toString(),
+            postsData.id.toString()
+        )
+        bottomSheetDialog.show()
+
+        bottomBinding.ivSendComment.setOnClickListener {
+            val comment = bottomBinding.etComment.text.toString().trim()
+            if (comment.isNotEmpty()) {
+                bottomBinding.etComment.setText("")
+                commentsViewModel.addComment(
+                    "Bearer " + currentUser?.token.toString(),
+                    currentUser?.id.toString(),
+                    postsData.id.toString(),
+                    comment
+                )
+            } else {
+                Toast.makeText(requireContext(), "Please add comment", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun setUpCommentsRecyclerView(commentsData: ArrayList<CommentsData>) {
+        if (commentsData.isNotEmpty()) {
+            bottomBinding.tvNoComment.visibility = View.GONE
+        } else {
+            bottomBinding.tvNoComment.visibility = View.VISIBLE
+        }
+
+        postCommentsAdapter = PostCommentsAdapter(commentsData, requireContext())
+        bottomBinding.rvComments.adapter = postCommentsAdapter
+    }
 
     override fun onLikeClick(postsData: UserPostsData, postItemView: PostItemViewBinding) {
 

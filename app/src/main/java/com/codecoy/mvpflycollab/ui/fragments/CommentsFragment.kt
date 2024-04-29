@@ -19,7 +19,7 @@ import java.io.StringReader
 class CommentsFragment : Fragment(), LikesCallback{
 
 
-    private lateinit var activity: MainActivity
+//    private lateinit var activity: MainActivity
 
     private lateinit var commentsList: MutableList<String>
     private lateinit var commentsAdapter: CommentsAdapter
@@ -58,7 +58,7 @@ class CommentsFragment : Fragment(), LikesCallback{
         commentsList.add("https://img.freepik.com/free-photo/portrait-handsome-confident-model-sexy-stylish-man-dressed-sweater-jeans-fashion-hipster-male-with-curly-hairstyle-posing-near-blue-wall-studio-isolated_158538-26600.jpg?w=2000")
         commentsList.add("https://menshaircuts.com/wp-content/uploads/2022/06/male-models-jon-kortajarena-683x1024.jpg")
 
-        commentsAdapter = CommentsAdapter(commentsList, activity, this)
+        commentsAdapter = CommentsAdapter(commentsList, requireContext(), this)
         mBinding.rvComments.adapter = commentsAdapter
 
     }
@@ -73,11 +73,11 @@ class CommentsFragment : Fragment(), LikesCallback{
         }
     }
 
-    override fun onAttach(context: Context) {
+/*    override fun onAttach(context: Context) {
         super.onAttach(context)
 
         (context as MainActivity).also { activity = it }
-    }
+    }*/
 
 
 

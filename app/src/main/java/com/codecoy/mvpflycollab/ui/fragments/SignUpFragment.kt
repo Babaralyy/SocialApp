@@ -42,7 +42,7 @@ import java.io.File
 
 class SignUpFragment : Fragment() {
 
-    private lateinit var activity: MainActivity
+//    private lateinit var activity: MainActivity
 
     private lateinit var viewModel: UserRegisterViewModel
 
@@ -55,7 +55,7 @@ class SignUpFragment : Fragment() {
             if (uri != null) {
                 showSingleImage(uri)
             } else {
-                Toast.makeText(activity, "No media selected", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "No media selected", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -83,7 +83,7 @@ class SignUpFragment : Fragment() {
     }
 
     private fun inIt() {
-        dialog = Constant.getDialog(activity)
+        dialog = Constant.getDialog(requireContext())
         setUpViewModel()
         clickListeners()
     }
@@ -92,7 +92,7 @@ class SignUpFragment : Fragment() {
 
         if (viewModel.selectedImage != null) {
             Glide
-                .with(activity)
+                .with(requireContext())
                 .load(Constant.MEDIA_BASE_URL + viewModel.selectedImage)
                 .placeholder(R.drawable.img)
                 .into(mBinding.ivProfile)
@@ -128,13 +128,13 @@ class SignUpFragment : Fragment() {
                         }
                     }
                 } else {
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -145,20 +145,20 @@ class SignUpFragment : Fragment() {
                     viewModel.selectedImage = imageData.response
 
                     Glide
-                        .with(activity)
+                        .with(requireContext())
                         .load(Constant.MEDIA_BASE_URL + imageData.response)
                         .placeholder(R.drawable.img)
                         .into(mBinding.ivProfile)
 
                 } else {
 
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -219,7 +219,7 @@ class SignUpFragment : Fragment() {
                     READ_EXTERNAL_STORAGE
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-                Toast.makeText(activity, "Permission not granted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Permission not granted", Toast.LENGTH_SHORT).show()
                 // Request the permission
                 requestPermissionLauncher.launch(READ_EXTERNAL_STORAGE)
 
@@ -240,7 +240,7 @@ class SignUpFragment : Fragment() {
         val confirmPassword = mBinding.etConfirmPassword.text.toString()
 
         if (viewModel.selectedImage == null) {
-            Toast.makeText(activity, "No media selected", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "No media selected", Toast.LENGTH_SHORT).show()
             return
         }
         if (fullName.isEmpty()) {
@@ -301,7 +301,7 @@ class SignUpFragment : Fragment() {
 
     private fun showSingleImage(imageUri: Uri) {
 
-        val file = File(Utils.getRealPathFromImgURI(activity, imageUri))
+        val file = File(Utils.getRealPathFromImgURI(requireContext(), imageUri))
         val requestFile = RequestBody.create("image/*".toMediaTypeOrNull(), file)
         val imagePart = MultipartBody.Part.createFormData("img", file.name, requestFile)
 
@@ -315,8 +315,8 @@ class SignUpFragment : Fragment() {
         super.onStop()
     }
 
-    override fun onAttach(context: Context) {
+/*    override fun onAttach(context: Context) {
         super.onAttach(context)
         (context as MainActivity).also { activity = it }
-    }
+    }*/
 }

@@ -20,7 +20,7 @@ import com.codecoy.mvpflycollab.utils.Utils
 
 class AboutProfileFragment : Fragment() {
 
-    private lateinit var activity: MainActivity
+//    private lateinit var activity: MainActivity
 
     private var currentUser: UserLoginData? = null
     private lateinit var mBinding: FragmentAboutProfileBinding
@@ -36,14 +36,14 @@ class AboutProfileFragment : Fragment() {
     }
 
     private fun inIt() {
-        currentUser = Utils.getUserFromSharedPreferences(activity)
+        currentUser = Utils.getUserFromSharedPreferences(requireContext())
         clickListeners()
         setUpData()
     }
 
     private fun setUpData() {
         Glide
-            .with(activity)
+            .with(requireContext())
             .load(Constant.MEDIA_BASE_URL + currentUser?.profileImg)
             .placeholder(R.drawable.img)
             .into(mBinding.ivAboutProfileImage)
@@ -100,8 +100,8 @@ class AboutProfileFragment : Fragment() {
         }
     }
 
-    override fun onAttach(context: Context) {
+/*    override fun onAttach(context: Context) {
         super.onAttach(context)
         (context as MainActivity).also { activity = it }
-    }
+    }*/
 }

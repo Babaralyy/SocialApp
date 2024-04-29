@@ -49,10 +49,10 @@ class UserFollowingFragment : Fragment() {
     }
 
     private fun inIt() {
-        dialog = Constant.getDialog(activity)
-        currentUser = Utils.getUserFromSharedPreferences(activity)
+        dialog = Constant.getDialog(requireContext())
+        currentUser = Utils.getUserFromSharedPreferences(requireContext())
 
-        mBinding.rvFollowing.layoutManager = LinearLayoutManager(activity)
+        mBinding.rvFollowing.layoutManager = LinearLayoutManager(requireContext())
 
         setUpViewModel()
         responseFromViewModel()
@@ -95,13 +95,13 @@ class UserFollowingFragment : Fragment() {
                     }
 
                 } else {
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -122,7 +122,7 @@ class UserFollowingFragment : Fragment() {
             mBinding.tvNoData.visibility = View.VISIBLE
         }
 
-        userFollowingAdapter = UserFollowingAdapter(userFollowingData, activity)
+        userFollowingAdapter = UserFollowingAdapter(userFollowingData, requireContext())
         mBinding.rvFollowing.adapter = userFollowingAdapter
     }
 

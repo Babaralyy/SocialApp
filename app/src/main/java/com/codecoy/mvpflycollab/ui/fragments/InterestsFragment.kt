@@ -18,7 +18,7 @@ import com.codecoy.mvpflycollab.utils.Constant.TAG
 
 class InterestsFragment : Fragment() {
 
-    private lateinit var activity: MainActivity
+//    private lateinit var activity: MainActivity
 
     private lateinit var interestsAdapter: InterestsAdapter
     private lateinit var interestsList: MutableList<String>
@@ -38,7 +38,7 @@ class InterestsFragment : Fragment() {
     private fun inIt() {
         interestsList = arrayListOf()
 
-        mBinding.rvInterests.layoutManager = LinearLayoutManager(activity)
+        mBinding.rvInterests.layoutManager = LinearLayoutManager(requireContext())
         mBinding.rvInterests.setHasFixedSize(true)
 
 
@@ -64,15 +64,15 @@ class InterestsFragment : Fragment() {
         interestsList.add("Functional Training:")
 
 
-        interestsAdapter = InterestsAdapter(interestsList, activity)
+        interestsAdapter = InterestsAdapter(interestsList, requireContext())
         mBinding.rvInterests.adapter = interestsAdapter
 
     }
 
-    override fun onAttach(context: Context) {
+/*    override fun onAttach(context: Context) {
         super.onAttach(context)
 
         (context as MainActivity).also { activity = it }
-    }
+    }*/
 
 }

@@ -20,6 +20,7 @@ import com.codecoy.mvpflycollab.ui.activities.MainActivity
 import com.codecoy.mvpflycollab.utils.Constant
 import com.codecoy.mvpflycollab.utils.Utils
 import com.codecoy.mvpflycollab.repo.MvpRepository
+import com.codecoy.mvpflycollab.utils.Constant.TAG
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.codecoy.mvpflycollab.viewmodels.UserLoginViewModel
 import kotlinx.coroutines.launch
@@ -27,7 +28,7 @@ import kotlinx.coroutines.launch
 
 class SignInFragment : Fragment() {
 
-    private lateinit var activity: MainActivity
+//    private lateinit var activity: MainActivity
 
     private lateinit var viewModel: UserLoginViewModel
 
@@ -53,14 +54,18 @@ class SignInFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        dialog = Constant.getDialog(activity)
-        responseFromViewModel()
+        try {
+            dialog = Constant.getDialog(requireContext())
+        } catch (e: Exception){
+            Log.i(TAG, "onResume: ${e.message}")
+        }
 
+        responseFromViewModel()
     }
     private fun clickListeners() {
 
         mBinding.tvForgot.setOnClickListener {
-            Toast.makeText(activity, "Clicked", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Clicked", Toast.LENGTH_SHORT).show()
         }
 
         mBinding.btnSignIn.setOnClickListener {
@@ -131,7 +136,7 @@ class SignInFragment : Fragment() {
 
                         try {
                             userData.user?.let {
-                                Utils.saveUserToSharedPreferences(activity, it)
+                                Utils.saveUserToSharedPreferences(requireContext(), it)
                             }
 
                             val action =
@@ -142,19 +147,20 @@ class SignInFragment : Fragment() {
                         }
                     }
                 } else {
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
 
         viewModel.exceptionLiveData.observe(this){ exception ->
             if (exception != null){
+                Log.i(Constant.TAG, "signinLiveData:: exception $exception")
                 dialog?.dismiss()
             }
         }
@@ -165,8 +171,8 @@ class SignInFragment : Fragment() {
         viewModel.userLogin(userLoginBody)
     }
 
-    override fun onAttach(context: Context) {
+/*    override fun onAttach(context: Context) {
         super.onAttach(context)
-        (context as MainActivity).also { activity = it }
-    }
+        (context as MainrequireContext()).also { activity = it }
+    }*/
 }

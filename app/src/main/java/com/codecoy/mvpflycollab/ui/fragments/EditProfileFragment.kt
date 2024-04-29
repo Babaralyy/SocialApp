@@ -42,7 +42,7 @@ import java.io.File
 
 class EditProfileFragment : Fragment() {
 
-    private lateinit var activity: MainActivity
+//    private lateinit var activity: MainActivity
 
     private lateinit var viewModel: UserRegisterViewModel
 
@@ -56,7 +56,7 @@ class EditProfileFragment : Fragment() {
             if (uri != null) {
                 showSingleImage(uri)
             } else {
-                Toast.makeText(activity, "No media selected", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "No media selected", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -84,13 +84,13 @@ class EditProfileFragment : Fragment() {
     }
 
     private fun inIt() {
-        currentUser = Utils.getUserFromSharedPreferences(activity)
-        dialog = Constant.getDialog(activity)
+        currentUser = Utils.getUserFromSharedPreferences(requireContext())
+        dialog = Constant.getDialog(requireContext())
         clickListeners()
         setUpViewModel()
 
         Glide
-            .with(activity)
+            .with(requireContext())
             .load(Constant.MEDIA_BASE_URL + currentUser?.profileImg)
             .placeholder(R.drawable.img)
             .into(mBinding.ivProfile)
@@ -105,7 +105,7 @@ class EditProfileFragment : Fragment() {
         super.onResume()
         if (viewModel.selectedImage != null) {
             Glide
-                .with(activity)
+                .with(requireContext())
                 .load(Constant.MEDIA_BASE_URL + viewModel.selectedImage)
                 .placeholder(R.drawable.img)
                 .into(mBinding.ivProfile)
@@ -131,7 +131,7 @@ class EditProfileFragment : Fragment() {
                 if (userData != null && userData.success == true && userData.userList != null) {
                     val data = userData.userList
                     val updatedData= UserLoginData(data?.id, data?.profileImg, data?.name, data?.username, data?.phone, data?.email, data?.emailVerifiedAt, data?.deviceToken, data?.websiteUrl, data?.aboutMe, data?.createdAt, data?.updatedAt, currentUser?.token.toString())
-                    Utils.saveUserToSharedPreferences(activity, updatedData)
+                    Utils.saveUserToSharedPreferences(requireContext(), updatedData)
                     lifecycleScope.launch {
                         try {
                             findNavController().navigate(EditProfileFragmentDirections.actionEditProfileFragmentToMainFragment())
@@ -140,13 +140,13 @@ class EditProfileFragment : Fragment() {
                         }
                     }
                 } else {
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -157,20 +157,20 @@ class EditProfileFragment : Fragment() {
                     viewModel.selectedImage = imageData.response
 
                     Glide
-                        .with(activity)
+                        .with(requireContext())
                         .load(Constant.MEDIA_BASE_URL + imageData.response)
                         .placeholder(R.drawable.img)
                         .into(mBinding.ivProfile)
 
                 } else {
 
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -270,7 +270,7 @@ class EditProfileFragment : Fragment() {
 
     private fun showSingleImage(imageUri: Uri) {
 
-        val file = File(Utils.getRealPathFromImgURI(activity, imageUri))
+        val file = File(Utils.getRealPathFromImgURI(requireContext(), imageUri))
         val requestFile = RequestBody.create("image/*".toMediaTypeOrNull(), file)
         val imagePart = MultipartBody.Part.createFormData("img", file.name, requestFile)
 
@@ -296,7 +296,7 @@ class EditProfileFragment : Fragment() {
                     Manifest.permission.READ_EXTERNAL_STORAGE
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-                Toast.makeText(activity, "Permission not granted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Permission not granted", Toast.LENGTH_SHORT).show()
                 // Request the permission
                 requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
 
@@ -305,9 +305,10 @@ class EditProfileFragment : Fragment() {
             }
         }
     }
-    override fun onAttach(context: Context) {
+
+/*    override fun onAttach(context: Context) {
         super.onAttach(context)
         (context as MainActivity).also { activity = it }
-    }
+    }*/
 }
 

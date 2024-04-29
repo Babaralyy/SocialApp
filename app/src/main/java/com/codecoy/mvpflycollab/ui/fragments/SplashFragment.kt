@@ -35,7 +35,7 @@ class SplashFragment : Fragment() {
     private fun inIt() {
         Handler(Looper.getMainLooper()).postDelayed({
             // Retrieve user using Flow
-                val user = Utils.getUserFromSharedPreferences(activity)
+                val user = Utils.getUserFromSharedPreferences(requireContext())
                 if (user?.id != null) {
                     val action = SplashFragmentDirections.actionSplashFragmentToMainFragment()
                     findNavController().navigate(action)

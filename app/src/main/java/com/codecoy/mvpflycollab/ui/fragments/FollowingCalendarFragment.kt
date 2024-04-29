@@ -73,7 +73,8 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
     ImageClickCallback,
     ToShareImageClickCallback, ToShareVideoClickCallback {
 
-    private lateinit var activity: MainActivity
+//    private lateinit var activity: MainActivity
+
     private lateinit var viewModel: ActivityViewModel
     private var dialog: Dialog? = null
     private val calendar = Calendar.getInstance()
@@ -129,7 +130,7 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
             if (uri != null) {
                 showSingleImage(uri)
             } else {
-                Toast.makeText(activity, "No media selected", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "No media selected", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -137,7 +138,7 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
         viewModel.mediaImgList.clear()
         viewModel.mediaImgList.add(0, uri)
         viewModel.mediaImgList.distinct()
-        showActivityImageAdapter = ShowActivityImageAdapter(viewModel.mediaImgList, activity, this)
+        showActivityImageAdapter = ShowActivityImageAdapter(viewModel.mediaImgList, requireContext(), this)
         bottomBinding?.rvMediaImage?.adapter = showActivityImageAdapter
     }
 
@@ -147,7 +148,7 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
             if (uri != null) {
                 showSingleVideo(uri)
             } else {
-                Toast.makeText(activity, "No media selected", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "No media selected", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -155,7 +156,7 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
         viewModel.mediaVidList.clear()
         viewModel.mediaVidList.add(0, uri)
         viewModel.mediaVidList.distinct()
-        showActivityVideoAdapter = ShowActivityVideoAdapter(viewModel.mediaVidList, activity, this)
+        showActivityVideoAdapter = ShowActivityVideoAdapter(viewModel.mediaVidList, requireContext(), this)
         bottomBinding?.rvMediaVideo?.adapter = showActivityVideoAdapter
     }
 
@@ -173,9 +174,9 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
     }
 
     private fun inIt() {
-        dialog = Constant.getDialog(activity)
+        dialog = Constant.getDialog(requireContext())
 
-        currentUser = Utils.getUserFromSharedPreferences(activity)
+        currentUser = Utils.getUserFromSharedPreferences(requireContext())
         eventsList = arrayListOf()
 
         imagePartList = arrayListOf()
@@ -183,7 +184,7 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
 
         shareActivityList = arrayListOf()
 
-        mBinding.rvEvents.layoutManager = LinearLayoutManager(activity)
+        mBinding.rvEvents.layoutManager = LinearLayoutManager(requireContext())
         mBinding.rvEvents.setHasFixedSize(true)
 
         setUpViewModel()
@@ -222,27 +223,27 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
 
     private fun setUpBottomDialog() {
         bottomBinding = BottomsheetToAddCalendarBinding.inflate(layoutInflater)
-        bottomSheetDialog = BottomSheetDialog(activity)
+        bottomSheetDialog = BottomSheetDialog(requireContext())
         bottomBinding?.root?.let { bottomSheetDialog?.setContentView(it) }
 
         bottomBinding?.rvMediaImage?.layoutManager =
-            LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
         bottomBinding?.rvMediaVideo?.layoutManager =
-            LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
     }
 
     private fun setUpShareActivityBottomDialog() {
         toShareBottomBinding = BottomsheetAddCalendarBinding.inflate(layoutInflater)
-        toShareBottomSheetDialog = BottomSheetDialog(activity)
+        toShareBottomSheetDialog = BottomSheetDialog(requireContext())
         toShareBottomBinding?.root?.let { toShareBottomSheetDialog?.setContentView(it) }
 
 
         toShareBottomBinding?.rvMediaImage?.layoutManager =
-            LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
         toShareBottomBinding?.rvMediaVideo?.layoutManager =
-            LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
     }
 
@@ -291,13 +292,13 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
 
                 } else {
 
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -310,13 +311,13 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
 
                 } else {
 
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -338,13 +339,13 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
                     findNavController().popBackStack()
 
                 } else {
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -358,7 +359,7 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
 
 
     private fun setUpRecyclerView(allActivitiesData: ArrayList<AllActivitiesData>) {
-        calendarAdapter = CalendarAdapter(allActivitiesData, activity, this)
+        calendarAdapter = CalendarAdapter(allActivitiesData, requireContext(), this)
         mBinding.rvEvents.adapter = calendarAdapter
     }
 
@@ -407,7 +408,7 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
         shareActivityList.add("")
         shareActivityList.add("")
 
-        shareActivityAdapter = ShareActivityAdapter(shareActivityList, activity)
+        shareActivityAdapter = ShareActivityAdapter(shareActivityList, requireContext())
         shareBinding?.rvActivityMembers?.adapter = shareActivityAdapter
 
         shareBottomSheetDialog?.show()
@@ -416,10 +417,10 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
     private fun setUpBottomShareDialog() {
 
         shareBinding = ShareWithMemnersDialogLayBinding.inflate(layoutInflater)
-        shareBottomSheetDialog = BottomSheetDialog(activity)
+        shareBottomSheetDialog = BottomSheetDialog(requireContext())
         shareBinding?.root?.let { shareBottomSheetDialog?.setContentView(it) }
 
-        shareBinding?.rvActivityMembers?.layoutManager = LinearLayoutManager(activity)
+        shareBinding?.rvActivityMembers?.layoutManager = LinearLayoutManager(requireContext())
         shareBinding?.rvActivityMembers?.setHasFixedSize(true)
 
     }
@@ -481,7 +482,7 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
                     Manifest.permission.READ_EXTERNAL_STORAGE
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-                Toast.makeText(activity, "Permission not granted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Permission not granted", Toast.LENGTH_SHORT).show()
                 // Request the permission
                 requestImgPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
 
@@ -510,7 +511,7 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
                     Manifest.permission.READ_EXTERNAL_STORAGE
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-                Toast.makeText(activity, "Permission not granted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Permission not granted", Toast.LENGTH_SHORT).show()
                 // Request the permission
                 requestVidPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
 
@@ -522,7 +523,7 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
 
     private fun showDatePickerDialog() {
         val datePickerDialog = DatePickerDialog(
-            activity,
+            requireContext(),
             { _, year, month, dayOfMonth ->
                 // Update calendar with the selected date
                 calendar.set(Calendar.YEAR, year)
@@ -591,16 +592,16 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
             return
         }
         if (date.isEmpty()) {
-            Toast.makeText(activity, "Please select date", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Please select date", Toast.LENGTH_SHORT).show()
             return
         }
 
         if (sTime.isEmpty()) {
-            Toast.makeText(activity, "Please select start time", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Please select start time", Toast.LENGTH_SHORT).show()
             return
         }
         if (eTime.isEmpty()) {
-            Toast.makeText(activity, "Please select end time", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Please select end time", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -621,7 +622,7 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
 
         for (item in viewModel.mediaImgList) {
 
-            Utils.getRealPathFromImgURI(activity, item)
+            Utils.getRealPathFromImgURI(requireContext(), item)
                 .let {
                     Log.i(Constant.TAG, "mediaImgList:: getRealPathFromURI $it")
 
@@ -644,7 +645,7 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
 
         for (item in viewModel.mediaVidList) {
 
-            Utils.getRealPathFromVidURI(activity, item)
+            Utils.getRealPathFromVidURI(requireContext(), item)
                 .let {
                     Log.i(Constant.TAG, "mediaVidList:: getRealPathFromURI $it")
 
@@ -700,9 +701,9 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
             !it.videoUrl.isNullOrEmpty()
         }
 
-        shareActivityImageAdapter = ShareActivityImageAdapter(filteredImgList as MutableList<ActivityDetails>, activity, this)
+        shareActivityImageAdapter = ShareActivityImageAdapter(filteredImgList as MutableList<ActivityDetails>, requireContext(), this)
         toShareBottomBinding?.rvMediaImage?.adapter = shareActivityImageAdapter
-        shareActivityVideoAdapter = ShareActivityVideoAdapter(filteredVidList as MutableList<ActivityDetails>, activity, this)
+        shareActivityVideoAdapter = ShareActivityVideoAdapter(filteredVidList as MutableList<ActivityDetails>, requireContext(), this)
         toShareBottomBinding?.rvMediaVideo?.adapter = shareActivityVideoAdapter
 
         toShareBottomBinding?.ivShare?.setOnClickListener {
@@ -739,13 +740,13 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
 
         val videoBinding = ShowVideoDialogBinding.inflate(layoutInflater)
 
-        val dialog = Dialog(activity)
+        val dialog = Dialog(requireContext())
         dialog.setContentView(videoBinding.root)
         dialog.setCancelable(true)
 
         val window = dialog.window
         val height =
-            (activity.resources.displayMetrics.widthPixels * 1.4).toInt() // 80% of screen width
+            (requireContext().resources.displayMetrics.widthPixels * 1.4).toInt() // 80% of screen width
         window?.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, height)
 
         if (videoPath != null) {
@@ -755,7 +756,7 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
 
             videoBinding.videoPlayer.visibility = View.VISIBLE
 
-            val player = ExoPlayer.Builder(activity).build()
+            val player = ExoPlayer.Builder(requireContext()).build()
             videoBinding.videoPlayer.player = player
             CoroutineScope(Dispatchers.IO).launch {
                 try {
@@ -783,19 +784,19 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
 
         val imageBinding = ShowImageDialogBinding.inflate(layoutInflater)
 
-        val dialog = Dialog(activity)
+        val dialog = Dialog(requireContext())
         dialog.setContentView(imageBinding.root)
         dialog.setCancelable(true)
 
         val window = dialog.window
         val height =
-            (activity.resources.displayMetrics.widthPixels * 01.4).toInt() // 80% of screen width
+            (requireContext().resources.displayMetrics.widthPixels * 01.4).toInt() // 80% of screen width
         window?.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, height)
 
 
         if (imageUrl != null) {
             Glide
-                .with(activity)
+                .with(requireContext())
                 .load(imageUrl)
                 .placeholder(R.drawable.img)
                 .into(imageBinding.imageView)
@@ -805,8 +806,8 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
 
         dialog.show()
     }
-    override fun onAttach(context: Context) {
+/*    override fun onAttach(context: Context) {
         super.onAttach(context)
         (context as MainActivity).also { activity = it }
-    }
+    }*/
 }

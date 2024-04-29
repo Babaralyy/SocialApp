@@ -30,7 +30,6 @@ class WelcomeFragment : Fragment() {
     }
 
     private fun inIt() {
-
         clickListeners()
     }
 
@@ -52,10 +51,10 @@ class WelcomeFragment : Fragment() {
             }
         }
         mBinding.googleLay.setOnClickListener {
-            Toast.makeText(activity, "Pending", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Pending", Toast.LENGTH_SHORT).show()
         }
         mBinding.facebookLay.setOnClickListener {
-            Toast.makeText(activity, "Pending", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Pending", Toast.LENGTH_SHORT).show()
         }
     }
     override fun onAttach(context: Context) {

@@ -80,7 +80,7 @@ class MainFragment : Fragment(), ImageClickCallback {
             if (uris != null) {
                 showSingleImage(uris)
             } else {
-                Toast.makeText(activity, "No media selected", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "No media selected", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -89,7 +89,7 @@ class MainFragment : Fragment(), ImageClickCallback {
             viewModel.mediaImgList.add(item)
         }
 
-        showPostImageAdapter = ShowPostImageAdapter(viewModel.mediaImgList, activity, this)
+        showPostImageAdapter = ShowPostImageAdapter(viewModel.mediaImgList, requireContext(), this)
         bottomBinding?.rvMediaImage?.adapter = showPostImageAdapter
     }
 
@@ -125,20 +125,23 @@ class MainFragment : Fragment(), ImageClickCallback {
     }
 
     private fun inIt() {
+
         textViewList = arrayListOf()
         fragmentList = arrayListOf()
 
-        dialog = Constant.getDialog(activity)
-        currentUser = Utils.getUserFromSharedPreferences(activity)
+        dialog = Constant.getDialog(requireContext())
+        currentUser = Utils.getUserFromSharedPreferences(requireContext())
         imagePartList = arrayListOf()
         activity.replaceFragment(HomeFragment())
 
         // Initialize Places API
-        Places.initialize(activity, getString(R.string.google_maps_key))
-        placesClient = Places.createClient(activity)
+        Places.initialize(requireContext(), getString(R.string.google_maps_key))
+        placesClient = Places.createClient(requireContext())
 
         setUpBottomDialog()
         setUpViewModel()
+
+        responseFromViewModel()
 
 
         /*
@@ -201,7 +204,7 @@ class MainFragment : Fragment(), ImageClickCallback {
 
             textViewList.forEachIndexed { index, textView ->
                 textView.setOnClickListener {
-                    activity.replaceFragment(fragmentList[index])
+                    requireContext().replaceFragment(fragmentList[index])
                     textViewList.forEach { it.isSelected = false }
                     textView.isSelected = true
                 }
@@ -215,7 +218,7 @@ class MainFragment : Fragment(), ImageClickCallback {
             mBinding.bottomNavigation.selectedItemId = R.id.navigation_calendar
             Utils.isFromProfile = false
         }
-        responseFromViewModel()
+
     }
 
     private fun responseFromViewModel() {
@@ -237,19 +240,21 @@ class MainFragment : Fragment(), ImageClickCallback {
                 if (userResponse?.success == true) {
 
                     try {
+                        viewModel.mediaImgList.clear()
                         bottomSheetDialog?.dismiss()
+                        mBinding.bottomNavigation.selectedItemId = R.id.navigation_home
                     } catch (e: Exception) {
                         Log.i(Constant.TAG, "navControllerException:: ${e.message}")
                     }
 
                 } else {
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -263,11 +268,11 @@ class MainFragment : Fragment(), ImageClickCallback {
 
     private fun setUpBottomDialog() {
         bottomBinding = NewPostBottomDialogLayBinding.inflate(layoutInflater)
-        bottomSheetDialog = BottomSheetDialog(activity)
+        bottomSheetDialog = BottomSheetDialog(requireContext())
         bottomBinding?.root?.let { bottomSheetDialog?.setContentView(it) }
 
         bottomBinding?.rvMediaImage?.layoutManager =
-            LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, true)
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, true)
 
     }
 
@@ -334,17 +339,17 @@ class MainFragment : Fragment(), ImageClickCallback {
                         }
                         .addOnFailureListener { exception ->
                             Toast.makeText(
-                                activity,
+                                requireContext(),
                                 "Failed to fetch place details: $exception",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
                 } else {
-                    Toast.makeText(activity, "No results found", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "No results found", Toast.LENGTH_SHORT).show()
                 }
             }
             .addOnFailureListener { exception ->
-                Toast.makeText(activity, "Error: ${exception.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Error: ${exception.message}", Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -357,11 +362,12 @@ class MainFragment : Fragment(), ImageClickCallback {
             return
         }
         if (viewModel.mediaImgList.isEmpty()) {
-            Toast.makeText(activity, "Please add post image", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Please add post image", Toast.LENGTH_SHORT).show()
             return
         }
         if (des.isNotEmpty() && viewModel.mediaImgList.isNotEmpty()) {
             addNewPost(des)
+            bottomBinding?.etDes?.setText("")
         }
     }
 
@@ -370,7 +376,7 @@ class MainFragment : Fragment(), ImageClickCallback {
 
         for (item in viewModel.mediaImgList) {
 
-            Utils.getRealPathFromImgURI(activity, item)
+            Utils.getRealPathFromImgURI(requireContext(), item)
                 .let {
                     Log.i(Constant.TAG, "mediaImgList:: getRealPathFromURI $it")
 
@@ -424,7 +430,7 @@ class MainFragment : Fragment(), ImageClickCallback {
                     Manifest.permission.READ_EXTERNAL_STORAGE
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-                Toast.makeText(activity, "Permission not granted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Permission not granted", Toast.LENGTH_SHORT).show()
                 // Request the permission
                 requestImgPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
 
@@ -435,10 +441,7 @@ class MainFragment : Fragment(), ImageClickCallback {
     }
 
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        (context as MainActivity).also { activity = it }
-    }
+
 
     override fun onImageClick(imgPath: Uri) {
 
@@ -447,5 +450,10 @@ class MainFragment : Fragment(), ImageClickCallback {
     override fun onImgRemove(position: Int) {
         viewModel.mediaImgList.removeAt(position)
         showPostImageAdapter.notifyDataSetChanged()
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        (context as MainActivity).also { activity = it }
     }
 }

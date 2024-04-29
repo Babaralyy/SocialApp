@@ -53,10 +53,10 @@ class UserProfileDetailsFragment : Fragment(), UserProfilePostCallback {
     }
 
     private fun inIt() {
-        mBinding.rvUserPosts.layoutManager = GridLayoutManager(activity, 4)
+        mBinding.rvUserPosts.layoutManager = GridLayoutManager(requireContext(), 4)
 
-        dialog = Constant.getDialog(activity)
-        currentUser = Utils.getUserFromSharedPreferences(activity)
+        dialog = Constant.getDialog(requireContext())
+        currentUser = Utils.getUserFromSharedPreferences(requireContext())
 
 
 
@@ -96,7 +96,7 @@ class UserProfileDetailsFragment : Fragment(), UserProfilePostCallback {
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -157,7 +157,7 @@ class UserProfileDetailsFragment : Fragment(), UserProfilePostCallback {
 
     private fun setUpProfileData(userProfileResponse: UserProfileResponse) {
         Glide
-            .with(activity)
+            .with(requireContext())
             .load(Constant.MEDIA_BASE_URL + userProfileResponse.user?.profileImg)
             .placeholder(R.drawable.img)
             .into(mBinding.ivProfile)
@@ -175,7 +175,7 @@ class UserProfileDetailsFragment : Fragment(), UserProfilePostCallback {
             mBinding.tvNoPost.visibility = View.VISIBLE
         }
 
-        userProfilePostsAdapter = UserProfilePostsAdapter(userProfileResponse.posts, activity, this)
+        userProfilePostsAdapter = UserProfilePostsAdapter(userProfileResponse.posts, requireContext(), this)
         mBinding.rvUserPosts.adapter = userProfilePostsAdapter
     }
 

@@ -44,7 +44,7 @@ import java.io.File
 
 class JourneyFragment : Fragment(), JourneyCallback {
 
-    private lateinit var activity: MainActivity
+//    private lateinit var activity: MainActivity
 
     private lateinit var viewModel: JourneyViewModel
     private var dialog: Dialog? = null
@@ -63,7 +63,7 @@ class JourneyFragment : Fragment(), JourneyCallback {
             if (uris != null) {
                 showSingleImage(uris)
             } else {
-                Toast.makeText(activity, "No media selected", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "No media selected", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -91,14 +91,15 @@ class JourneyFragment : Fragment(), JourneyCallback {
     }
 
     private fun inIt() {
-        dialog = Constant.getDialog(activity)
-        journeyList = arrayListOf()
-        currentUser = Utils.getUserFromSharedPreferences(activity)
 
-        mBinding.rvJourney.layoutManager = LinearLayoutManager(activity)
+        dialog = Constant.getDialog(requireContext())
+        journeyList = arrayListOf()
+        currentUser = Utils.getUserFromSharedPreferences(requireContext())
+
+        mBinding.rvJourney.layoutManager = LinearLayoutManager(requireContext())
         mBinding.rvJourney.setHasFixedSize(true)
 
-        journeyAdapter = JourneyAdapter(mutableListOf(), activity, this)
+        journeyAdapter = JourneyAdapter(mutableListOf(), requireContext(), this)
         mBinding.rvJourney.adapter = journeyAdapter
 
         clickListeners()
@@ -129,7 +130,7 @@ class JourneyFragment : Fragment(), JourneyCallback {
 
     private fun setUpBottomDialog() {
         bottomBinding = NewJourneyBottomDialogLayBinding.inflate(layoutInflater)
-        bottomSheetDialog = BottomSheetDialog(activity)
+        bottomSheetDialog = BottomSheetDialog(requireContext())
         bottomSheetDialog.setContentView(bottomBinding.root)
     }
 
@@ -183,38 +184,40 @@ class JourneyFragment : Fragment(), JourneyCallback {
 
                 }
             /*    else {
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }*/
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
-
         viewModel.imageResponseLiveData.observe(this) { response ->
+
+            Log.i(TAG, "responseFromViewModel:: $response  ${response.body()}")
+
             if (response.code() == 200) {
                 val imageData = response.body()
                 if (imageData != null && imageData.success == true && imageData.response != null) {
                     viewModel.selectedImage = imageData.response
 
                     Glide
-                        .with(activity)
+                        .with(requireContext())
                         .load(Constant.MEDIA_BASE_URL + imageData.response)
                         .placeholder(R.drawable.img)
                         .into(bottomBinding.ivJourneyImg)
 
                 } else {
 
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -235,13 +238,13 @@ class JourneyFragment : Fragment(), JourneyCallback {
 
                 }
                /* else {
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }*/
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -258,7 +261,7 @@ class JourneyFragment : Fragment(), JourneyCallback {
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -309,7 +312,7 @@ class JourneyFragment : Fragment(), JourneyCallback {
 
 
         if (viewModel.selectedImage == null) {
-            Toast.makeText(activity, "No media selected", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "No media selected", Toast.LENGTH_SHORT).show()
             return
         }
         if (title.isEmpty()) {
@@ -357,7 +360,7 @@ class JourneyFragment : Fragment(), JourneyCallback {
                     Manifest.permission.READ_EXTERNAL_STORAGE
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-                Toast.makeText(activity, "Permission not granted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Permission not granted", Toast.LENGTH_SHORT).show()
                 // Request the permission
                 requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
 
@@ -369,13 +372,11 @@ class JourneyFragment : Fragment(), JourneyCallback {
 
 
     private fun showSingleImage(uris: List<Uri>) {
-
-        val file = File(Utils.getRealPathFromImgURI(activity, uris[0]))
+        val file = File(Utils.getRealPathFromImgURI(requireContext(), uris[0]))
         val requestFile = RequestBody.create("image/*".toMediaTypeOrNull(), file)
         val imagePart = MultipartBody.Part.createFormData("img", file.name, requestFile)
 
         viewModel.uploadImage(imagePart)
-
     }
 
 
@@ -395,7 +396,7 @@ class JourneyFragment : Fragment(), JourneyCallback {
     }
 
     private fun showAlertDialog(journeyData: AllJourneyData) {
-        val builder = AlertDialog.Builder(activity)
+        val builder = AlertDialog.Builder(requireContext())
         builder.setTitle(journeyData.title)
         builder.setMessage("Are you sure you want to delete?")
         builder.setPositiveButton("Yes") { dialog, which ->
@@ -410,9 +411,9 @@ class JourneyFragment : Fragment(), JourneyCallback {
         dialog.show()
     }
 
-    override fun onAttach(context: Context) {
+/*    override fun onAttach(context: Context) {
         super.onAttach(context)
         (context as MainActivity).also { activity = it }
-    }
+    }*/
 
 }

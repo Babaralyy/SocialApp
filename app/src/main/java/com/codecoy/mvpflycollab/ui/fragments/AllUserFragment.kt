@@ -32,7 +32,8 @@ import java.util.ArrayList
 
 class AllUserFragment : Fragment(), UserFollowCallback {
 
-    private lateinit var activity: MainActivity
+//    private lateinit var activity: MainActivity
+
     private lateinit var viewModel: UserViewModel
     private var dialog: Dialog? = null
 
@@ -54,14 +55,14 @@ class AllUserFragment : Fragment(), UserFollowCallback {
     }
 
     private fun inIt() {
-        dialog = Constant.getDialog(activity)
-        currentUser = Utils.getUserFromSharedPreferences(activity)
+        dialog = Constant.getDialog(requireContext())
+        currentUser = Utils.getUserFromSharedPreferences(requireContext())
 
 
-        mBinding.rvPeople.layoutManager = LinearLayoutManager(activity)
+        mBinding.rvPeople.layoutManager = LinearLayoutManager(requireContext())
         mBinding.rvPeople.setHasFixedSize(true)
 
-        searchUserAdapter = SearchUserAdapter(mutableListOf(), activity, this)
+        searchUserAdapter = SearchUserAdapter(mutableListOf(), requireContext(), this)
         mBinding.rvPeople.adapter = searchUserAdapter
 
         setUpViewModel()
@@ -207,8 +208,8 @@ class AllUserFragment : Fragment(), UserFollowCallback {
 
     }
 
-    override fun onAttach(context: Context) {
+   /* override fun onAttach(context: Context) {
         super.onAttach(context)
         (context as MainActivity).also { activity = it }
-    }
+    }*/
 }

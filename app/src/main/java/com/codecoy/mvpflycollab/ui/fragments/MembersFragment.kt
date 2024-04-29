@@ -28,7 +28,8 @@ import com.codecoy.mvpflycollab.viewmodels.UserViewModel
 
 class MembersFragment : Fragment(), MembersCallback {
 
-    private lateinit var activity: MainActivity
+//    private lateinit var activity: MainActivity
+
     private lateinit var membersAdapter: MembersAdapter
 
     private lateinit var viewModel: UserViewModel
@@ -51,10 +52,10 @@ class MembersFragment : Fragment(), MembersCallback {
 
     private fun inIt() {
 
-        dialog = Constant.getDialog(activity)
-        currentUser = Utils.getUserFromSharedPreferences(activity)
+        dialog = Constant.getDialog(requireContext())
+        currentUser = Utils.getUserFromSharedPreferences(requireContext())
 
-        mBinding.rvMembers.layoutManager = GridLayoutManager(activity, 3)
+        mBinding.rvMembers.layoutManager = GridLayoutManager(requireContext(), 3)
         mBinding.rvMembers.setHasFixedSize(true)
 
         setUpViewModel()
@@ -105,13 +106,13 @@ class MembersFragment : Fragment(), MembersCallback {
                     }
 
                 } else {
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -134,7 +135,7 @@ class MembersFragment : Fragment(), MembersCallback {
             mBinding.tvNoData.visibility = View.VISIBLE
         }
 
-        membersAdapter = MembersAdapter(collaboratorsListData, activity, this)
+        membersAdapter = MembersAdapter(collaboratorsListData, requireContext(), this)
         mBinding.rvMembers.adapter = membersAdapter
 
     }
@@ -148,12 +149,9 @@ class MembersFragment : Fragment(), MembersCallback {
         }
     }
 
-    override fun onAttach(context: Context) {
+/*    override fun onAttach(context: Context) {
         super.onAttach(context)
 
         (context as MainActivity).also { activity = it }
-    }
-
-
-
+    }*/
 }

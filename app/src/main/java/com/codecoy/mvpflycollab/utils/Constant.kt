@@ -21,8 +21,8 @@ import javax.net.ssl.HttpsURLConnection
 object Constant {
 
     const val TAG = "TAG"
-    private const val BASE_URL = "https://wh1309648.ispot.cc/fly_colab/"
-    const val MEDIA_BASE_URL = "https://wh1309648.ispot.cc/fly_colab/public/storage/"
+    private const val BASE_URL = "http://13.49.66.85/"
+    const val MEDIA_BASE_URL = "http://13.49.66.85/storage/"
 
 
     private var httpClient: OkHttpClient = OkHttpClient.Builder()
@@ -65,7 +65,7 @@ object Constant {
         val cursor = context.contentResolver.query(uri, projection, null, null, null)
         val columnIndex = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
         cursor?.moveToFirst()
-        val filePath = cursor?.getString(columnIndex!!)
+        val filePath = columnIndex?.let { cursor.getString(it) }
         cursor?.close()
         return filePath ?: ""
     }

@@ -44,7 +44,7 @@ class VideoPreviewFragment : Fragment() {
     }
 
     private fun playVideo( videoUrl: String? = null) {
-            val player = ExoPlayer.Builder(activity).build()
+            val player = ExoPlayer.Builder(requireContext()).build()
             mBinding.videoPlayer.player = player
             CoroutineScope(Dispatchers.IO).launch {
                 try {

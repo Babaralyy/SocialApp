@@ -41,7 +41,8 @@ import java.util.Date
 
 class ProfileDetailFragment : Fragment(), UserFollowCallback, UserProfilePostCallback {
 
-    private lateinit var activity: MainActivity
+//    private lateinit var activity: MainActivity
+
     private lateinit var viewModel: UserViewModel
     private var dialog: Dialog? = null
 
@@ -64,16 +65,17 @@ class ProfileDetailFragment : Fragment(), UserFollowCallback, UserProfilePostCal
 
     private fun inIt() {
 
-        mBinding.rvUserPosts.layoutManager = GridLayoutManager(activity, 4)
+        mBinding.rvUserPosts.layoutManager = GridLayoutManager(requireContext(), 4)
 
-        dialog = Constant.getDialog(activity)
-        currentUser = Utils.getUserFromSharedPreferences(activity)
+        dialog = Constant.getDialog(requireContext())
+
+        currentUser = Utils.getUserFromSharedPreferences(requireContext())
 
 
-        mBinding.rvUsers.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
+        mBinding.rvUsers.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         mBinding.rvUsers.setHasFixedSize(true)
 
-        allUsersAdapter = AllUsersAdapter(mutableListOf(), activity, this)
+        allUsersAdapter = AllUsersAdapter(mutableListOf(), requireContext(), this)
         mBinding.rvUsers.adapter = allUsersAdapter
 
         setUpViewModel()
@@ -165,13 +167,13 @@ class ProfileDetailFragment : Fragment(), UserFollowCallback, UserProfilePostCal
                     }
 
                 } else {
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -191,13 +193,13 @@ class ProfileDetailFragment : Fragment(), UserFollowCallback, UserProfilePostCal
                     }
 
                 } else {
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -216,13 +218,13 @@ class ProfileDetailFragment : Fragment(), UserFollowCallback, UserProfilePostCal
                     }
 
                 } else {
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -246,7 +248,7 @@ class ProfileDetailFragment : Fragment(), UserFollowCallback, UserProfilePostCal
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -261,7 +263,7 @@ class ProfileDetailFragment : Fragment(), UserFollowCallback, UserProfilePostCal
 
     private fun setUpProfileData(userProfileResponse: UserProfileResponse) {
         Glide
-            .with(activity)
+            .with(requireContext())
             .load(Constant.MEDIA_BASE_URL + userProfileResponse.user?.profileImg)
             .placeholder(R.drawable.img)
             .into(mBinding.ivProfile)
@@ -275,7 +277,7 @@ class ProfileDetailFragment : Fragment(), UserFollowCallback, UserProfilePostCal
         mBinding.tvSavedCount.text = userProfileResponse.savePosts.toString()
 
 
-        userProfilePostsAdapter = UserProfilePostsAdapter(userProfileResponse.posts, activity, this)
+        userProfilePostsAdapter = UserProfilePostsAdapter(userProfileResponse.posts, requireContext(), this)
         mBinding.rvUserPosts.adapter = userProfilePostsAdapter
     }
 
@@ -351,19 +353,19 @@ class ProfileDetailFragment : Fragment(), UserFollowCallback, UserProfilePostCal
 
         val imageBinding = ShowImageDialogBinding.inflate(layoutInflater)
 
-        val dialog = Dialog(activity)
+        val dialog = Dialog(requireContext())
         dialog.setContentView(imageBinding.root)
         dialog.setCancelable(true)
 
         val window = dialog.window
         val height =
-            (activity.resources.displayMetrics.widthPixels * 01.4).toInt() // 80% of screen width
+            (requireContext().resources.displayMetrics.widthPixels * 01.4).toInt() // 80% of screen width
         window?.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, height)
 
 
         if (imageUrl != null) {
             Glide
-                .with(activity)
+                .with(requireContext())
                 .load(imageUrl)
                 .placeholder(R.drawable.img)
                 .into(imageBinding.imageView)
@@ -373,10 +375,9 @@ class ProfileDetailFragment : Fragment(), UserFollowCallback, UserProfilePostCal
     }
 
 
-    override fun onAttach(context: Context) {
+/*    override fun onAttach(context: Context) {
         super.onAttach(context)
         (context as MainActivity).also { activity = it }
-    }
-
+    }*/
 
 }

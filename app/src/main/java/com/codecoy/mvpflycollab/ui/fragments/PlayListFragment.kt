@@ -51,7 +51,8 @@ class PlayListFragment : Fragment(), PlaylistCallback {
 
     private lateinit var viewModel: PlaylistViewModel
 
-    private lateinit var activity: MainActivity
+//    private lateinit var activity: MainActivity
+
     private lateinit var playListAdapter: PlayListAdapter
     private lateinit var playList: MutableList<String>
 
@@ -62,7 +63,7 @@ class PlayListFragment : Fragment(), PlaylistCallback {
             if (!uris.isNullOrEmpty()) {
                 showSingleImage(uris)
             } else {
-                Toast.makeText(activity, "No media selected", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "No media selected", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -90,12 +91,12 @@ class PlayListFragment : Fragment(), PlaylistCallback {
     }
 
     private fun inIt() {
-        dialog = Constant.getDialog(activity)
+        dialog = Constant.getDialog(requireContext())
         playList = arrayListOf()
 
-        currentUser = Utils.getUserFromSharedPreferences(activity)
+        currentUser = Utils.getUserFromSharedPreferences(requireContext())
 
-        mBinding.rvPlayList.layoutManager = GridLayoutManager(activity, 2)
+        mBinding.rvPlayList.layoutManager = GridLayoutManager(requireContext(), 2)
         mBinding.rvPlayList.setHasFixedSize(true)
 
         clickListeners()
@@ -132,7 +133,7 @@ class PlayListFragment : Fragment(), PlaylistCallback {
 
     private fun setUpBottomDialog() {
         bottomBinding = BottomsheetNewplaylistBinding.inflate(layoutInflater)
-        bottomSheetDialog = BottomSheetDialog(activity)
+        bottomSheetDialog = BottomSheetDialog(requireContext())
         bottomSheetDialog.setContentView(bottomBinding.root)
     }
 
@@ -163,7 +164,7 @@ class PlayListFragment : Fragment(), PlaylistCallback {
             return
         }
         if (viewModel.selectedImage.isNullOrEmpty()) {
-            Toast.makeText(activity, "Please attach Playlist image", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Please attach Playlist image", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -200,7 +201,7 @@ class PlayListFragment : Fragment(), PlaylistCallback {
                     Manifest.permission.READ_EXTERNAL_STORAGE
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-                Toast.makeText(activity, "Permission not granted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Permission not granted", Toast.LENGTH_SHORT).show()
                 // Request the permission
                 requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
 
@@ -212,7 +213,7 @@ class PlayListFragment : Fragment(), PlaylistCallback {
 
     private fun showSingleImage(uris: List<Uri>) {
 
-        val file = File(Constant.getRealPathFromURI(activity, uris[0]))
+        val file = File(Constant.getRealPathFromURI(requireContext(), uris[0]))
         val requestFile = RequestBody.create("image/*".toMediaTypeOrNull(), file)
         val imagePart = MultipartBody.Part.createFormData("img", file.name, requestFile)
 
@@ -257,13 +258,13 @@ class PlayListFragment : Fragment(), PlaylistCallback {
                     }
 
                 } else {
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -275,20 +276,20 @@ class PlayListFragment : Fragment(), PlaylistCallback {
                     viewModel.selectedImage = imageData.response
 
                     Glide
-                        .with(activity)
+                        .with(requireContext())
                         .load(Constant.MEDIA_BASE_URL + imageData.response)
                         .placeholder(R.drawable.img)
                         .into(bottomBinding.ivPlayImg)
 
                 } else {
 
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -309,13 +310,13 @@ class PlayListFragment : Fragment(), PlaylistCallback {
                     bottomSheetDialog.dismiss()
 
                 } else {
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -336,7 +337,7 @@ class PlayListFragment : Fragment(), PlaylistCallback {
         }
 
 
-        playListAdapter = PlayListAdapter(allPlaylistData, activity, this)
+        playListAdapter = PlayListAdapter(allPlaylistData, requireContext(), this)
         mBinding.rvPlayList.adapter = playListAdapter
     }
 
@@ -351,11 +352,11 @@ class PlayListFragment : Fragment(), PlaylistCallback {
         }
     }
 
-    override fun onAttach(context: Context) {
+/*    override fun onAttach(context: Context) {
         super.onAttach(context)
 
         (context as MainActivity).also { activity = it }
-    }
+    }*/
 
 
 }

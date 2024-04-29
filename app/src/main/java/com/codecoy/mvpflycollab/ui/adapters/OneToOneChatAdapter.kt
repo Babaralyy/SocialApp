@@ -8,10 +8,10 @@ import com.codecoy.mvpflycollab.databinding.ChatReceiverBinding
 import com.codecoy.mvpflycollab.databinding.ChatSenderBinding
 import com.codecoy.mvpflycollab.datamodels.MessageData
 
-class ChatAdapter (
+class OneToOneChatAdapter (
     private val chat1List: MutableList<MessageData>,
     var context: Context,
-    ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
         private const val VIEW_TYPE_1 = 1
@@ -65,10 +65,10 @@ class ChatAdapter (
 
     override fun getItemViewType(position: Int): Int {
 
-        if (chat1List[position].isSender){
-            return VIEW_TYPE_1
+        return if (chat1List[position].isSender){
+            VIEW_TYPE_1
         } else {
-            return VIEW_TYPE_2
+            VIEW_TYPE_2
         }
     }
 }

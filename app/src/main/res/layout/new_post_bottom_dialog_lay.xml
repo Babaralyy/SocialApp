@@ -55,7 +55,7 @@
             android:layout_marginEnd="@dimen/_15sdp"
             android:background="@drawable/edittext_shape"
             android:gravity="top"
-            android:hint="@string/description"
+            android:hint="@string/location"
             android:importantForAutofill="no"
             android:inputType="textMultiLine"
             android:padding="@dimen/_10sdp"

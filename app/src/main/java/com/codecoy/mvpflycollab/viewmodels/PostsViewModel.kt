@@ -48,6 +48,9 @@ class PostsViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
     private val savePostResponseMutableLiveData = MutableLiveData<Response<SavePostResponse>>()
     val savePostResponseLiveData: LiveData<Response<SavePostResponse>> get() = savePostResponseMutableLiveData
 
+    private val savedPostsResponseMutableLiveData = MutableLiveData<Response<UserPostsResponse>>()
+    val savedUsersPostsResponseLiveData: LiveData<Response<UserPostsResponse>> get() = savedPostsResponseMutableLiveData
+
 
     var mediaImgList: MutableList<Uri> = arrayListOf()
 
@@ -126,7 +129,7 @@ class PostsViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
 
     fun allStories(token: String, userId: String) {
         viewModelScope.launch(handler) {
-            _loading.value = true
+//            _loading.value = true
             val response = mvpRepository.allStories(token, userId)
 
             try {
@@ -135,7 +138,7 @@ class PostsViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
             } catch (e: Exception) {
                 allStoriesResponseMutableLiveData.value = response
             } finally {
-                _loading.value = false
+//                _loading.value = false
             }
         }
     }
@@ -166,6 +169,22 @@ class PostsViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
 
             } catch (e: Exception) {
                 savePostResponseMutableLiveData.value = response
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
+
+    fun savedPosts(token: String, userId: String) {
+        viewModelScope.launch(handler) {
+            _loading.value = true
+            val response = mvpRepository.savedPosts(token, userId)
+
+            try {
+                savedPostsResponseMutableLiveData.value = response
+
+            } catch (e: Exception) {
+                savedPostsResponseMutableLiveData.value = response
             } finally {
                 _loading.value = false
             }

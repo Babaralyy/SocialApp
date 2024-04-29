@@ -154,4 +154,9 @@
     <string name="followers">Followers</string>
     <string name="people">People</string>
     <string name="google_maps_key">AIzaSyCtpacCfJuORk4M4n2Kfu6GTKyJ-D35Tzo</string>
+    <string name="message">Message</string>
+    <string name="messages">Messages</string>
+    <string name="get_started">Get Started</string>
+    <string name="chats_will_appear_here">Chats will appear here after you send or receive a message</string>
+    <string name="location">Location</string>
 </resources>

@@ -210,4 +210,7 @@ class MvpRepository(private val apiCall: ApiCall) {
     suspend fun savePost(token: String, userId: String, postId: String) =
         apiCall.savePost(token, userId, postId)
 
+    suspend fun savedPosts(token: String, userId: String) =
+        apiCall.savedPosts(token, userId)
+
 }

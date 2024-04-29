@@ -29,7 +29,8 @@
         android:theme="@style/Theme.MVPFlyCollab"
         tools:targetApi="31"
         android:requestLegacyExternalStorage="true"
-        android:largeHeap="true">
+        android:largeHeap="true"
+        android:usesCleartextTraffic="true">
         <activity
             android:name=".ui.activities.MainActivity"
             android:exported="true"

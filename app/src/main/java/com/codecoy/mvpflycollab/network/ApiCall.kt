@@ -334,4 +334,10 @@ interface ApiCall {
         @Field("post_id") postId: String,
     ): Response<SavePostResponse>
 
+    @GET("api/save_post_list_user")
+    suspend fun savedPosts(
+        @Header("Authorization") token: String,
+        @Query("user_id") userId: String,
+    ): Response<UserPostsResponse>
+
 }

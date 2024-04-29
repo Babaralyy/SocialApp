@@ -29,11 +29,10 @@ class PostsAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val postsData = postsList[position]
 
-
         Glide
             .with(context)
             .load(Constant.MEDIA_BASE_URL + postsData.userData?.profileImg)
-            .placeholder(R.drawable.img)
+            .placeholder(R.drawable.loading_svg)
             .into(holder.mBinding.ivUser)
 
         holder.mBinding.tvUserName.text = postsData.userData?.name

@@ -1,7 +1,6 @@
 package com.codecoy.mvpflycollab.ui.fragments
 
 import android.app.Dialog
-import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -14,6 +13,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
@@ -33,7 +33,6 @@ import com.codecoy.mvpflycollab.datamodels.UserLoginData
 import com.codecoy.mvpflycollab.datamodels.UserPostsData
 import com.codecoy.mvpflycollab.network.ApiCall
 import com.codecoy.mvpflycollab.repo.MvpRepository
-import com.codecoy.mvpflycollab.ui.activities.MainActivity
 import com.codecoy.mvpflycollab.ui.adapters.PostCommentsAdapter
 import com.codecoy.mvpflycollab.ui.adapters.PostsAdapter
 import com.codecoy.mvpflycollab.ui.adapters.stories.StoriesAdapter
@@ -56,7 +55,7 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
 
     private var currentUser: UserLoginData? = null
 
-    private lateinit var activity: MainActivity
+//    private lateinit var activity: MainActivity
 
     private lateinit var storiesAdapter: StoriesAdapter
     private lateinit var postsAdapter: PostsAdapter
@@ -80,18 +79,19 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
     }
 
     private fun inIt() {
-        dialog = Constant.getDialog(activity)
-        currentUser = Utils.getUserFromSharedPreferences(activity)
+        dialog = Constant.getDialog(requireContext())
+
+        currentUser = Utils.getUserFromSharedPreferences(requireContext())
 
         mBinding.rvStories.layoutManager =
-            LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         mBinding.rvStories.setHasFixedSize(true)
 
         mBinding.rvPosts.layoutManager =
-            LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         mBinding.rvPosts.setHasFixedSize(true)
 
-        postsAdapter = PostsAdapter(mutableListOf(), activity, this)
+        postsAdapter = PostsAdapter(mutableListOf(), requireContext(), this)
         mBinding.rvPosts.adapter = postsAdapter
 
         setUpViewModel()
@@ -99,10 +99,11 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
         getAllPosts()
         getAllStories()
         setUpBottomDialog()
+        responseFromViewModel()
 
         mBinding.ivMessenger.setOnClickListener {
             try {
-                val action = MainFragmentDirections.actionMainFragmentToChatFragment()
+                val action = MainFragmentDirections.actionMainFragmentToStartChatFragment()
                 findNavController().navigate(action)
             } catch (e: Exception) {
                 Log.i(TAG, "inIt: ${e.message}")
@@ -147,15 +148,15 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
 
     override fun onResume() {
         super.onResume()
-        responseFromViewModel()
+
     }
 
     private fun setUpBottomDialog() {
         bottomBinding = CommentsBottomDialogLayBinding.inflate(layoutInflater)
-        bottomSheetDialog = BottomSheetDialog(activity)
+        bottomSheetDialog = BottomSheetDialog(requireContext())
         bottomSheetDialog.setContentView(bottomBinding.root)
 
-        bottomBinding.rvComments.layoutManager = LinearLayoutManager(activity)
+        bottomBinding.rvComments.layoutManager = LinearLayoutManager(requireContext())
     }
 
     private fun getAllPosts() {
@@ -174,8 +175,12 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
         viewModel.loading.observe(this) { isLoading ->
             if (isLoading) {
                 dialog?.show()
+                Log.i(TAG, "dialog --> :: show")
             } else {
                 dialog?.dismiss()
+
+                Log.i(TAG, "dialog --> :: dismiss")
+
             }
         }
 
@@ -194,13 +199,13 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
                     }
 
                 } else {
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -219,13 +224,13 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
                     }
 
                 } else {
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -244,13 +249,13 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
                     }
 
                 } else {
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -269,13 +274,13 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
                     }
 
                 } else {
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -294,13 +299,13 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
                     }
 
                 } else {
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -319,19 +324,20 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
                     }
 
                 } else {
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
         viewModel.exceptionLiveData.observe(this) { exception ->
-            if (exception != null) {
-                Log.i(TAG, "addJourneyResponseLiveData:: exception $exception")
+
+            exception.let {
+                Log.i(TAG, "addJourneyResponseLiveData:: exception $it")
                 dialog?.dismiss()
             }
         }
@@ -344,7 +350,7 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
             bottomBinding.tvNoComment.visibility = View.VISIBLE
         }
 
-        postCommentsAdapter = PostCommentsAdapter(commentsData, activity)
+        postCommentsAdapter = PostCommentsAdapter(commentsData, requireContext())
         bottomBinding.rvComments.adapter = postCommentsAdapter
     }
 
@@ -389,7 +395,7 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
         }
 
         Glide
-            .with(activity)
+            .with(requireContext())
             .load(Constant.MEDIA_BASE_URL + currentUser?.profileImg)
             .placeholder(R.drawable.img)
             .into(mBinding.drawerLayout.findViewById(R.id.ivUserProfile))
@@ -476,18 +482,18 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
         }
 
         mBinding.drawerLayout.findViewById<LinearLayout>(R.id.iShareUs).setOnClickListener {
-            Toast.makeText(activity, "Clicked", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Clicked", Toast.LENGTH_SHORT).show()
             mBinding.drawerLayout.closeDrawer(GravityCompat.START)
         }
 
         mBinding.drawerLayout.findViewById<LinearLayout>(R.id.iRateUs).setOnClickListener {
-            Toast.makeText(activity, "Clicked", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Clicked", Toast.LENGTH_SHORT).show()
             mBinding.drawerLayout.closeDrawer(GravityCompat.START)
         }
 
         mBinding.drawerLayout.findViewById<LinearLayout>(R.id.iLogout).setOnClickListener {
             try {
-                Utils.clearSharedPreferences(activity)
+                Utils.clearSharedPreferences(requireContext())
                 findNavController().navigate(MainFragmentDirections.actionMainFragmentToSignInFragment())
             } catch (e: Exception) {
 
@@ -502,7 +508,7 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
         } else {
             mBinding.rvStories.visibility = View.GONE
         }
-        storiesAdapter = StoriesAdapter(calendarStoryData, activity, this)
+        storiesAdapter = StoriesAdapter(calendarStoryData, requireContext(), this)
         mBinding.rvStories.adapter = storiesAdapter
     }
 
@@ -522,18 +528,19 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
     }
 
     private fun showPopupMenu(view: View, postsData: UserPostsData) {
-        val popupMenu = PopupMenu(activity, view)
+        val popupMenu = PopupMenu(requireContext(), view)
         popupMenu.inflate(R.menu.popup_menu) // Inflate the menu resource
         popupMenu.setOnMenuItemClickListener { menuItem: MenuItem ->
             when (menuItem.itemId) {
-               /* R.id.item_edit -> {
-                    // Handle click on menu item 1
-                    true
-                }*/
+                /* R.id.item_edit -> {
+                     // Handle click on menu item 1
+                     true
+                 }*/
                 R.id.item_delete -> {
                     deletePost(postsData)
                     true
                 }
+
                 else -> false
             }
         }
@@ -541,7 +548,24 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
     }
 
     private fun deletePost(postsData: UserPostsData) {
-        viewModel.deletePost("Bearer " + currentUser?.token.toString(), postsData.id.toString())
+        showAlertDialog(postsData)
+
+    }
+
+    private fun showAlertDialog(postsData: UserPostsData) {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Post")
+        builder.setMessage("Are you sure you want to delete?")
+        builder.setPositiveButton("Yes") { dialog, which ->
+            viewModel.deletePost("Bearer " + currentUser?.token.toString(), postsData.id.toString())
+            dialog.dismiss()
+        }
+        builder.setNegativeButton("No") { dialog, which ->
+
+            dialog.dismiss()
+        }
+        val dialog = builder.create()
+        dialog.show()
     }
 
     override fun onCommentsClick(postsData: UserPostsData) {
@@ -582,13 +606,13 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
                     }
 
                 } else {
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -612,13 +636,13 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
                     }
 
                 } else {
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -646,7 +670,7 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
                     comment
                 )
             } else {
-                Toast.makeText(activity, "Please add comment", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Please add comment", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -668,13 +692,13 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
 
     override fun onUserClick(postsData: UserPostsData, mBinding: PostItemViewBinding) {
         try {
-            if(postsData.userId.toString() == currentUser?.id.toString()){
+            if (postsData.userId.toString() == currentUser?.id.toString()) {
                 findNavController().navigate(MainFragmentDirections.actionMainFragmentToAboutProfileFragment())
             } else {
                 Utils.userId = postsData.userId.toString()
                 findNavController().navigate(MainFragmentDirections.actionMainFragmentToUserProfileDetailsFragment())
             }
-        } catch (e: Exception){
+        } catch (e: Exception) {
             Log.i(TAG, "clickListeners:: ${e.message}")
         }
     }
@@ -697,9 +721,9 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
         }
     }
 
-    override fun onAttach(context: Context) {
+/*    override fun onAttach(context: Context) {
         super.onAttach(context)
 
         (context as MainActivity).also { activity = it }
-    }
+    }*/
 }

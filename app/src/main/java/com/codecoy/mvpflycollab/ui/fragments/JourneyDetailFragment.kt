@@ -62,7 +62,8 @@ import java.util.Locale
 class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallback,
     ImageClickCallback {
 
-    private lateinit var activity: MainActivity
+//    private lateinit var activity: MainActivity
+
     private lateinit var journeyDetailAdapter: JourneyDetailAdapter
     private lateinit var journeyDetailImageAdapter: JourneyDetailImageAdapter
     private lateinit var showJourneyVideoAdapter: ShowJourneyVideoAdapter
@@ -98,7 +99,7 @@ class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallba
             if (uris != null) {
                 showSingleImage(uris)
             } else {
-                Toast.makeText(activity, "No media selected", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "No media selected", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -107,7 +108,7 @@ class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallba
         for (item in uris) {
             viewModel.mediaImgList.add(item)
         }
-        journeyDetailImageAdapter = JourneyDetailImageAdapter(viewModel.mediaImgList, activity, this)
+        journeyDetailImageAdapter = JourneyDetailImageAdapter(viewModel.mediaImgList, requireContext(), this)
         bottomBinding.rvJourneyDetailsImages.adapter = journeyDetailImageAdapter
 
     }
@@ -123,19 +124,22 @@ class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallba
     }
 
     private val pickVidMedia =
-        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(2)) { uris ->
             // Callback is invoked after the user selects a media item or closes the photo picker.
-            if (uri != null) {
-                showSingleVideo(uri)
+            if (uris != null) {
+                showSingleVideo(uris)
             } else {
-                Toast.makeText(activity, "No media selected", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "No media selected", Toast.LENGTH_SHORT).show()
             }
         }
 
-    private fun showSingleVideo(uri: Uri) {
-        viewModel.mediaVidList.add(uri)
-        viewModel.mediaVidList.distinct()
-        showJourneyVideoAdapter = ShowJourneyVideoAdapter(viewModel.mediaVidList, activity, this)
+    private fun showSingleVideo(uris: List<Uri>) {
+
+        for (item in uris) {
+            viewModel.mediaVidList.add(item)
+        }
+
+        showJourneyVideoAdapter = ShowJourneyVideoAdapter(viewModel.mediaVidList, requireContext(), this)
         bottomBinding.rvMediaVideo.adapter = showJourneyVideoAdapter
     }
 
@@ -156,9 +160,9 @@ class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallba
         imagePartList = arrayListOf()
         videoPartList = arrayListOf()
 
-        dialog = Constant.getDialog(activity)
+        dialog = Constant.getDialog(requireContext())
         journeyDetailDataList = arrayListOf()
-        currentUser = Utils.getUserFromSharedPreferences(activity)
+        currentUser = Utils.getUserFromSharedPreferences(requireContext())
 
         setUpViewModel()
         getJourneyData()
@@ -166,7 +170,7 @@ class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallba
         setUpBottomDialog()
         clickListeners()
 
-        mBinding.rvJourneyDetail.layoutManager = LinearLayoutManager(activity)
+        mBinding.rvJourneyDetail.layoutManager = LinearLayoutManager(requireContext())
 
         if (currentUser?.id.toString() != Utils.userId){
             mBinding.floatingActionButton.visibility = View.GONE
@@ -193,15 +197,15 @@ class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallba
 
     private fun setUpBottomDialog() {
         bottomBinding = AddJourneyPicBottomDialogLayBinding.inflate(layoutInflater)
-        bottomSheetDialog = BottomSheetDialog(activity)
+        bottomSheetDialog = BottomSheetDialog(requireContext())
         bottomSheetDialog.setContentView(bottomBinding.root)
 
         bottomBinding.rvJourneyDetailsImages.layoutManager =
-            LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, true)
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, true)
         bottomBinding.rvJourneyDetailsImages.setHasFixedSize(true)
 
         bottomBinding.rvMediaVideo.layoutManager =
-            LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, true)
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, true)
         bottomBinding.rvMediaVideo.setHasFixedSize(true)
     }
 
@@ -231,13 +235,13 @@ class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallba
 
                 } else {
 
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -252,13 +256,13 @@ class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallba
                     viewModel.allJourneyDetailsList("Bearer " + currentUser?.token.toString(), allJourneyData?.id.toString())
                     bottomSheetDialog.dismiss()
                 } else {
-                    Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(activity, "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -329,7 +333,7 @@ class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallba
                     Manifest.permission.READ_EXTERNAL_STORAGE
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-                Toast.makeText(activity, "Permission not granted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Permission not granted", Toast.LENGTH_SHORT).show()
                 // Request the permission
                 requestVidPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
 
@@ -340,7 +344,7 @@ class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallba
     }
     private fun showDatePickerDialog(bottomBinding: AddJourneyPicBottomDialogLayBinding) {
         val datePickerDialog = DatePickerDialog(
-            activity,
+            requireContext(),
             { _, year, month, dayOfMonth ->
                 // Update calendar with the selected date
                 calendar.set(Calendar.YEAR, year)
@@ -380,12 +384,12 @@ class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallba
             return
         }
         if (eventDate.isEmpty()) {
-            Toast.makeText(activity, "Please select date", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Please select date", Toast.LENGTH_SHORT).show()
             return
         }
 
         if (viewModel.mediaImgList.isEmpty() && viewModel.mediaVidList.isEmpty()){
-            Toast.makeText(activity, "Please add media", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Please add media", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -404,7 +408,7 @@ class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallba
 
         for (item in viewModel.mediaImgList) {
 
-            Utils.getRealPathFromImgURI(activity, item)
+            Utils.getRealPathFromImgURI(requireContext(), item)
                 .let {
                     Log.i(TAG, "mediaImgList:: getRealPathFromURI $it")
 
@@ -425,7 +429,7 @@ class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallba
 
         for (item in viewModel.mediaVidList) {
 
-            Utils.getRealPathFromVidURI(activity, item)
+            Utils.getRealPathFromVidURI(requireContext(), item)
                 .let {
                     Log.i(TAG, "mediaVidList:: getRealPathFromURI $it")
 
@@ -473,7 +477,7 @@ class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallba
                     Manifest.permission.READ_EXTERNAL_STORAGE
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-                Toast.makeText(activity, "Permission not granted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Permission not granted", Toast.LENGTH_SHORT).show()
                 // Request the permission
                 requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
 
@@ -493,7 +497,7 @@ class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallba
             mBinding.tvNoDataFound.visibility = View.GONE
         }
 
-        journeyDetailAdapter = JourneyDetailAdapter(journeyDetailsData, activity, this)
+        journeyDetailAdapter = JourneyDetailAdapter(journeyDetailsData, requireContext(), this)
         mBinding.rvJourneyDetail.adapter = journeyDetailAdapter
     }
 
@@ -524,7 +528,7 @@ class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallba
 
         val imageBinding = ShowImageDialogBinding.inflate(layoutInflater)
 
-        val dialog = Dialog(activity)
+        val dialog = Dialog(requireContext())
         dialog.setContentView(imageBinding.root)
         dialog.setCancelable(false)
 
@@ -539,7 +543,7 @@ class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallba
 
         if (imageUrl != null) {
             Glide
-                .with(activity)
+                .with(requireContext())
                 .load(imageUrl)
                 .placeholder(R.drawable.img)
                 .into(imageBinding.imageView)
@@ -554,7 +558,7 @@ class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallba
 
         val videoBinding = ShowVideoDialogBinding.inflate(layoutInflater)
 
-        val dialog = Dialog(activity)
+        val dialog = Dialog(requireContext())
         dialog.setContentView(videoBinding.root)
         dialog.setCancelable(false)
 
@@ -562,7 +566,7 @@ class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallba
         val window = dialog.window
         window?.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT)
 
-        val player = ExoPlayer.Builder(activity).build()
+        val player = ExoPlayer.Builder(requireContext()).build()
         videoBinding.videoPlayer.player = player
 
         videoBinding.btnClose.setOnClickListener {
@@ -599,9 +603,9 @@ class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallba
 
     }
 
-    override fun onAttach(context: Context) {
+/*    override fun onAttach(context: Context) {
         super.onAttach(context)
         (context as MainActivity).also { activity = it }
-    }
+    }*/
 
 }
