@@ -44,7 +44,7 @@ android {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.core:core-ktx:1.13.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
@@ -78,18 +78,20 @@ dependencies {
     //Lottie Animation
     implementation("com.airbnb.android:lottie:6.3.0")
 
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("androidx.datastore:datastore-preferences:1.1.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
 
     implementation ("com.applandeo:material-calendar-view:1.7.0")
 
-    implementation("androidx.media3:media3-exoplayer:1.3.0")
-    implementation("androidx.media3:media3-exoplayer-dash:1.3.0")
-    implementation("androidx.media3:media3-ui:1.3.0")
+    implementation("androidx.media3:media3-exoplayer:1.3.1")
+    implementation("androidx.media3:media3-exoplayer-dash:1.3.1")
+    implementation("androidx.media3:media3-ui:1.3.1")
 
     implementation("com.github.smarteist:autoimageslider:1.4.0-appcompat")
 
     implementation("com.google.android.libraries.places:places:3.4.0")
+
+    implementation ("io.socket:socket.io-client:2.0.0")
 
 }

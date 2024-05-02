@@ -18,6 +18,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -43,6 +44,7 @@ import com.codecoy.mvpflycollab.viewmodels.CommentsViewModel
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.codecoy.mvpflycollab.viewmodels.PostsViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import de.hdodenhof.circleimageview.CircleImageView
 import java.util.Calendar
 import java.util.Date
 
@@ -344,11 +346,9 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
     }
 
     private fun setUpCommentsRecyclerView(commentsData: ArrayList<CommentsData>) {
-        if (commentsData.isNotEmpty()) {
-            bottomBinding.tvNoComment.visibility = View.GONE
-        } else {
-            bottomBinding.tvNoComment.visibility = View.VISIBLE
-        }
+
+        val hasComments = commentsData.isNotEmpty()
+        bottomBinding.tvNoComment.visibility = if (hasComments) View.GONE else View.VISIBLE
 
         postCommentsAdapter = PostCommentsAdapter(commentsData, requireContext())
         bottomBinding.rvComments.adapter = postCommentsAdapter
@@ -376,13 +376,10 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
         val actionView = layoutInflater.inflate(R.layout.custom_nav_layout, null)
         mBinding.drawerNavigation.addView(actionView)
 
-
-
         mBinding.navIcon.setOnClickListener {
-            if (!mBinding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                mBinding.drawerLayout.openDrawer(GravityCompat.START)
-            } else {
-                mBinding.drawerLayout.closeDrawer(GravityCompat.START)
+            val isOpen = mBinding.drawerLayout.isDrawerOpen(GravityCompat.START)
+            mBinding.drawerLayout.apply {
+                if (!isOpen) openDrawer(GravityCompat.START) else closeDrawer(GravityCompat.START)
             }
         }
 
@@ -390,124 +387,113 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
     }
 
     private fun drawersClicks() {
+
         mBinding.drawerLayout.findViewById<ImageView>(R.id.ivCloseDrawer).setOnClickListener {
             mBinding.drawerLayout.closeDrawer(GravityCompat.START)
         }
 
-        Glide
-            .with(requireContext())
-            .load(Constant.MEDIA_BASE_URL + currentUser?.profileImg)
-            .placeholder(R.drawable.img)
-            .into(mBinding.drawerLayout.findViewById(R.id.ivUserProfile))
+        loadImageAndSetText(
+            R.id.ivUserProfile,
+            R.id.tvProfileName,
+            currentUser?.profileImg,
+            currentUser?.name
+        )
 
-        mBinding.drawerLayout.findViewById<TextView>(R.id.tvProfileName).setText(currentUser?.name)
+        setupDrawerItems()
 
-        mBinding.drawerLayout.findViewById<LinearLayout>(R.id.iProfile).setOnClickListener {
 
+    }
+
+    private fun setupDrawerItems() {
+
+        mBinding.drawerLayout.findViewById<CircleImageView>(R.id.ivUserProfile).setOnClickListener {
             mBinding.drawerLayout.closeDrawer(GravityCompat.START)
-
             try {
-                val action = MainFragmentDirections.actionMainFragmentToAboutProfileFragment()
-                findNavController().navigate(action)
+                navigateTo { MainFragmentDirections.actionMainFragmentToAboutProfileFragment()}
             } catch (e: Exception) {
-                Log.i(TAG, "inIt: ${e.message}")
+                Log.i(TAG, "init: ${e.message}")
             }
         }
 
-        mBinding.drawerLayout.findViewById<LinearLayout>(R.id.iEditProfile).setOnClickListener {
-
-            mBinding.drawerLayout.closeDrawer(GravityCompat.START)
-
-            try {
-                val action = MainFragmentDirections.actionMainFragmentToEditProfileFragment()
-                findNavController().navigate(action)
-            } catch (e: Exception) {
-                Log.i(TAG, "inIt: ${e.message}")
-            }
+        setDrawerItemClick(R.id.iProfile) {
+            navigateTo { MainFragmentDirections.actionMainFragmentToAboutProfileFragment() }
         }
 
-        mBinding.drawerLayout.findViewById<LinearLayout>(R.id.iJourney).setOnClickListener {
-
-            mBinding.drawerLayout.closeDrawer(GravityCompat.START)
-
-            try {
-                Utils.userId = currentUser?.id.toString()
-                val action = MainFragmentDirections.actionMainFragmentToJourneyFragment()
-                findNavController().navigate(action)
-            } catch (e: Exception) {
-                Log.i(TAG, "inIt: ${e.message}")
-            }
-
+        setDrawerItemClick(R.id.iEditProfile) {
+            navigateTo { MainFragmentDirections.actionMainFragmentToEditProfileFragment() }
         }
 
-        mBinding.drawerLayout.findViewById<LinearLayout>(R.id.iPlaylist).setOnClickListener {
-
-            mBinding.drawerLayout.closeDrawer(GravityCompat.START)
-
-            try {
-                Utils.userId = currentUser?.id.toString()
-                val action = MainFragmentDirections.actionMainFragmentToPlayListFragment()
-                findNavController().navigate(action)
-            } catch (e: Exception) {
-                Log.i(TAG, "inIt: ${e.message}")
-            }
-
+        setDrawerItemClick(R.id.iJourney) {
+            Utils.userId = currentUser?.id.toString()
+            navigateTo { MainFragmentDirections.actionMainFragmentToJourneyFragment() }
         }
 
-        mBinding.drawerLayout.findViewById<LinearLayout>(R.id.iCollab).setOnClickListener {
-
-            mBinding.drawerLayout.closeDrawer(GravityCompat.START)
-
-            try {
-                Utils.userId = currentUser?.id.toString()
-                val action = MainFragmentDirections.actionMainFragmentToMembersFragment()
-                findNavController().navigate(action)
-            } catch (e: Exception) {
-                Log.i(TAG, "inIt: ${e.message}")
-            }
-
+        setDrawerItemClick(R.id.iPlaylist) {
+            Utils.userId = currentUser?.id.toString()
+            navigateTo { MainFragmentDirections.actionMainFragmentToPlayListFragment() }
         }
 
-        mBinding.drawerLayout.findViewById<LinearLayout>(R.id.iLevels).setOnClickListener {
-
-            mBinding.drawerLayout.closeDrawer(GravityCompat.START)
-
-            try {
-                val action = MainFragmentDirections.actionMainFragmentToLevelsFragment()
-                findNavController().navigate(action)
-            } catch (e: Exception) {
-                Log.i(TAG, "inIt: ${e.message}")
-            }
-
+        setDrawerItemClick(R.id.iCollab) {
+            Utils.userId = currentUser?.id.toString()
+            navigateTo { MainFragmentDirections.actionMainFragmentToMembersFragment() }
         }
 
-        mBinding.drawerLayout.findViewById<LinearLayout>(R.id.iShareUs).setOnClickListener {
-            Toast.makeText(requireContext(), "Clicked", Toast.LENGTH_SHORT).show()
-            mBinding.drawerLayout.closeDrawer(GravityCompat.START)
+        setDrawerItemClick(R.id.iLevels) {
+            navigateTo { MainFragmentDirections.actionMainFragmentToLevelsFragment() }
         }
 
-        mBinding.drawerLayout.findViewById<LinearLayout>(R.id.iRateUs).setOnClickListener {
-            Toast.makeText(requireContext(), "Clicked", Toast.LENGTH_SHORT).show()
-            mBinding.drawerLayout.closeDrawer(GravityCompat.START)
+        setDrawerItemClick(R.id.iShareUs) {
+            showToast("Clicked")
         }
 
-        mBinding.drawerLayout.findViewById<LinearLayout>(R.id.iLogout).setOnClickListener {
-            try {
-                Utils.clearSharedPreferences(requireContext())
-                findNavController().navigate(MainFragmentDirections.actionMainFragmentToSignInFragment())
-            } catch (e: Exception) {
+        setDrawerItemClick(R.id.iRateUs) {
+            showToast("Clicked")
+        }
 
-            }
-            mBinding.drawerLayout.closeDrawer(GravityCompat.START)
+        setDrawerItemClick(R.id.iLogout) {
+            Utils.clearSharedPreferences(requireContext())
+            navigateTo { MainFragmentDirections.actionMainFragmentToSignInFragment() }
         }
     }
 
-    private fun setUpStoriesRecyclerView(calendarStoryData: ArrayList<CalendarStoryData>) {
-        if (calendarStoryData.isNotEmpty()) {
-            mBinding.rvStories.visibility = View.VISIBLE
-        } else {
-            mBinding.rvStories.visibility = View.GONE
+    private fun setDrawerItemClick(itemId: Int, action: () -> Unit) {
+        mBinding.drawerLayout.findViewById<LinearLayout>(itemId).setOnClickListener {
+            mBinding.drawerLayout.closeDrawer(GravityCompat.START)
+            try {
+                action()
+            } catch (e: Exception) {
+                Log.i(TAG, "init: ${e.message}")
+            }
         }
+    }
+
+    private fun loadImageAndSetText(imageViewId: Int, textId: Int, imageUrl: String?, text: String?) {
+        Glide.with(requireContext())
+            .load(Constant.MEDIA_BASE_URL + imageUrl)
+            .placeholder(R.drawable.img)
+            .into(mBinding.drawerLayout.findViewById(imageViewId))
+        mBinding.drawerLayout.findViewById<TextView>(textId).text = text
+    }
+
+    private fun navigateTo(destinationAction: () -> NavDirections) {
+        findNavController().navigate(destinationAction())
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun setUpStoriesRecyclerView(calendarStoryData: ArrayList<CalendarStoryData>) {
+
+        val hasStories = calendarStoryData.isNotEmpty()
+        mBinding.rvStories.visibility = if (hasStories) View.VISIBLE else View.GONE
+
+//        if (calendarStoryData.isNotEmpty()) {
+//            mBinding.rvStories.visibility = View.VISIBLE
+//        } else {
+//            mBinding.rvStories.visibility = View.GONE
+//        }
+        
         storiesAdapter = StoriesAdapter(calendarStoryData, requireContext(), this)
         mBinding.rvStories.adapter = storiesAdapter
     }
@@ -569,15 +555,7 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
     }
 
     override fun onCommentsClick(postsData: UserPostsData) {
-        /*   try {
-               val action = MainFragmentDirections.actionMainFragmentToCommentsFragment()
-               findNavController().navigate(action)
-           } catch (e: Exception) {
-
-           }*/
-
         showBottomCommentDialog(postsData)
-
     }
 
     private fun showBottomCommentDialog(postsData: UserPostsData) {
@@ -717,7 +695,7 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
             val action = MainFragmentDirections.actionMainFragmentToFollowingCalendarFragment()
             findNavController().navigate(action)
         } catch (e: Exception) {
-
+            Log.i(TAG, "onStoryClick: ${e.message}")
         }
     }
 

@@ -79,6 +79,13 @@ class UserProfilePostDetailAdapter(
             holder.mBinding.ivLikeimage.setImageResource(R.drawable.dislike_post)
         }
 
+        if (postsData.userSaveStatus == "saved") {
+            holder.mBinding.ivSaveImage.setImageResource(R.drawable.save_post_filled)
+        }
+        else if (postsData.userSaveStatus == "unsaved") {
+            holder.mBinding.ivSaveImage.setImageResource(R.drawable.unsaved_post)
+        }
+
 //        holder.mBinding.tvLocation.text = "Tokyo, Japan"
         holder.mBinding.tvlikenumber.text = postsData.totalLikes.toString()
         holder.mBinding.tvcommentnumber.text = postsData.totalComments.toString()
@@ -94,6 +101,10 @@ class UserProfilePostDetailAdapter(
 
         holder.mBinding.ivmenu.setOnClickListener {
             homeCallback.onMenuClick(postsData, holder.mBinding)
+        }
+
+        holder.mBinding.ivSaveImage.setOnClickListener {
+            homeCallback.onSaveClick(postsData, holder.mBinding)
         }
 
     }

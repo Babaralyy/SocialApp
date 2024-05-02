@@ -215,6 +215,31 @@ class UserPostsFragment : Fragment(), HomeCallback {
         }
 
 
+        postViewModel.savePostResponseLiveData.observe(this) { response ->
+
+            Log.i(TAG, "registerUser:: response $response")
+
+            if (response.code() == 200) {
+                val postResponse = response.body()
+                if (postResponse != null && postResponse.success == true) {
+
+                    try {
+                        getProfileData()
+                    } catch (e: Exception) {
+                        Log.i(TAG, "navControllerException:: ${e.message}")
+                    }
+
+                } else {
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
+                        .show()
+                }
+            } else if (response.code() == 401) {
+
+            } else {
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+            }
+        }
+
         viewModel.exceptionLiveData.observe(this) { exception ->
             if (exception != null) {
                 Log.i(TAG, "addJourneyResponseLiveData:: exception $exception")
@@ -365,7 +390,11 @@ class UserPostsFragment : Fragment(), HomeCallback {
     }
 
     override fun onSaveClick(postsData: UserPostsData, mBinding: PostItemViewBinding) {
-
+        postViewModel.savePost(
+            "Bearer " + currentUser?.token.toString(),
+            currentUser?.id.toString(),
+            postsData.id.toString()
+        )
     }
 
     override fun onAttach(context: Context) {

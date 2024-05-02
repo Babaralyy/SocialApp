@@ -24,6 +24,8 @@ class StartChatFragment : Fragment() {
 
     private fun inIt() {
 
+        listenSocket()
+
         mBinding.btnStart.setOnClickListener {
             try {
                 findNavController().navigate(StartChatFragmentDirections.actionStartChatFragmentToChatListFragment())
@@ -35,5 +37,9 @@ class StartChatFragment : Fragment() {
         mBinding.btnBackPress.setOnClickListener {
             findNavController().popBackStack()
         }
+    }
+
+    private fun listenSocket() {
+
     }
 }

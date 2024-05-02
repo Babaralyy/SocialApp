@@ -218,7 +218,6 @@ class MainFragment : Fragment(), ImageClickCallback {
             mBinding.bottomNavigation.selectedItemId = R.id.navigation_calendar
             Utils.isFromProfile = false
         }
-
     }
 
     private fun responseFromViewModel() {

@@ -194,6 +194,7 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
         setUpShareActivityBottomDialog()
         responseFromViewModel()
 
+
         mBinding.floatingActionButton.setOnClickListener {
             showAddActivityBottomDialog()
         }
@@ -250,7 +251,6 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
     override fun onResume() {
         super.onResume()
 
-
     }
 
     private fun getActivitiesAgainstDate(date: String?) {
@@ -282,15 +282,15 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
         viewModel.loading.observe(this) { isLoading ->
             if (isLoading) {
                 dialog?.show()
+                Log.i(TAG, "calendar_dialog --> :: show")
             } else {
                 dialog?.dismiss()
+                Log.i(TAG, "calendar_dialog --> :: dismiss")
             }
         }
 
         viewModel.allActivitiesResponseLiveData.observe(this) { response ->
             if (response.code() == 200) {
-
-
                 val allActivitiesList = response.body()
                 if (allActivitiesList != null && allActivitiesList.success == true) {
 

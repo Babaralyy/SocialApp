@@ -73,7 +73,7 @@ class ActivityViewModel (private val mvpRepository: MvpRepository) : ViewModel()
     }
     fun allActivitiesDates(token: String,userId: String) {
         viewModelScope.launch(handler) {
-            _loading.value = true
+//            _loading.value = true
             val response = mvpRepository.allActivitiesDates(token, userId)
 
             try {
@@ -82,7 +82,7 @@ class ActivityViewModel (private val mvpRepository: MvpRepository) : ViewModel()
             } catch (e: Exception) {
                 allActivitiesDateMutableLiveData.value = response
             } finally {
-                _loading.value = false
+//                _loading.value = false
             }
         }
     }
