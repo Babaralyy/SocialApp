@@ -33,6 +33,9 @@ object Utils {
     var scrollPosition: Int = 0
     var userId: String? = null
 
+    var receiverId: Int = 0
+    var socketId: String? = null
+
     private lateinit var sharedPreferences: SharedPreferences
 
 

@@ -196,7 +196,12 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
 
 
         mBinding.floatingActionButton.setOnClickListener {
-            showAddActivityBottomDialog()
+            try {
+                showAddActivityBottomDialog()
+            }catch (e: Exception){
+                Log.i(TAG, "showAddActivityBottomDialog: ${e.message}")
+            }
+
         }
 
         val calendar = Calendar.getInstance()
@@ -343,6 +348,7 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
                     )
 
                     bottomSheetDialog?.dismiss()
+
                 } else {
                     Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
                         .show()
@@ -582,8 +588,8 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
     private fun checkBottomCredentials() {
 
         val event = bottomBinding?.etEventName?.text.toString()
-        val note = bottomBinding?.etNote?.text.toString()
-        val date = bottomBinding?.etDate?.text.toString()
+        val note =  bottomBinding?.etNote?.text.toString()
+        val date =  bottomBinding?.etDate?.text.toString()
         val sTime = bottomBinding?.etStartTime?.text.toString()
         val eTime = bottomBinding?.etEndTime?.text.toString()
 
@@ -612,6 +618,12 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
 
         if (event.isNotEmpty() && note.isNotEmpty() && date.isNotEmpty() && sTime.isNotEmpty() && eTime.isNotEmpty()) {
             addNewActivity(event, note, date, sTime, eTime)
+
+            bottomBinding?.etEventName?.setText("")
+            bottomBinding?.etNote?.setText("")
+            bottomBinding?.etDate?.text = ""
+            bottomBinding?.etStartTime?.text = ""
+            bottomBinding?.etEndTime?.text = ""
         }
     }
 
@@ -681,6 +693,12 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
             imagePartList,
             videoPartList
         )
+
+        viewModel.mediaImgList.clear()
+        viewModel.mediaVidList.clear()
+        imagePartList.clear()
+        videoPartList.clear()
+
     }
 
 

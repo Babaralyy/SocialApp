@@ -1,5 +1,6 @@
 package com.codecoy.mvpflycollab.ui.adapters
 
+
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -10,8 +11,10 @@ import com.bumptech.glide.Glide
 import com.codecoy.mvpflycollab.R
 import com.codecoy.mvpflycollab.callbacks.HomeCallback
 import com.codecoy.mvpflycollab.databinding.PostItemViewBinding
+import com.codecoy.mvpflycollab.datamodels.UserLoginData
 import com.codecoy.mvpflycollab.datamodels.UserPostsData
 import com.codecoy.mvpflycollab.utils.Constant
+import com.codecoy.mvpflycollab.utils.Utils
 import java.util.Locale
 
 
@@ -20,14 +23,27 @@ class PostsAdapter(
     private var context: Context,
     private var homeCallback: HomeCallback
 ) : RecyclerView.Adapter<PostsAdapter.ViewHolder>() {
+    private var currentUser: UserLoginData? = null
 
-    private var filteredList: MutableList<UserPostsData> = postsList
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        currentUser = Utils.getUserFromSharedPreferences(context)
         return ViewHolder(PostItemViewBinding.inflate(LayoutInflater.from(context), parent, false))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val postsData = postsList[position]
+
+        holder.mBinding.ivmenu.visibility = if (currentUser?.id.toString() == postsData.userId) {
+            View.VISIBLE
+        } else {
+            View.INVISIBLE
+        }
+
+        if (currentUser?.id.toString() != postsData.userId){
+            holder.mBinding.ivmenu.visibility = View.INVISIBLE
+        } else {
+            holder.mBinding.ivmenu.visibility = View.VISIBLE
+        }
 
         Glide
             .with(context)
@@ -72,19 +88,14 @@ class PostsAdapter(
 
         }
 
-
-        if (postsData.userLikeStatus == "liked") {
-            holder.mBinding.ivLikeimage.setImageResource(R.drawable.like_post)
-        }
-        else if (postsData.userLikeStatus == "unliked") {
-            holder.mBinding.ivLikeimage.setImageResource(R.drawable.dislike_post)
+        when (postsData.userLikeStatus) {
+            "liked" -> holder.mBinding.ivLikeimage.setImageResource(R.drawable.like_post)
+            "unliked" -> holder.mBinding.ivLikeimage.setImageResource(R.drawable.dislike_post)
         }
 
-        if (postsData.userSaveStatus == "saved") {
-            holder.mBinding.ivSaveImage.setImageResource(R.drawable.save_post_filled)
-        }
-        else if (postsData.userSaveStatus == "unsaved") {
-            holder.mBinding.ivSaveImage.setImageResource(R.drawable.unsaved_post)
+        when (postsData.userSaveStatus) {
+            "saved" -> holder.mBinding.ivSaveImage.setImageResource(R.drawable.save_post_filled)
+            "unsaved" -> holder.mBinding.ivSaveImage.setImageResource(R.drawable.unsaved_post)
         }
 
 //        holder.mBinding.tvLocation.text = "Tokyo, Japan"

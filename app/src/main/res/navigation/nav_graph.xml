@@ -257,6 +257,9 @@
         <action
             android:id="@+id/action_mainFragment_to_startChatFragment"
             app:destination="@id/startChatFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_chatListFragment"
+            app:destination="@id/chatListFragment" />
     </fragment>
     <fragment
         android:id="@+id/levelsFragment"

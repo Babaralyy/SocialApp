@@ -105,7 +105,7 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
 
         mBinding.ivMessenger.setOnClickListener {
             try {
-                val action = MainFragmentDirections.actionMainFragmentToStartChatFragment()
+                val action = MainFragmentDirections.actionMainFragmentToChatListFragment()
                 findNavController().navigate(action)
             } catch (e: Exception) {
                 Log.i(TAG, "inIt: ${e.message}")
