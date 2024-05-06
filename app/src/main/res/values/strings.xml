@@ -160,4 +160,5 @@
     <string name="chats_will_appear_here">Chats will appear here after you send or receive a message</string>
     <string name="location">Location</string>
     <string name="no_one_is_online_at_the_moment">No one is online at the moment.</string>
+    <string name="add_chat">Add Chat</string>
 </resources>

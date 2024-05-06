@@ -1,4 +1,4 @@
-package com.codecoy.mvpflycollab.ui.adapters
+package com.codecoy.mvpflycollab.ui.adapters.chat
 
 import android.content.Context
 import android.view.LayoutInflater

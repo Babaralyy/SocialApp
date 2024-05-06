@@ -282,13 +282,12 @@ class ProfileDetailFragment : Fragment(), UserFollowCallback, UserProfilePostCal
     }
 
     private fun setUpAdapter(userList: ArrayList<AllUserData>) {
-        if (userList.isNotEmpty()){
-            mBinding.rvUsers.visibility = View.VISIBLE
-            mBinding.tvSuggested.visibility = View.VISIBLE
-        } else {
-            mBinding.rvUsers.visibility = View.GONE
-            mBinding.tvSuggested.visibility = View.GONE
-        }
+
+        val isVisible = userList.isNotEmpty()
+        mBinding.rvUsers.visibility = if (isVisible) View.VISIBLE else View.GONE
+        mBinding.tvSuggested.visibility = if (isVisible) View.VISIBLE else View.GONE
+
+        userList.removeIf { it.followerDetails?.collabStatus == "accepted" || it.followerDetails?.collabStatus == "sent"}
 
         allUsersAdapter.setItemList(userList)
 

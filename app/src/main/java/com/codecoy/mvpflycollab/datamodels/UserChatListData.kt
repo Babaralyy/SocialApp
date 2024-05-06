@@ -2,7 +2,7 @@ package com.codecoy.mvpflycollab.datamodels
 
 import com.google.gson.annotations.SerializedName
 
-data class UserFollowingData(
+data class UserChatListData(
     @SerializedName("id") var id: Int? = null,
     @SerializedName("profile_img") var profileImg: String? = null,
     @SerializedName("name") var name: String? = null,

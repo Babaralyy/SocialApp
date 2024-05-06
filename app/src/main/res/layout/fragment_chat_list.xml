@@ -12,7 +12,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="@string/messages"
+        android:text="@string/followers"
         android:textColor="@color/white"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="@+id/btnBackPress"
@@ -48,7 +48,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="@string/no_one_is_online_at_the_moment"
+        android:text="@string/no_data_found"
         android:textColor="@color/white"
         android:textSize="16sp"
 

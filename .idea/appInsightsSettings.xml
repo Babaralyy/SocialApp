@@ -27,10 +27,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.codecoy.mvpflycollab" />
+                  <option name="mobileSdkAppId" value="1:874659016722:android:d6ac80c5fbf693b4b1e8cb" />
+                  <option name="projectId" value="fly-collab" />
+                  <option name="projectNumber" value="874659016722" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

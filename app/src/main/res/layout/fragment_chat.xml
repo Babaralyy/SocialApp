@@ -13,10 +13,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:gravity="center"
-        android:text="@string/chat"
+        android:text="@string/dummy"
         android:textColor="@color/white"
-        android:textSize="@dimen/_16sdp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textSize="16sp"
+        android:singleLine="true"
+        app:layout_constraintEnd_toStartOf="@+id/btnnavv"
         app:layout_constraintStart_toEndOf="@+id/ivBack"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -33,6 +34,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/tvChat"
         app:layout_constraintEnd_toStartOf="@+id/btnnavv"
         app:layout_constraintTop_toTopOf="@+id/tvChat"
+
         android:visibility="invisible"/>
 
     <ImageView

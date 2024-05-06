@@ -29,11 +29,13 @@ import com.codecoy.mvpflycollab.datamodels.FollowRequestsResponse
 import com.codecoy.mvpflycollab.datamodels.FollowUserResponse
 import com.codecoy.mvpflycollab.datamodels.JourneyDetailsResponse
 import com.codecoy.mvpflycollab.datamodels.LikePostResponse
+import com.codecoy.mvpflycollab.datamodels.OneTwoOneChatResponse
 import com.codecoy.mvpflycollab.datamodels.SavePostResponse
 import com.codecoy.mvpflycollab.datamodels.UpdateProfileBody
 import com.codecoy.mvpflycollab.datamodels.UpdateProfileResponse
 import com.codecoy.mvpflycollab.datamodels.UploadImageResponse
 import com.codecoy.mvpflycollab.datamodels.UploadVideoResponse
+import com.codecoy.mvpflycollab.datamodels.UserChatListResponse
 import com.codecoy.mvpflycollab.datamodels.UserColResponse
 import com.codecoy.mvpflycollab.datamodels.UserFollowingResponse
 import com.codecoy.mvpflycollab.datamodels.UserLoginBody
@@ -340,4 +342,16 @@ interface ApiCall {
         @Query("user_id") userId: String,
     ): Response<UserPostsResponse>
 
+    @GET("api/chat_list_user")
+    suspend fun userChatList(
+        @Header("Authorization") token: String,
+        @Query("user_id") userId: String,
+    ): Response<UserChatListResponse>
+
+    @GET("api/message_list")
+    suspend fun oneTwoOneChat(
+        @Header("Authorization") token: String,
+        @Query("sender_id") senderId: String,
+        @Query("receiver_id") receiverId: String,
+    ): Response<OneTwoOneChatResponse>
 }

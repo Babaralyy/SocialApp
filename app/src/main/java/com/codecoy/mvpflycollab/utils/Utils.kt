@@ -35,6 +35,7 @@ object Utils {
 
     var receiverId: Int = 0
     var socketId: String? = null
+    var chatName: String? = null
 
     private lateinit var sharedPreferences: SharedPreferences
 

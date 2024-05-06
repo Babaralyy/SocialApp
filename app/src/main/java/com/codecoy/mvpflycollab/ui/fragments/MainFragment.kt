@@ -41,6 +41,7 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.libraries.places.api.net.PlacesStatusCodes
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.snackbar.Snackbar
 import okhttp3.MultipartBody
 
 
@@ -80,7 +81,7 @@ class MainFragment : Fragment(), ImageClickCallback {
             if (uris != null) {
                 showSingleImage(uris)
             } else {
-                Toast.makeText(requireContext(), "No media selected", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, "No media selected")
             }
         }
 
@@ -143,16 +144,6 @@ class MainFragment : Fragment(), ImageClickCallback {
 
         responseFromViewModel()
 
-
-        /*
-                setUpBottomNavigation()
-        */
-
-        /*    mBinding.ivCreatePost.setOnClickListener {
-                showAddPostBottomDialog()
-            }
-    */
-
         mBinding.bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_home -> {
@@ -186,31 +177,6 @@ class MainFragment : Fragment(), ImageClickCallback {
 
     }
 
-    /*    private fun setUpBottomNavigation() {
-
-            mBinding.tvHome.isSelected = true
-
-            textViewList.clear()
-            textViewList.add(mBinding.tvHome)
-            textViewList.add(mBinding.tvCalendar)
-            textViewList.add( mBinding.tvSavePost)
-            textViewList.add(mBinding.tvProfile)
-
-            fragmentList.clear()
-            fragmentList.add(HomeFragment())
-            fragmentList.add(CalendarFragment())
-            fragmentList.add(SavedPostFragment())
-            fragmentList.add(ProfileDetailFragment())
-
-            textViewList.forEachIndexed { index, textView ->
-                textView.setOnClickListener {
-                    requireContext().replaceFragment(fragmentList[index])
-                    textViewList.forEach { it.isSelected = false }
-                    textView.isSelected = true
-                }
-            }
-
-        }*/
 
     override fun onResume() {
         super.onResume()
@@ -223,46 +189,47 @@ class MainFragment : Fragment(), ImageClickCallback {
     private fun responseFromViewModel() {
 
         viewModel.loading.observe(this) { isLoading ->
-            if (isLoading) {
-                dialog?.show()
-            } else {
-                dialog?.dismiss()
-            }
+            dialog?.apply { if (isLoading) show() else dismiss() }
         }
 
-        viewModel.addNewPostResponseLiveData.observe(this) { response ->
 
+        viewModel.addNewPostResponseLiveData.observe(this) { response ->
             Log.i(Constant.TAG, "registerUser:: response $response")
 
-            if (response.code() == 200) {
-                val userResponse = response.body()
-                if (userResponse?.success == true) {
-
-                    try {
+            when (response.code()) {
+                200 -> {
+                    val userResponse = response.body()
+                    if (userResponse?.success == true) {
                         viewModel.mediaImgList.clear()
                         bottomSheetDialog?.dismiss()
                         mBinding.bottomNavigation.selectedItemId = R.id.navigation_home
-                    } catch (e: Exception) {
-                        Log.i(Constant.TAG, "navControllerException:: ${e.message}")
+                    } else {
+                        showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                     }
-
-                } else {
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
                 }
-            } else if (response.code() == 401) {
 
-            } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                401 -> {
+                    // Handle 401 Unauthorized
+                }
+
+                else -> showSnackBar(mBinding.root, "Something went wrong")
             }
         }
 
+
         viewModel.exceptionLiveData.observe(this) { exception ->
-            if (exception != null) {
+
+            exception?.let {
                 Log.i(Constant.TAG, "addJourneyResponseLiveData:: exception $exception")
                 dialog?.dismiss()
             }
+
         }
+    }
+
+
+    private fun showSnackBar(view: View, message: String) {
+        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show()
     }
 
     private fun setUpBottomDialog() {
@@ -348,59 +315,46 @@ class MainFragment : Fragment(), ImageClickCallback {
                 }
             }
             .addOnFailureListener { exception ->
-                Toast.makeText(requireContext(), "Error: ${exception.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Error: ${exception.message}", Toast.LENGTH_SHORT)
+                    .show()
             }
     }
 
     private fun checkBottomCredentials() {
 
-        val des = bottomBinding?.etDes?.text.toString()
+        val description = bottomBinding?.etDes?.text.toString().trim()
 
-        if (des.isEmpty()) {
+        if (description.isEmpty()) {
             bottomBinding?.etDes?.error = "Description is required"
             return
         }
         if (viewModel.mediaImgList.isEmpty()) {
-            Toast.makeText(requireContext(), "Please add post image", Toast.LENGTH_SHORT).show()
+            showSnackBar(mBinding.root, "Please add post image")
             return
         }
-        if (des.isNotEmpty() && viewModel.mediaImgList.isNotEmpty()) {
-            addNewPost(des)
-            bottomBinding?.etDes?.setText("")
-        }
+
+        addNewPost(description)
+        bottomBinding?.etDes?.setText("")
+
     }
 
-    private fun addNewPost(des: String) {
+    private fun addNewPost(description: String) {
         imagePartList.clear()
 
-        for (item in viewModel.mediaImgList) {
-
-            Utils.getRealPathFromImgURI(requireContext(), item)
-                .let {
-                    Log.i(Constant.TAG, "mediaImgList:: getRealPathFromURI $it")
-
-                    Utils.getFileFromPath(it)?.let { file ->
-
-                        Log.i(Constant.TAG, "mediaImgList:: getFileFromPath $file")
-
-                        val part = Utils.getPartFromFile("image/*", "post_images[]", file)
-
-
-                        Log.i(Constant.TAG, "mediaImgList:: getPartFromFile $part")
-
-                        imagePartList.add(part)
-
-
-                    }
+        imagePartList = viewModel.mediaImgList.mapNotNull { item ->
+            Utils.getRealPathFromImgURI(requireContext(), item).let { path ->
+                Utils.getFileFromPath(path)?.let { file ->
+                    Utils.getPartFromFile("image/*", "post_images[]", file)
                 }
-        }
+            }
+        }.toMutableList()
 
         viewModel.addNewPost(
             "Bearer " + currentUser?.token.toString(),
             Utils.createTextRequestBody(currentUser?.id.toString()),
             Utils.createTextRequestBody("combat_sports"),
             Utils.createTextRequestBody("karate"),
-            Utils.createTextRequestBody(des),
+            Utils.createTextRequestBody(description),
             Utils.createTextRequestBody("#Chill #Enjoy #2k24 2"),
             Utils.createTextRequestBody("2.345786348789"),
             Utils.createTextRequestBody("2.389786348754"),
@@ -411,36 +365,24 @@ class MainFragment : Fragment(), ImageClickCallback {
 
     private fun imagePermission() {
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            // If Android version is 13 or above
-            if (ContextCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.READ_MEDIA_IMAGES
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                requestImgPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES)
-
-            } else {
-                pickImgMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-            }
+        val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Manifest.permission.READ_MEDIA_IMAGES
         } else {
-            if (ContextCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                Toast.makeText(requireContext(), "Permission not granted", Toast.LENGTH_SHORT).show()
-                // Request the permission
-                requestImgPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        }
 
-            } else {
-                pickImgMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-            }
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                permission
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            showSnackBar(mBinding.root, "Permission not granted")
+
+            requestImgPermissionLauncher.launch(permission)
+        } else {
+            pickImgMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
     }
-
-
-
 
     override fun onImageClick(imgPath: Uri) {
 

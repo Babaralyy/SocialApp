@@ -213,4 +213,9 @@ class MvpRepository(private val apiCall: ApiCall) {
     suspend fun savedPosts(token: String, userId: String) =
         apiCall.savedPosts(token, userId)
 
+    suspend fun userChatList(token: String, userId: String) =
+        apiCall.userChatList(token, userId)
+
+    suspend fun oneTwoOneChat(token: String, senderId: String, receiverId: String) =
+        apiCall.oneTwoOneChat(token, senderId, receiverId)
 }

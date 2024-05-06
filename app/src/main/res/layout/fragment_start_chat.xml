@@ -21,13 +21,16 @@
         app:layout_constraintTop_toTopOf="@+id/btnBackPress" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_chat_user"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/_10sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnBackPress"/>
+        app:layout_constraintTop_toBottomOf="@+id/btnBackPress"
+        app:layout_constraintVertical_bias="1.0" />
 
     <ImageView
         android:id="@+id/btnBackPress"
@@ -52,7 +55,6 @@
         android:visibility="gone">
 
         <TextView
-            android:id="@+id/tv_chat_message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_20sdp"
@@ -71,4 +73,52 @@
             android:layout_gravity="center_horizontal"/>
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_chat_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_20sdp"
+        android:layout_marginEnd="@dimen/_20sdp"
+        android:gravity="center"
+        android:text="@string/chats_will_appear_here"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvPlaylistName"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="@dimen/_42sdp"
+        android:layout_height="@dimen/_42sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:layout_marginEnd="@dimen/_10sdp"
+        android:background="@drawable/fab_back"
+        android:backgroundTint="@null"
+        android:clickable="true"
+        android:contentDescription="@string/add_event"
+        android:src="@drawable/ic_add"
+        app:shapeAppearance="@drawable/fab_back"
+        app:shapeAppearanceOverlay="@drawable/fab_back"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:layout_marginEnd="@dimen/_10sdp"
+        android:layout_gravity="bottom|end"
+        android:contentDescription="@string/add_chat"
+        app:srcCompat="@drawable/ic_add"
+        app:backgroundTint="@color/purple"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

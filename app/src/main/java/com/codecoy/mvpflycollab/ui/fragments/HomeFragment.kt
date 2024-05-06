@@ -51,19 +51,21 @@ import java.util.Date
 
 class HomeFragment : Fragment(), HomeCallback, StoryCallback {
 
+
+    //    private lateinit var activity: MainActivity
+
     private lateinit var viewModel: PostsViewModel
     private lateinit var commentsViewModel: CommentsViewModel
+
     private var dialog: Dialog? = null
-
     private var currentUser: UserLoginData? = null
-
-//    private lateinit var activity: MainActivity
 
     private lateinit var storiesAdapter: StoriesAdapter
     private lateinit var postsAdapter: PostsAdapter
     private lateinit var postCommentsAdapter: PostCommentsAdapter
 
     private lateinit var postItemViewBinding: PostItemViewBinding
+
 
     private lateinit var bottomBinding: CommentsBottomDialogLayBinding
     private lateinit var bottomSheetDialog: BottomSheetDialog
@@ -105,7 +107,7 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
 
         mBinding.ivMessenger.setOnClickListener {
             try {
-                val action = MainFragmentDirections.actionMainFragmentToChatListFragment()
+                val action = MainFragmentDirections.actionMainFragmentToStartChatFragment()
                 findNavController().navigate(action)
             } catch (e: Exception) {
                 Log.i(TAG, "inIt: ${e.message}")

@@ -1,19 +1,18 @@
-package com.codecoy.mvpflycollab.ui.adapters
+package com.codecoy.mvpflycollab.ui.adapters.chat
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.codecoy.mvpflycollab.R
 import com.codecoy.mvpflycollab.callbacks.ChatsCallback
 import com.codecoy.mvpflycollab.databinding.WhomeChatToItemViewBinding
-import com.codecoy.mvpflycollab.datamodels.OnlineUserData
+import com.codecoy.mvpflycollab.datamodels.UserFollowingData
 import com.codecoy.mvpflycollab.utils.Constant
 
 class ChatListAdapter (
-    private val chatsList: MutableList<OnlineUserData>,
+    private val chatsList: MutableList<UserFollowingData>,
     var context: Context,
     private val chatsCallback: ChatsCallback
 ) : RecyclerView.Adapter<ChatListAdapter.ViewHolder>() {
@@ -39,14 +38,14 @@ class ChatListAdapter (
 
 
 
-        if (chatData.online == true){
-            holder.mBinding.ivOnline.visibility = View.VISIBLE
-        } else {
-            holder.mBinding.ivOnline.visibility = View.GONE
-        }
+//        if (chatData.online == true){
+//            holder.mBinding.ivOnline.visibility = View.VISIBLE
+//        } else {
+//            holder.mBinding.ivOnline.visibility = View.GONE
+//        }
 
         holder.itemView.setOnClickListener {
-            chatsCallback.onUserClick(chatData)
+            chatsCallback.onFollowerClick(chatData)
         }
     }
 
