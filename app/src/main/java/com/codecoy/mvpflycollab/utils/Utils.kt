@@ -29,6 +29,7 @@ object Utils {
     var videoUrl: String?= null
     var isFromProfile: Boolean= false
     var isUserProfile: Boolean= false
+    var isFromFollowingCalendar: Boolean= false
 
     var scrollPosition: Int = 0
     var userId: String? = null

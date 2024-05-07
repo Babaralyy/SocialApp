@@ -13,12 +13,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -32,16 +34,22 @@ import com.codecoy.mvpflycollab.repo.MvpRepository
 import com.codecoy.mvpflycollab.ui.activities.MainActivity
 import com.codecoy.mvpflycollab.ui.adapters.ShowPostImageAdapter
 import com.codecoy.mvpflycollab.utils.Constant
+import com.codecoy.mvpflycollab.utils.Constant.TAG
 import com.codecoy.mvpflycollab.utils.Utils
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.codecoy.mvpflycollab.viewmodels.PostsViewModel
 import com.google.android.gms.common.api.Status
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.api.model.RectangularBounds
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.libraries.places.api.net.PlacesStatusCodes
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 
 
@@ -64,6 +72,10 @@ class MainFragment : Fragment(), ImageClickCallback {
 
     private lateinit var textViewList: ArrayList<TextView>
     private lateinit var fragmentList: ArrayList<Fragment>
+
+    private var adapter: ArrayAdapter<String>? = null
+
+    private val placeNames = mutableListOf<String>()
 
     private val requestImgPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -140,10 +152,20 @@ class MainFragment : Fragment(), ImageClickCallback {
         placesClient = Places.createClient(requireContext())
 
         setUpBottomDialog()
+        setUpBottomNav()
         setUpViewModel()
-
         responseFromViewModel()
 
+        if (Utils.isFromFollowingCalendar) {
+            Utils.isFromFollowingCalendar = false
+            val menuItem = mBinding.bottomNavigation.menu.findItem(R.id.navigation_calendar)
+            menuItem?.isChecked = true
+            activity.replaceFragment(CalendarFragment())
+        }
+
+    }
+
+    private fun setUpBottomNav() {
         mBinding.bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_home -> {
@@ -174,7 +196,6 @@ class MainFragment : Fragment(), ImageClickCallback {
             }
             return@setOnItemSelectedListener true
         }
-
     }
 
 
@@ -192,7 +213,6 @@ class MainFragment : Fragment(), ImageClickCallback {
             dialog?.apply { if (isLoading) show() else dismiss() }
         }
 
-
         viewModel.addNewPostResponseLiveData.observe(this) { response ->
             Log.i(Constant.TAG, "registerUser:: response $response")
 
@@ -202,7 +222,9 @@ class MainFragment : Fragment(), ImageClickCallback {
                     if (userResponse?.success == true) {
                         viewModel.mediaImgList.clear()
                         bottomSheetDialog?.dismiss()
-                        mBinding.bottomNavigation.selectedItemId = R.id.navigation_home
+                        val menuItem = mBinding.bottomNavigation.menu.findItem(R.id.navigation_home)
+                        menuItem?.isChecked = true
+                        activity.replaceFragment(HomeFragment())
                     } else {
                         showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                     }
@@ -220,7 +242,7 @@ class MainFragment : Fragment(), ImageClickCallback {
         viewModel.exceptionLiveData.observe(this) { exception ->
 
             exception?.let {
-                Log.i(Constant.TAG, "addJourneyResponseLiveData:: exception $exception")
+                Log.i(TAG, "addJourneyResponseLiveData:: exception $exception")
                 dialog?.dismiss()
             }
 
@@ -258,21 +280,12 @@ class MainFragment : Fragment(), ImageClickCallback {
             imagePermission()
         }
 
-        bottomBinding?.etLoc?.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
+        // Start fetching predictions when the user starts typing
+        bottomBinding?.etLoc?.addTextChangedListener { text ->
+            if (!text.isNullOrEmpty()) {
+                searchLocation(text.toString())
             }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                searchLocation(s.toString())
-            }
-
-        })
-
+        }
         bottomBinding?.btnAddPost?.setOnClickListener {
             checkBottomCredentials()
         }
@@ -280,6 +293,7 @@ class MainFragment : Fragment(), ImageClickCallback {
     }
 
     private fun searchLocation(locationName: String) {
+
         val fields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
 
         val request =
@@ -292,6 +306,20 @@ class MainFragment : Fragment(), ImageClickCallback {
                 if (response.autocompletePredictions.isNotEmpty()) {
                     val placeId = response.autocompletePredictions[0].placeId
 
+
+                    response.autocompletePredictions.forEach { prediction ->
+                        placeNames.add(prediction.getPrimaryText(null).toString())
+                    }
+
+                    adapter = ArrayAdapter(
+                        requireContext(),
+                        android.R.layout.simple_dropdown_item_1line,
+                        placeNames.distinct()
+                    )
+
+                    bottomBinding?.etLoc?.setAdapter(adapter)
+                    placeNames.clear()
+
                     // Fetch details of the place using Place ID
                     val placeRequest =
                         com.google.android.libraries.places.api.net.FetchPlaceRequest.newInstance(
@@ -301,7 +329,19 @@ class MainFragment : Fragment(), ImageClickCallback {
                     placesClient.fetchPlace(placeRequest)
                         .addOnSuccessListener { fetchPlaceResponse ->
                             val place = fetchPlaceResponse.place
-                            bottomBinding?.etLoc?.setText(place.name)
+
+
+
+
+//                            place.name?.let { placeNames.add(it) }
+
+
+
+
+
+                            Log.i(TAG, "searchLocation:: ${place.name}")
+
+//                            bottomBinding?.etLoc?.setText(place.name)
                         }
                         .addOnFailureListener { exception ->
                             Toast.makeText(
@@ -310,6 +350,8 @@ class MainFragment : Fragment(), ImageClickCallback {
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
+
+
                 } else {
                     Toast.makeText(requireContext(), "No results found", Toast.LENGTH_SHORT).show()
                 }
@@ -318,11 +360,13 @@ class MainFragment : Fragment(), ImageClickCallback {
                 Toast.makeText(requireContext(), "Error: ${exception.message}", Toast.LENGTH_SHORT)
                     .show()
             }
+
     }
 
     private fun checkBottomCredentials() {
 
         val description = bottomBinding?.etDes?.text.toString().trim()
+        val loc = bottomBinding?.etLoc?.text.toString().trim()
 
         if (description.isEmpty()) {
             bottomBinding?.etDes?.error = "Description is required"

@@ -30,7 +30,7 @@ class ActivityViewModel (private val mvpRepository: MvpRepository) : ViewModel()
 
     private val handler = CoroutineExceptionHandler { _, exception ->
         exceptionMutableLiveData.value = exception
-        Log.i(Constant.TAG, "addNewPlaylistDetail:: value $exception")
+        Log.i(TAG, "addNewPlaylistDetail:: value $exception")
     }
 
     private val allActivitiesResponseMutableLiveData = MutableLiveData<Response<AllActivitiesResponse>>()
@@ -73,7 +73,7 @@ class ActivityViewModel (private val mvpRepository: MvpRepository) : ViewModel()
     }
     fun allActivitiesDates(token: String,userId: String) {
         viewModelScope.launch(handler) {
-//            _loading.value = true
+            _loading.value = true
             val response = mvpRepository.allActivitiesDates(token, userId)
 
             try {
@@ -82,7 +82,7 @@ class ActivityViewModel (private val mvpRepository: MvpRepository) : ViewModel()
             } catch (e: Exception) {
                 allActivitiesDateMutableLiveData.value = response
             } finally {
-//                _loading.value = false
+                _loading.value = false
             }
         }
     }

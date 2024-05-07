@@ -72,7 +72,7 @@ import java.util.Locale
 class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, ImageClickCallback,
     ToShareImageClickCallback, ToShareVideoClickCallback {
 
-//    private lateinit var activity: MainActivity
+    private lateinit var activity: MainActivity
 
     private lateinit var viewModel: ActivityViewModel
     private var dialog: Dialog? = null
@@ -284,6 +284,7 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
 
 
     private fun responseFromViewModel() {
+
         viewModel.loading.observe(this) { isLoading ->
             if (isLoading) {
                 dialog?.show()
@@ -853,8 +854,8 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
     }
 
 
-/*    override fun onAttach(context: Context) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         (context as MainActivity).also { activity = it }
-    }*/
+    }
 }

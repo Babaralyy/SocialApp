@@ -53,9 +53,11 @@ import com.codecoy.mvpflycollab.ui.adapters.ShareActivityVideoAdapter
 import com.codecoy.mvpflycollab.ui.adapters.ShowActivityImageAdapter
 import com.codecoy.mvpflycollab.ui.adapters.ShowActivityVideoAdapter
 import com.codecoy.mvpflycollab.utils.Constant
+import com.codecoy.mvpflycollab.utils.Constant.TAG
 import com.codecoy.mvpflycollab.utils.Utils
 import com.codecoy.mvpflycollab.viewmodels.ActivityViewModel
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -73,7 +75,7 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
     ImageClickCallback,
     ToShareImageClickCallback, ToShareVideoClickCallback {
 
-//    private lateinit var activity: MainActivity
+    private lateinit var activity: MainActivity
 
     private lateinit var viewModel: ActivityViewModel
     private var dialog: Dialog? = null
@@ -138,7 +140,8 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
         viewModel.mediaImgList.clear()
         viewModel.mediaImgList.add(0, uri)
         viewModel.mediaImgList.distinct()
-        showActivityImageAdapter = ShowActivityImageAdapter(viewModel.mediaImgList, requireContext(), this)
+        showActivityImageAdapter =
+            ShowActivityImageAdapter(viewModel.mediaImgList, requireContext(), this)
         bottomBinding?.rvMediaImage?.adapter = showActivityImageAdapter
     }
 
@@ -156,7 +159,8 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
         viewModel.mediaVidList.clear()
         viewModel.mediaVidList.add(0, uri)
         viewModel.mediaVidList.distinct()
-        showActivityVideoAdapter = ShowActivityVideoAdapter(viewModel.mediaVidList, requireContext(), this)
+        showActivityVideoAdapter =
+            ShowActivityVideoAdapter(viewModel.mediaVidList, requireContext(), this)
         bottomBinding?.rvMediaVideo?.adapter = showActivityVideoAdapter
     }
 
@@ -210,6 +214,7 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
         getActivitiesAgainstDate(formattedDate)
 
     }
+
     private fun onDateClick() {
 
         mBinding.calendarView.setOnDayClickListener {
@@ -324,7 +329,7 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
 
         viewModel.addActivityResponseLiveData.observe(this) { response ->
 
-            Log.i(Constant.TAG, "responseFromViewModel:: $response ")
+            Log.i(TAG, "responseFromViewModel:: $response ")
 
             if (response.code() == 200) {
                 val activityData = response.body()
@@ -336,7 +341,13 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
                     )
 
                     bottomSheetDialog?.dismiss()
-                    findNavController().popBackStack()
+
+                    try {
+                        Utils.isFromFollowingCalendar = true
+                        findNavController().navigate(FollowingCalendarFragmentDirections.actionFollowingCalendarFragmentToMainFragment())
+                    }catch (e: Exception){
+                        Log.i(TAG, "responseFromViewModel:: ${e.message}")
+                    }
 
                 } else {
                     Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
@@ -351,7 +362,7 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
 
         viewModel.exceptionLiveData.observe(this) { exception ->
             if (exception != null) {
-                Log.i(Constant.TAG, "addJourneyResponseLiveData:: exception $exception")
+                Log.i(TAG, "addJourneyResponseLiveData:: exception $exception")
                 dialog?.dismiss()
             }
         }
@@ -436,7 +447,7 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
         bottomBinding?.tvMediaImage?.setOnClickListener {
             try {
                 imagePermission()
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 Log.i(Constant.TAG, "showAddActivityBottomDialog:: ${e.message}")
             }
         }
@@ -446,15 +457,15 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
         }
 
 
-/*        bottomBinding?.etStartTime?.setOnClickListener {
-            showTimePickerDialog(activity, true)
-        }
-        bottomBinding?.etEndTime?.setOnClickListener {
-            showTimePickerDialog(activity, false)
-        }
-        bottomBinding?.etDate?.setOnClickListener {
-            showDatePickerDialog()
-        }*/
+        /*        bottomBinding?.etStartTime?.setOnClickListener {
+                    showTimePickerDialog(activity, true)
+                }
+                bottomBinding?.etEndTime?.setOnClickListener {
+                    showTimePickerDialog(activity, false)
+                }
+                bottomBinding?.etDate?.setOnClickListener {
+                    showDatePickerDialog()
+                }*/
 
         bottomBinding?.btnAddActivity?.setOnClickListener {
             checkBottomCredentials()
@@ -482,7 +493,8 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
                     Manifest.permission.READ_EXTERNAL_STORAGE
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-                Toast.makeText(requireContext(), "Permission not granted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Permission not granted", Toast.LENGTH_SHORT)
+                    .show()
                 // Request the permission
                 requestImgPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
 
@@ -511,7 +523,8 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
                     Manifest.permission.READ_EXTERNAL_STORAGE
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-                Toast.makeText(requireContext(), "Permission not granted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Permission not granted", Toast.LENGTH_SHORT)
+                    .show()
                 // Request the permission
                 requestVidPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
 
@@ -701,9 +714,17 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
             !it.videoUrl.isNullOrEmpty()
         }
 
-        shareActivityImageAdapter = ShareActivityImageAdapter(filteredImgList as MutableList<ActivityDetails>, requireContext(), this)
+        shareActivityImageAdapter = ShareActivityImageAdapter(
+            filteredImgList as MutableList<ActivityDetails>,
+            requireContext(),
+            this
+        )
         toShareBottomBinding?.rvMediaImage?.adapter = shareActivityImageAdapter
-        shareActivityVideoAdapter = ShareActivityVideoAdapter(filteredVidList as MutableList<ActivityDetails>, requireContext(), this)
+        shareActivityVideoAdapter = ShareActivityVideoAdapter(
+            filteredVidList as MutableList<ActivityDetails>,
+            requireContext(),
+            this
+        )
         toShareBottomBinding?.rvMediaVideo?.adapter = shareActivityVideoAdapter
 
         toShareBottomBinding?.ivShare?.setOnClickListener {
@@ -806,8 +827,9 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
 
         dialog.show()
     }
-/*    override fun onAttach(context: Context) {
+
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         (context as MainActivity).also { activity = it }
-    }*/
+    }
 }

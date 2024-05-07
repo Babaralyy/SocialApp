@@ -290,7 +290,11 @@
         android:id="@+id/followingCalendarFragment"
         android:name="com.codecoy.mvpflycollab.ui.fragments.FollowingCalendarFragment"
         android:label="fragment_following_calendar"
-        tools:layout="@layout/fragment_following_calendar"  />
+        tools:layout="@layout/fragment_following_calendar"  >
+        <action
+            android:id="@+id/action_followingCalendarFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+    </fragment>
     <fragment
         android:id="@+id/videoPreviewFragment"
         android:name="com.codecoy.mvpflycollab.ui.fragments.VideoPreviewFragment"
