@@ -4,8 +4,10 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
 import android.provider.MediaStore
+import android.util.Log
 import com.codecoy.mvpflycollab.datamodels.AllActivitiesData
 import com.codecoy.mvpflycollab.datamodels.CalendarStoryData
+import com.codecoy.mvpflycollab.datamodels.UserLevelsData
 import com.codecoy.mvpflycollab.datamodels.UserLoginData
 import com.google.gson.Gson
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -20,9 +22,9 @@ import java.util.Locale
 
 object Utils {
 
-
     private const val PREF_NAME = "userData"
     private const val KEY_USER_DATA = "uData"
+    const val CHANNEL_ID_ = "channel_id"
 
     var storyDetail: CalendarStoryData?= null
     var allActivitiesData: AllActivitiesData?= null
@@ -39,8 +41,6 @@ object Utils {
     var chatName: String? = null
 
     private lateinit var sharedPreferences: SharedPreferences
-
-
 
     fun getFileFromPath(filePath: String): File? {
         return try {
@@ -132,11 +132,60 @@ object Utils {
         return gson.fromJson(json, UserLoginData::class.java)
     }
 
+    fun saveLevelsToSharedPreferences(context: Context, userData: UserLevelsData) {
+        sharedPreferences = context.getSharedPreferences("userLevels", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        val gson = Gson()
+        val json = gson.toJson(userData)
+        editor.putString("uLevels", json)
+        editor.apply()
+    }
+
+    fun getLevelsFromSharedPreferences(context: Context): UserLevelsData? {
+        sharedPreferences = context.getSharedPreferences("userLevels", Context.MODE_PRIVATE)
+        val gson = Gson()
+        val json = sharedPreferences.getString("uLevels", null)
+        return gson.fromJson(json, UserLevelsData::class.java)
+    }
+
     fun clearSharedPreferences(context: Context) {
         val sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.clear()
         editor.apply()
+    }
+
+    fun deviceTokenIntoPref(context: Context, tokenInfo: String, deviceToken: String) {
+
+        sharedPreferences = context.getSharedPreferences(tokenInfo, Context.MODE_PRIVATE)
+
+        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+
+        editor.putString("deviceToken", deviceToken)
+
+        Log.i("TAG", "saveInfoIntoPref: deviceToken $deviceToken")
+
+        editor.apply()
+    }
+
+    fun fetchDeviceTokenFromPref(context: Context, tokenInfo: String): String? {
+
+        sharedPreferences = context.getSharedPreferences(tokenInfo, Context.MODE_PRIVATE)
+
+        return sharedPreferences.getString("deviceToken", null)
+
+    }
+
+    fun saveNotificationStateIntoPref(context: Context, notificationState: Boolean) {
+        sharedPreferences = context.getSharedPreferences("notificationState", Context.MODE_PRIVATE)
+        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+        editor.putBoolean("notificationS", notificationState)
+        Log.i("TAG", "saveInfoIntoPref: notificationState $notificationState")
+        editor.apply()
+    }
+    fun fetchNotificationStateFromPref(context: Context): Boolean {
+        sharedPreferences = context.getSharedPreferences("notificationState", Context.MODE_PRIVATE)
+        return sharedPreferences.getBoolean("notificationS", false)
     }
 
 }

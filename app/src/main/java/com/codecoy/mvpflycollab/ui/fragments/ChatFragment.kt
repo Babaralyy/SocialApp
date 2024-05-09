@@ -29,6 +29,7 @@ import com.codecoy.mvpflycollab.viewmodels.ChatViewModel
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.google.android.material.snackbar.Snackbar
 import io.socket.client.Socket
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -50,8 +51,6 @@ class ChatFragment : Fragment() {
     private lateinit var chatAdapter: OneToOneChatAdapter
     private lateinit var chatList: MutableList<MessageData>
 
-    var newMessageMutableLiveData = MutableLiveData<MutableList<NewMessageResponseData>>()
-    private lateinit var newMessageChatList: MutableList<NewMessageResponseData>
 
 
     private lateinit var mBinding: FragmentChatBinding
@@ -66,6 +65,7 @@ class ChatFragment : Fragment() {
         return mBinding.root
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     private fun inIt() {
 
         chatList = arrayListOf()
@@ -211,42 +211,18 @@ class ChatFragment : Fragment() {
                         activity.runOnUiThread {
 
                             getOneToOneChat()
-
-       /*                     val jsonObject = it[0] as JSONObject
-                            jsonObject.let {
-                                val jsonData = it.getJSONObject("data")
-                                jsonData.let { it1 ->
-                                    val userData = it1.getJSONObject("response")
-                                    userData.let { it2 ->
-                                        val newMessageResponseData = NewMessageResponseData(
-                                            it2.getString("sender_id"),
-                                            it2.getInt("receiver_id"),
-                                            it2.getString("message"),
-                                            it2.getString("updated_at"),
-                                            it2.getString("created_at"),
-                                            it2.getInt("id"))
-
-                                        Log . i (TAG, "main socket:: received message $jsonData")
-
-                                        if (newMessageResponseData.senderId?.toInt() != currentUser?.id){
-                                            chatList.add(MessageData(newMessageResponseData.message.toString(), true))
-                                        } else {
-                                            chatList.add(MessageData(newMessageResponseData.message.toString(), false))
-                                        }
-                                    }
-                                }
-                            }*/
+                            Log.i(TAG, "main socket:: message ${it[0]}")
                         }
                     }
                     SocketManager.socket?.on(Socket.EVENT_CONNECT_ERROR) { error ->
                         activity.runOnUiThread {
-                            Log.i(Constant.TAG, "main socket:: $error ")
+                            Log.i(TAG, "main socket:: $error ")
                         }
 
                     }
                     SocketManager.socket?.on(Socket.EVENT_DISCONNECT) {
                         activity.runOnUiThread {
-                            Log.i(Constant.TAG, "main socket:: message $it")
+                            Log.i(TAG, "main socket:: message $it")
                         }
                     }
                 } catch (e: URISyntaxException) {

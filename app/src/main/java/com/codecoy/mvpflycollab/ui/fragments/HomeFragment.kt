@@ -1,6 +1,10 @@
 package com.codecoy.mvpflycollab.ui.fragments
 
+import android.Manifest
 import android.app.Dialog
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -13,8 +17,11 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -34,6 +41,7 @@ import com.codecoy.mvpflycollab.datamodels.UserLoginData
 import com.codecoy.mvpflycollab.datamodels.UserPostsData
 import com.codecoy.mvpflycollab.network.ApiCall
 import com.codecoy.mvpflycollab.repo.MvpRepository
+import com.codecoy.mvpflycollab.ui.activities.MainActivity
 import com.codecoy.mvpflycollab.ui.adapters.PostCommentsAdapter
 import com.codecoy.mvpflycollab.ui.adapters.PostsAdapter
 import com.codecoy.mvpflycollab.ui.adapters.stories.StoriesAdapter
@@ -44,6 +52,7 @@ import com.codecoy.mvpflycollab.viewmodels.CommentsViewModel
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.codecoy.mvpflycollab.viewmodels.PostsViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.snackbar.Snackbar
 import de.hdodenhof.circleimageview.CircleImageView
 import java.util.Calendar
 import java.util.Date
@@ -52,7 +61,7 @@ import java.util.Date
 class HomeFragment : Fragment(), HomeCallback, StoryCallback {
 
 
-    //    private lateinit var activity: MainActivity
+    private lateinit var activity: MainActivity
 
     private lateinit var viewModel: PostsViewModel
     private lateinit var commentsViewModel: CommentsViewModel
@@ -69,6 +78,19 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
 
     private lateinit var bottomBinding: CommentsBottomDialogLayBinding
     private lateinit var bottomSheetDialog: BottomSheetDialog
+
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            // Permission is granted. Continue the action or workflow in your
+            // app.
+
+        } else {
+            showSnackBar(mBinding.root, "Please allow notification persmission")
+        }
+    }
 
     private lateinit var mBinding: FragmentHomeBinding
     override fun onCreateView(
@@ -102,6 +124,7 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
         setUpDrawer()
         getAllPosts()
         getAllStories()
+        getLevels()
         setUpBottomDialog()
         responseFromViewModel()
 
@@ -150,9 +173,41 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
         })
     }
 
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onResume() {
         super.onResume()
+        requestNotificationPermission()
 
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun requestNotificationPermission() {
+
+        when {
+            ContextCompat.checkSelfPermission(
+                activity, Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                // You can use the API that requires the permission.
+                Log.e(TAG, "onCreate: PERMISSION GRANTED")
+            }
+
+            shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
+
+            }
+
+            else -> {
+                // The registered ActivityResultCallback gets the result of this request
+                requestPermissionLauncher.launch(
+                    Manifest.permission.POST_NOTIFICATIONS
+                )
+            }
+        }
+    }
+
+
+    private fun showSnackBar(view: View, message: String) {
+        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show()
     }
 
     private fun setUpBottomDialog() {
@@ -174,15 +229,20 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
         viewModel.allStories("Bearer " + currentUser?.token.toString(), currentUser?.id.toString())
     }
 
+    private fun getLevels() {
+        viewModel.userLevels("Bearer " + currentUser?.token.toString(), currentUser?.id.toString())
+
+    }
 
     private fun responseFromViewModel() {
         viewModel.loading.observe(this) { isLoading ->
             if (isLoading) {
-                dialog?.show()
+//                dialog?.show()
+                mBinding.progressBar.visibility = View.VISIBLE
                 Log.i(TAG, "dialog --> :: show")
             } else {
-                dialog?.dismiss()
-
+//                dialog?.dismiss()
+                mBinding.progressBar.visibility = View.GONE
                 Log.i(TAG, "dialog --> :: dismiss")
 
             }
@@ -338,11 +398,42 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
             }
         }
 
+        viewModel.levelsResponseLiveData.observe(this) { response ->
+
+            Log.i(TAG, "registerUser:: response $response")
+
+            if (response.code() == 200) {
+                val levelsResponse = response.body()
+                if (levelsResponse != null && levelsResponse.success == true) {
+
+                    try {
+                        levelsResponse.userLevelsData?.let {
+                            Utils.saveLevelsToSharedPreferences(requireContext(),
+                                it
+                            )
+                        }
+                    } catch (e: Exception) {
+                        Log.i(TAG, "navControllerException:: ${e.message}")
+                    }
+
+                } else {
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
+                        .show()
+                }
+            } else if (response.code() == 401) {
+
+            } else {
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+            }
+        }
+
         viewModel.exceptionLiveData.observe(this) { exception ->
 
             exception.let {
                 Log.i(TAG, "addJourneyResponseLiveData:: exception $it")
-                dialog?.dismiss()
+//                dialog?.dismiss()
+                mBinding.progressBar.visibility = View.GONE
+                showSnackBar(mBinding.root, it.message.toString())
             }
         }
     }
@@ -411,7 +502,7 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
         mBinding.drawerLayout.findViewById<CircleImageView>(R.id.ivUserProfile).setOnClickListener {
             mBinding.drawerLayout.closeDrawer(GravityCompat.START)
             try {
-                navigateTo { MainFragmentDirections.actionMainFragmentToAboutProfileFragment()}
+                navigateTo { MainFragmentDirections.actionMainFragmentToAboutProfileFragment() }
             } catch (e: Exception) {
                 Log.i(TAG, "init: ${e.message}")
             }
@@ -454,6 +545,7 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
 
         setDrawerItemClick(R.id.iLogout) {
             Utils.clearSharedPreferences(requireContext())
+            Utils.saveNotificationStateIntoPref(activity, false)
             navigateTo { MainFragmentDirections.actionMainFragmentToSignInFragment() }
         }
     }
@@ -469,7 +561,12 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
         }
     }
 
-    private fun loadImageAndSetText(imageViewId: Int, textId: Int, imageUrl: String?, text: String?) {
+    private fun loadImageAndSetText(
+        imageViewId: Int,
+        textId: Int,
+        imageUrl: String?,
+        text: String?
+    ) {
         Glide.with(requireContext())
             .load(Constant.MEDIA_BASE_URL + imageUrl)
             .placeholder(R.drawable.img)
@@ -490,12 +587,6 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
         val hasStories = calendarStoryData.isNotEmpty()
         mBinding.rvStories.visibility = if (hasStories) View.VISIBLE else View.GONE
 
-//        if (calendarStoryData.isNotEmpty()) {
-//            mBinding.rvStories.visibility = View.VISIBLE
-//        } else {
-//            mBinding.rvStories.visibility = View.GONE
-//        }
-        
         storiesAdapter = StoriesAdapter(calendarStoryData, requireContext(), this)
         mBinding.rvStories.adapter = storiesAdapter
     }
@@ -562,7 +653,7 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
 
     private fun showBottomCommentDialog(postsData: UserPostsData) {
 
-        viewModel.loading.observe(this) { isLoading ->
+        commentsViewModel.loading.observe(this) { isLoading ->
             if (isLoading) {
                 bottomBinding.progressBar.visibility = View.VISIBLE
             } else {
@@ -701,9 +792,9 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
         }
     }
 
-/*    override fun onAttach(context: Context) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
 
         (context as MainActivity).also { activity = it }
-    }*/
+    }
 }

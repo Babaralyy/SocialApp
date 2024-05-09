@@ -114,6 +114,15 @@
             app:layout_constraintBottom_toBottomOf="@id/rvPosts"
             android:visibility="gone"/>
 
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="@id/rvPosts"
+            app:layout_constraintStart_toStartOf="@id/rvPosts"
+            app:layout_constraintTop_toTopOf="@id/rvPosts"
+            app:layout_constraintBottom_toBottomOf="@id/rvPosts"
+            android:visibility="gone"/>
         <TextView
             android:id="@+id/tv_no_post"
             android:layout_width="wrap_content"

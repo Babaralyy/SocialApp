@@ -48,6 +48,7 @@ import com.codecoy.mvpflycollab.utils.RealPathUtil
 import com.codecoy.mvpflycollab.utils.Utils
 import com.codecoy.mvpflycollab.repo.MvpRepository
 import com.codecoy.mvpflycollab.ui.adapters.JourneyDetailImageAdapter
+import com.codecoy.mvpflycollab.ui.adapters.journey.ShowJourneyVideoAdapter
 import com.codecoy.mvpflycollab.ui.adapters.playlist.PlaylistDetailImageAdapter
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.codecoy.mvpflycollab.viewmodels.PlaylistViewModel
@@ -245,6 +246,9 @@ class PlayListDetailFragment : Fragment(), VideoClickCallback, PlaylistDetailCal
                         "Bearer " + currentUser?.token.toString(),
                         allPlaylistData?.id.toString()
                     )
+
+                    clearNewPlaylistViews()
+
                     bottomSheetDialog.dismiss()
                 } else {
                     Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
@@ -280,9 +284,36 @@ class PlayListDetailFragment : Fragment(), VideoClickCallback, PlaylistDetailCal
 
         viewModel.exceptionLiveData.observe(this) { exception ->
             if (exception != null) {
-                Log.i(Constant.TAG, "addJourneyResponseLiveData:: exception $exception")
+                Log.i(TAG, "addJourneyResponseLiveData:: exception $exception")
                 dialog?.dismiss()
             }
+        }
+    }
+
+
+    private fun clearNewPlaylistViews() {
+        try {
+            bottomBinding.etTitle.clearFocus()
+            bottomBinding.etDes.clearFocus()
+
+            bottomBinding.etTitle.text = null
+            bottomBinding.etDes.text = null
+            bottomBinding.tvDate.text = ""
+
+
+            viewModel.imagesList.clear()
+            viewModel.videoList.clear()
+            imagePartList.clear()
+            videoPartList.clear()
+
+            playlistDetailImageAdapter = PlaylistDetailImageAdapter(viewModel.imagesList, requireContext(), this)
+            bottomBinding.rvMediaImage.adapter = playlistDetailImageAdapter
+
+            playlistDetailVideoAdapter = PlaylistDetailVideoAdapter(viewModel.videoList, requireContext(), this)
+            bottomBinding.rvMediaVideo.adapter = playlistDetailVideoAdapter
+
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 

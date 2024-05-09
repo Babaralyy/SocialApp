@@ -1,8 +1,11 @@
 package com.codecoy.mvpflycollab.ui.fragments
 
 import android.app.Dialog
+import android.content.ContentValues
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.util.Patterns
 import androidx.fragment.app.Fragment
@@ -23,6 +26,9 @@ import com.codecoy.mvpflycollab.repo.MvpRepository
 import com.codecoy.mvpflycollab.utils.Constant.TAG
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.codecoy.mvpflycollab.viewmodels.UserLoginViewModel
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.launch
 
 
@@ -31,6 +37,7 @@ class SignInFragment : Fragment() {
 //    private lateinit var activity: MainActivity
 
     private lateinit var viewModel: UserLoginViewModel
+    private var deviceToken: String? = null
 
     private var dialog: Dialog? = null
 
@@ -50,6 +57,39 @@ class SignInFragment : Fragment() {
 
         setUpViewModel()
         clickListeners()
+
+
+        Handler(Looper.getMainLooper()).postDelayed({
+
+            deviceToken = Utils.fetchDeviceTokenFromPref(requireContext(), "tokenInfo")
+
+            Log.i(ContentValues.TAG, "deviceToken:: deviceToken $deviceToken")
+
+            if (deviceToken == null) {
+                getDeviceToken()
+                Log.i(ContentValues.TAG, "deviceToken:: deviceToken --> getDeviceToken is called")
+            }
+
+        }, 2000)
+
+    }
+
+    private fun getDeviceToken() {
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.i(ContentValues.TAG, "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+
+            // Get new FCM registration token
+            deviceToken = task.result
+
+            Utils.deviceTokenIntoPref(requireContext(), "tokenInfo", deviceToken.toString())
+
+            Log.i(ContentValues.TAG, "deviceToken:: ----> $deviceToken")
+
+        })
     }
 
     override fun onResume() {
@@ -127,7 +167,7 @@ class SignInFragment : Fragment() {
         }
         viewModel.userLoginResponseLiveData.observe(this) { response ->
 
-            Log.i(Constant.TAG, "registerUser:: response $response")
+            Log.i(TAG, "registerUser:: response $response")
 
             if (response.code() == 200) {
                 val userData = response.body()
@@ -137,6 +177,7 @@ class SignInFragment : Fragment() {
                         try {
                             userData.user?.let {
                                 Utils.saveUserToSharedPreferences(requireContext(), it)
+                                Utils.saveNotificationStateIntoPref(requireContext(), true)
                             }
 
                             val action =
@@ -160,15 +201,24 @@ class SignInFragment : Fragment() {
 
         viewModel.exceptionLiveData.observe(this){ exception ->
             if (exception != null){
-                Log.i(Constant.TAG, "signinLiveData:: exception $exception")
+                Log.i(TAG, "signinLiveData:: exception $exception")
                 dialog?.dismiss()
             }
         }
     }
 
     private fun userLogin(email: String, password: String) {
-        val userLoginBody = UserLoginBody(email, password, "dummyToken")
-        viewModel.userLogin(userLoginBody)
+        if (deviceToken != null){
+            val userLoginBody = UserLoginBody(email, password, deviceToken)
+            viewModel.userLogin(userLoginBody)
+        } else {
+            showSnackBar(mBinding.root, "Something went wrong")
+        }
+
+    }
+
+    private fun showSnackBar(view: View, message: String) {
+        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show()
     }
 
 /*    override fun onAttach(context: Context) {

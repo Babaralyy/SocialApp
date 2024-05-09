@@ -10,6 +10,7 @@ import com.codecoy.mvpflycollab.datamodels.CalendarStoryResponse
 import com.codecoy.mvpflycollab.datamodels.DeletePostResponse
 import com.codecoy.mvpflycollab.datamodels.LikePostResponse
 import com.codecoy.mvpflycollab.datamodels.SavePostResponse
+import com.codecoy.mvpflycollab.datamodels.UserLevelsResponse
 import com.codecoy.mvpflycollab.datamodels.UserPostsResponse
 import com.codecoy.mvpflycollab.repo.MvpRepository
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -51,6 +52,9 @@ class PostsViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
     private val savedPostsResponseMutableLiveData = MutableLiveData<Response<UserPostsResponse>>()
     val savedUsersPostsResponseLiveData: LiveData<Response<UserPostsResponse>> get() = savedPostsResponseMutableLiveData
 
+
+    private val levelsResponseMutableLiveData = MutableLiveData<Response<UserLevelsResponse>>()
+    val levelsResponseLiveData: LiveData<Response<UserLevelsResponse>> get() = levelsResponseMutableLiveData
 
     var mediaImgList: MutableList<Uri> = arrayListOf()
 
@@ -187,6 +191,22 @@ class PostsViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
                 savedPostsResponseMutableLiveData.value = response
             } finally {
                 _loading.value = false
+            }
+        }
+    }
+
+    fun userLevels(token: String, userId: String) {
+        viewModelScope.launch(handler) {
+//            _loading.value = true
+            val response = mvpRepository.userLevels(token, userId)
+
+            try {
+                levelsResponseMutableLiveData.value = response
+
+            } catch (e: Exception) {
+                levelsResponseMutableLiveData.value = response
+            } finally {
+//                _loading.value = false
             }
         }
     }

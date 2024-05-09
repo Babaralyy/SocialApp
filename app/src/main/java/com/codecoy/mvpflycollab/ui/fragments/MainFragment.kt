@@ -158,9 +158,9 @@ class MainFragment : Fragment(), ImageClickCallback {
 
         if (Utils.isFromFollowingCalendar) {
             Utils.isFromFollowingCalendar = false
-            val menuItem = mBinding.bottomNavigation.menu.findItem(R.id.navigation_calendar)
-            menuItem?.isChecked = true
-            activity.replaceFragment(CalendarFragment())
+//            val menuItem = mBinding.bottomNavigation.menu.findItem(R.id.navigation_calendar)
+//            menuItem?.isChecked = true
+//            activity.replaceFragment(CalendarFragment())
         }
 
     }

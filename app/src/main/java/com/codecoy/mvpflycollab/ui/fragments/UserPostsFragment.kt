@@ -134,9 +134,11 @@ class UserPostsFragment : Fragment(), HomeCallback {
     private fun responseFromViewModel() {
         viewModel.loading.observe(this) { isLoading ->
             if (isLoading) {
-                dialog?.show()
+//                dialog?.show()
+                mBinding.progressBar.visibility = View.VISIBLE
             } else {
-                dialog?.dismiss()
+//                dialog?.dismiss()
+                mBinding.progressBar.visibility = View.GONE
             }
         }
         viewModel.usersProfileResponseLiveData.observe(this) { response ->
@@ -243,7 +245,8 @@ class UserPostsFragment : Fragment(), HomeCallback {
         viewModel.exceptionLiveData.observe(this) { exception ->
             if (exception != null) {
                 Log.i(TAG, "addJourneyResponseLiveData:: exception $exception")
-                dialog?.dismiss()
+//                dialog?.dismiss()
+                mBinding.progressBar.visibility = View.GONE
             }
         }
     }

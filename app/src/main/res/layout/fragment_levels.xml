@@ -8,7 +8,7 @@
 
 
     <TextView
-        android:id="@+id/tvLevel"
+        android:id="@+id/tv_level"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_20sdp"
@@ -16,12 +16,18 @@
         android:layout_centerHorizontal="true"
         android:textColor="@color/white"/>
 
-    <ImageView
-        android:id="@+id/ivLevel"
+    <TextView
+        android:id="@+id/tv_current_level"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_25sdp"
-        android:layout_below="@id/tvLevel"
+        android:layout_below="@id/tv_level"
+        android:text="@string/dummy"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:background="@drawable/levels_back"
         android:layout_centerHorizontal="true"
         android:src="@drawable/current_level" />
 
@@ -31,7 +37,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_20sdp"
-        android:layout_below="@id/ivLevel"
+        android:layout_below="@id/tv_current_level"
         android:text="Level Up"
         android:textSize="26sp"
         android:fontFamily="@font/lato_bold"
@@ -48,7 +54,7 @@
         android:layout_below="@id/tvLevelUp">
 
         <TextView
-            android:id="@+id/tvCurrentLevel"
+            android:id="@+id/tv_start_level"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingStart="@dimen/_10sdp"
@@ -56,13 +62,13 @@
             android:paddingTop="@dimen/_6sdp"
             android:paddingBottom="@dimen/_6sdp"
             android:background="@drawable/level_back"
-            android:text="0"
+            android:text="--"
             android:textColor="@color/white"
             android:fontFamily="@font/lato_bold"
             android:textSize="16sp"/>
 
         <TextView
-            android:id="@+id/tvTotalLevels"
+            android:id="@+id/tv_next_level"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingStart="@dimen/_10sdp"
@@ -71,7 +77,7 @@
             android:paddingBottom="@dimen/_6sdp"
             android:layout_alignParentEnd="true"
             android:background="@drawable/level_back"
-            android:text="5"
+            android:text="--"
             android:textColor="@color/white"
             android:fontFamily="@font/lato_bold"
             android:textSize="16sp"/>
@@ -82,16 +88,26 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_15sdp"
             android:layout_centerInParent="true"
-            android:layout_toStartOf="@+id/tvTotalLevels"
-            android:layout_toEndOf="@+id/tvCurrentLevel">
+            android:layout_toStartOf="@+id/tv_next_level"
+            android:layout_toEndOf="@+id/tv_start_level">
 
-            <androidx.appcompat.widget.AppCompatSeekBar
+<!--            <androidx.appcompat.widget.AppCompatSeekBar-->
+<!--                android:id="@+id/sbLevels"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:progress="30"-->
+<!--                android:progressDrawable="@drawable/custom_seekbar_progress"-->
+<!--                android:thumb="@drawable/custom_seekbar_thumb" />-->
+
+            <ProgressBar
                 android:id="@+id/sbLevels"
+                style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:progress="30"
-                android:progressDrawable="@drawable/custom_seekbar_progress"
-                android:thumb="@drawable/custom_seekbar_thumb" />
+                android:layout_marginStart="@dimen/_15sdp"
+                android:layout_marginEnd="@dimen/_15sdp"
+                android:indeterminate="false"
+                android:progressDrawable="@drawable/custom_progress_bar"/>
 
             <TextView
                 android:id="@+id/tvStartDay"
@@ -142,9 +158,15 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <ImageView
+            <TextView
+                android:id="@+id/tv_level_one"
                 android:layout_width="@dimen/_50sdp"
                 android:layout_height="@dimen/_50sdp"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:gravity="center"
+                android:background="@drawable/level_lock"
                 android:layout_gravity="center_horizontal"
                 android:src="@drawable/level_one" />
 
@@ -164,11 +186,17 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <ImageView
+            <TextView
+                android:id="@+id/tv_level_two"
                 android:layout_width="@dimen/_50sdp"
                 android:layout_height="@dimen/_50sdp"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:gravity="center"
+                android:background="@drawable/level_lock"
                 android:layout_gravity="center_horizontal"
-                android:src="@drawable/current_level" />
+                android:src="@drawable/level_one" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -187,11 +215,17 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <ImageView
+            <TextView
+                android:id="@+id/tv_level_three"
                 android:layout_width="@dimen/_50sdp"
                 android:layout_height="@dimen/_50sdp"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:gravity="center"
+                android:background="@drawable/level_lock"
                 android:layout_gravity="center_horizontal"
-                android:src="@drawable/level_lock" />
+                android:src="@drawable/level_one" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -222,11 +256,17 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <ImageView
+            <TextView
+                android:id="@+id/tv_level_four"
                 android:layout_width="@dimen/_50sdp"
                 android:layout_height="@dimen/_50sdp"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:gravity="center"
+                android:background="@drawable/level_lock"
                 android:layout_gravity="center_horizontal"
-                android:src="@drawable/level_lock" />
+                android:src="@drawable/level_one" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -242,13 +282,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="invisible">
 
-            <ImageView
+            <TextView
+                android:id="@+id/tv_level_five"
                 android:layout_width="@dimen/_50sdp"
                 android:layout_height="@dimen/_50sdp"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:gravity="center"
+                android:background="@drawable/level_lock"
                 android:layout_gravity="center_horizontal"
-                android:src="@drawable/level_lock" />
+                android:src="@drawable/level_one" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -285,5 +332,7 @@
         </LinearLayout>
 
     </LinearLayout>
+
+
 
 </RelativeLayout>

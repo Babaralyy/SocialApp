@@ -40,6 +40,9 @@ class MvpViewModelFactory(private val mvpRepository: MvpRepository) :
             modelClass.isAssignableFrom(ChatViewModel::class.java) -> ChatViewModel(
                 mvpRepository
             )
+            modelClass.isAssignableFrom(NotificationViewModel::class.java) -> NotificationViewModel(
+                mvpRepository
+            )
             else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         } as T
     }

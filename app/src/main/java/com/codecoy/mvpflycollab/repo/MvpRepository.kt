@@ -218,4 +218,10 @@ class MvpRepository(private val apiCall: ApiCall) {
 
     suspend fun oneTwoOneChat(token: String, senderId: String, receiverId: String) =
         apiCall.oneTwoOneChat(token, senderId, receiverId)
+
+    suspend fun notifications(token: String, userId: String) =
+        apiCall.notifications(token, userId)
+
+    suspend fun userLevels(token: String, userId: String) =
+        apiCall.userLevels(token, userId)
 }

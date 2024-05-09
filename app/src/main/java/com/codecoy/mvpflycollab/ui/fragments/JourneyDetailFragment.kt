@@ -46,6 +46,8 @@ import com.codecoy.mvpflycollab.utils.Constant.TAG
 import com.codecoy.mvpflycollab.utils.Utils
 import com.codecoy.mvpflycollab.viewmodels.JourneyViewModel
 import com.codecoy.mvpflycollab.repo.MvpRepository
+import com.codecoy.mvpflycollab.ui.adapters.ShowActivityImageAdapter
+import com.codecoy.mvpflycollab.ui.adapters.ShowActivityVideoAdapter
 import com.codecoy.mvpflycollab.ui.adapters.journey.ShowJourneyVideoAdapter
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -254,6 +256,7 @@ class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallba
                 val journeyDetailData = response.body()
                 if (journeyDetailData != null && journeyDetailData.success == true && journeyDetailData.addJourneyDetailData != null) {
                     viewModel.allJourneyDetailsList("Bearer " + currentUser?.token.toString(), allJourneyData?.id.toString())
+                    clearNewJourneyViews()
                     bottomSheetDialog.dismiss()
                 } else {
                     Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
@@ -271,6 +274,32 @@ class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallba
                 Log.i(TAG, "addJourneyResponseLiveData:: exception $exception")
                 dialog?.dismiss()
             }
+        }
+    }
+
+    private fun clearNewJourneyViews() {
+        try {
+            bottomBinding.etEventName.clearFocus()
+            bottomBinding.etEventDes.clearFocus()
+
+            bottomBinding.etEventName.text = null
+            bottomBinding.etEventDes.text = null
+            bottomBinding.tvDate.text = ""
+
+
+            viewModel.mediaImgList.clear()
+            viewModel.mediaVidList.clear()
+            imagePartList.clear()
+            videoPartList.clear()
+
+            journeyDetailImageAdapter = JourneyDetailImageAdapter(viewModel.mediaImgList, requireContext(), this)
+            bottomBinding.rvJourneyDetailsImages.adapter = journeyDetailImageAdapter
+
+            showJourneyVideoAdapter = ShowJourneyVideoAdapter(viewModel.mediaVidList, requireContext(), this)
+            bottomBinding.rvMediaVideo.adapter = showJourneyVideoAdapter
+
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 

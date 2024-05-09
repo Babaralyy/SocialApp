@@ -138,7 +138,8 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
         for (item in uris) {
             viewModel.mediaImgList.add(item)
         }
-        showActivityImageAdapter = ShowActivityImageAdapter(viewModel.mediaImgList, requireContext(), this)
+        showActivityImageAdapter =
+            ShowActivityImageAdapter(viewModel.mediaImgList, requireContext(), this)
         bottomBinding?.rvMediaImage?.adapter = showActivityImageAdapter
     }
 
@@ -157,7 +158,8 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
         for (item in uris) {
             viewModel.mediaVidList.add(item)
         }
-        showActivityVideoAdapter = ShowActivityVideoAdapter(viewModel.mediaVidList, requireContext(), this)
+        showActivityVideoAdapter =
+            ShowActivityVideoAdapter(viewModel.mediaVidList, requireContext(), this)
         bottomBinding?.rvMediaVideo?.adapter = showActivityVideoAdapter
     }
 
@@ -198,7 +200,7 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
         mBinding.floatingActionButton.setOnClickListener {
             try {
                 showAddActivityBottomDialog()
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 Log.i(TAG, "showAddActivityBottomDialog: ${e.message}")
             }
 
@@ -348,6 +350,7 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
                         currentUser?.id.toString()
                     )
 
+                    clearNewActivityViews()
                     bottomSheetDialog?.dismiss()
 
                 } else {
@@ -366,6 +369,34 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
                 Log.i(TAG, "addJourneyResponseLiveData:: exception $exception")
                 dialog?.dismiss()
             }
+        }
+    }
+
+    private fun clearNewActivityViews() {
+        try {
+            bottomBinding?.etEventName?.clearFocus()
+            bottomBinding?.etNote?.clearFocus()
+
+            bottomBinding?.etEventName?.text = null
+            bottomBinding?.etNote?.text = null
+            bottomBinding?.etDate?.text = ""
+            bottomBinding?.etStartTime?.text = ""
+            bottomBinding?.etEndTime?.text = ""
+
+            viewModel.mediaImgList.clear()
+            viewModel.mediaVidList.clear()
+            imagePartList.clear()
+            videoPartList.clear()
+
+            showActivityImageAdapter =
+                ShowActivityImageAdapter(viewModel.mediaImgList, requireContext(), this)
+            bottomBinding?.rvMediaImage?.adapter = showActivityImageAdapter
+
+            showActivityVideoAdapter =
+                ShowActivityVideoAdapter(viewModel.mediaVidList, requireContext(), this)
+            bottomBinding?.rvMediaVideo?.adapter = showActivityVideoAdapter
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
@@ -494,7 +525,8 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
                     Manifest.permission.READ_EXTERNAL_STORAGE
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-                Toast.makeText(requireContext(), "Permission not granted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Permission not granted", Toast.LENGTH_SHORT)
+                    .show()
                 // Request the permission
                 requestImgPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
 
@@ -523,7 +555,8 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
                     Manifest.permission.READ_EXTERNAL_STORAGE
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-                Toast.makeText(requireContext(), "Permission not granted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Permission not granted", Toast.LENGTH_SHORT)
+                    .show()
                 // Request the permission
                 requestVidPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
 
@@ -589,8 +622,8 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
     private fun checkBottomCredentials() {
 
         val event = bottomBinding?.etEventName?.text.toString()
-        val note =  bottomBinding?.etNote?.text.toString()
-        val date =  bottomBinding?.etDate?.text.toString()
+        val note = bottomBinding?.etNote?.text.toString()
+        val date = bottomBinding?.etDate?.text.toString()
         val sTime = bottomBinding?.etStartTime?.text.toString()
         val eTime = bottomBinding?.etEndTime?.text.toString()
 
@@ -617,15 +650,10 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
             return
         }
 
-        if (event.isNotEmpty() && note.isNotEmpty() && date.isNotEmpty() && sTime.isNotEmpty() && eTime.isNotEmpty()) {
-            addNewActivity(event, note, date, sTime, eTime)
 
-            bottomBinding?.etEventName?.setText("")
-            bottomBinding?.etNote?.setText("")
-            bottomBinding?.etDate?.text = ""
-            bottomBinding?.etStartTime?.text = ""
-            bottomBinding?.etEndTime?.text = ""
-        }
+        addNewActivity(event, note, date, sTime, eTime)
+
+
     }
 
     private fun addNewActivity(
@@ -695,10 +723,6 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
             videoPartList
         )
 
-        viewModel.mediaImgList.clear()
-        viewModel.mediaVidList.clear()
-        imagePartList.clear()
-        videoPartList.clear()
 
     }
 
@@ -783,7 +807,10 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
 
         // Set window flags to make the dialog full screen
         val window = dialog.window
-        window?.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT)
+        window?.setLayout(
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.MATCH_PARENT
+        )
 
         val player = ExoPlayer.Builder(requireContext()).build()
         videoBinding.videoPlayer.player = player
@@ -793,13 +820,17 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
             dialog.dismiss()
         }
 
+        Log.i(TAG, "showVideoDialog:: videoPath $videoPath videoUrl $videoUrl ")
+
         if (videoPath != null) {
             videoBinding.videoView.visibility = View.VISIBLE
+            videoBinding.videoPlayer.visibility = View.GONE
             videoBinding.videoView.setVideoURI(videoPath)
+            videoBinding.videoView.start()
         } else {
 
             videoBinding.videoPlayer.visibility = View.VISIBLE
-
+            videoBinding.videoView.visibility = View.GONE
 
             CoroutineScope(Dispatchers.IO).launch {
                 try {
@@ -833,7 +864,10 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
 
         // Set window flags to make the dialog full screen
         val window = dialog.window
-        window?.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT)
+        window?.setLayout(
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.MATCH_PARENT
+        )
 
 
         imageBinding.btnClose.setOnClickListener {

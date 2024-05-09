@@ -2,7 +2,7 @@ package com.codecoy.mvpflycollab.datamodels
 
 import com.google.gson.annotations.SerializedName
 
-data class UserLoginData(
+data class UserLevelsData(
     @SerializedName("id"                ) var id              : Int?    = null,
     @SerializedName("profile_img"       ) var profileImg      : String? = null,
     @SerializedName("name"              ) var name            : String? = null,
@@ -19,6 +19,5 @@ data class UserLoginData(
     @SerializedName("consecutive_days"  ) var consecutiveDays : Int?    = null,
     @SerializedName("last_login_at"     ) var lastLoginAt     : String? = null,
     @SerializedName("created_at"        ) var createdAt       : String? = null,
-    @SerializedName("updated_at"        ) var updatedAt       : String? = null,
-    @SerializedName("token"             ) var token           : String? = null
+    @SerializedName("updated_at"        ) var updatedAt       : String? = null
 )

@@ -111,7 +111,7 @@ class PlayListFragment : Fragment(), PlaylistCallback {
             findNavController().popBackStack()
         }
 
-        if (currentUser?.id.toString() != Utils.userId){
+        if (currentUser?.id.toString() != Utils.userId) {
             mBinding.floatingActionButton.visibility = View.GONE
         } else {
             mBinding.floatingActionButton.visibility = View.VISIBLE
@@ -164,7 +164,8 @@ class PlayListFragment : Fragment(), PlaylistCallback {
             return
         }
         if (viewModel.selectedImage.isNullOrEmpty()) {
-            Toast.makeText(requireContext(), "Please attach Playlist image", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Please attach Playlist image", Toast.LENGTH_SHORT)
+                .show()
             return
         }
 
@@ -201,7 +202,8 @@ class PlayListFragment : Fragment(), PlaylistCallback {
                     Manifest.permission.READ_EXTERNAL_STORAGE
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-                Toast.makeText(requireContext(), "Permission not granted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Permission not granted", Toast.LENGTH_SHORT)
+                    .show()
                 // Request the permission
                 requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
 
@@ -304,9 +306,11 @@ class PlayListFragment : Fragment(), PlaylistCallback {
 
                     viewModel.selectedImage = null
 
-                    viewModel.allPlayList("Bearer " + currentUser?.token.toString(),
-                        currentUser?.id.toString())
-
+                    viewModel.allPlayList(
+                        "Bearer " + currentUser?.token.toString(),
+                        currentUser?.id.toString()
+                    )
+                    clearBottomView()
                     bottomSheetDialog.dismiss()
 
                 } else {
@@ -328,6 +332,18 @@ class PlayListFragment : Fragment(), PlaylistCallback {
         }
     }
 
+    private fun clearBottomView() {
+        try {
+            bottomBinding.etTitle.clearFocus()
+            bottomBinding.etDes.clearFocus()
+            bottomBinding.etTitle.setText("")
+            bottomBinding.etDes.setText("")
+            viewModel.selectedImage = null
+        } catch (e: Exception) {
+
+        }
+    }
+
     private fun setUpAdapter(allPlaylistData: ArrayList<AllPlaylistData>) {
 
         if (allPlaylistData.isEmpty()) {
@@ -344,7 +360,8 @@ class PlayListFragment : Fragment(), PlaylistCallback {
     override fun onPlaylistClick(playData: AllPlaylistData) {
         try {
 
-            val action = PlayListFragmentDirections.actionPlayListFragmentToPlayListDetailFragment(playData)
+            val action =
+                PlayListFragmentDirections.actionPlayListFragmentToPlayListDetailFragment(playData)
             findNavController().navigate(action)
 
         } catch (e: Exception) {
@@ -352,11 +369,11 @@ class PlayListFragment : Fragment(), PlaylistCallback {
         }
     }
 
-/*    override fun onAttach(context: Context) {
-        super.onAttach(context)
+    /*    override fun onAttach(context: Context) {
+            super.onAttach(context)
 
-        (context as MainActivity).also { activity = it }
-    }*/
+            (context as MainActivity).also { activity = it }
+        }*/
 
 
 }

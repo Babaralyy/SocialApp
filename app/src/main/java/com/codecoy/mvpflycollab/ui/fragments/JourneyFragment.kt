@@ -205,7 +205,7 @@ class JourneyFragment : Fragment(), JourneyCallback {
 
                     Glide
                         .with(requireContext())
-                        .load(Constant.MEDIA_BASE_URL + imageData.response)
+                        .load(Constant.MEDIA_BASE_URL + viewModel.selectedImage)
                         .placeholder(R.drawable.img)
                         .into(bottomBinding.ivJourneyImg)
 
@@ -233,6 +233,8 @@ class JourneyFragment : Fragment(), JourneyCallback {
                     viewModel.selectedImage = null
                     viewModel.allJourneyList("Bearer " + currentUser?.token.toString(),
                        currentUser?.id.toString())
+
+                    clearBottomView()
 
                     bottomSheetDialog.dismiss()
 
@@ -270,6 +272,18 @@ class JourneyFragment : Fragment(), JourneyCallback {
                 Log.i(TAG, "addJourneyResponseLiveData:: exception $exception")
                 dialog?.dismiss()
             }
+        }
+    }
+
+    private fun clearBottomView() {
+        try {
+            bottomBinding.etTitle.clearFocus()
+            bottomBinding.etDes.clearFocus()
+            bottomBinding.etTitle.setText("")
+            bottomBinding.etDes.setText("")
+            viewModel.selectedImage = null
+        } catch (e: Exception){
+
         }
     }
 
@@ -372,11 +386,15 @@ class JourneyFragment : Fragment(), JourneyCallback {
 
 
     private fun showSingleImage(uris: List<Uri>) {
-        val file = File(Utils.getRealPathFromImgURI(requireContext(), uris[0]))
-        val requestFile = RequestBody.create("image/*".toMediaTypeOrNull(), file)
-        val imagePart = MultipartBody.Part.createFormData("img", file.name, requestFile)
+        try {
+            val file = File(Utils.getRealPathFromImgURI(requireContext(), uris[0]))
+            val requestFile = RequestBody.create("image/*".toMediaTypeOrNull(), file)
+            val imagePart = MultipartBody.Part.createFormData("img", file.name, requestFile)
+            viewModel.uploadImage(imagePart)
+        } catch (e: Exception){
 
-        viewModel.uploadImage(imagePart)
+        }
+
     }
 
 

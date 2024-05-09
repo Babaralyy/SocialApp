@@ -13,6 +13,8 @@ data class UserDetailsForPost(
     @SerializedName("device_token"      ) var deviceToken     : String? = null,
     @SerializedName("website_url"       ) var websiteUrl      : String? = null,
     @SerializedName("about_me"          ) var aboutMe         : String? = null,
+    @SerializedName("socket_id"         ) var socketId        : String? = null,
+    @SerializedName("online"            ) var online          : String? = null,
     @SerializedName("created_at"        ) var createdAt       : String? = null,
     @SerializedName("updated_at"        ) var updatedAt       : String? = null
 )
