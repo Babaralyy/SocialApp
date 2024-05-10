@@ -46,6 +46,8 @@ class ChatFragment : Fragment() {
     private var currentUser: UserLoginData? = null
     private var dialog: Dialog? = null
 
+
+
     private lateinit var chatViewModel: ChatViewModel
 
     private lateinit var chatAdapter: OneToOneChatAdapter
@@ -206,7 +208,6 @@ class ChatFragment : Fragment() {
         withContext<Socket?>(Dispatchers.IO) {
             suspendCancellableCoroutine { continuation ->
                 try {
-
                     SocketManager.socket?.on("get_conversation") {
                         activity.runOnUiThread {
 
@@ -222,7 +223,7 @@ class ChatFragment : Fragment() {
                     }
                     SocketManager.socket?.on(Socket.EVENT_DISCONNECT) {
                         activity.runOnUiThread {
-                            Log.i(TAG, "main socket:: message $it")
+                            Log.i(TAG, "main socket:: EVENT_DISCONNECT $it")
                         }
                     }
                 } catch (e: URISyntaxException) {

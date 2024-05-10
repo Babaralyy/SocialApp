@@ -10,6 +10,7 @@ data class UserPostsData(
     @SerializedName("post_hashtag") var postHashtag: String? = null,
     @SerializedName("lat") var lat: String? = null,
     @SerializedName("long") var long: String? = null,
+    @SerializedName("loc_name") var locName: String? = null,
     @SerializedName("created_at") var createdAt: String? = null,
     @SerializedName("updated_at") var updatedAt: String? = null,
     @SerializedName("user_like_status") var userLikeStatus: String? = null,

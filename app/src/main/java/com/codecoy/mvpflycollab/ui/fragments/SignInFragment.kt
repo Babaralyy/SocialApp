@@ -184,7 +184,7 @@ class SignInFragment : Fragment() {
                                 SignInFragmentDirections.actionSignInFragmentToMainFragment()
                             findNavController().navigate(action)
                         } catch (e: Exception) {
-                            Log.i(Constant.TAG, "navControllerException:: ${e.message}")
+                            Log.i(TAG, "navControllerException:: ${e.message}")
                         }
                     }
                 } else {

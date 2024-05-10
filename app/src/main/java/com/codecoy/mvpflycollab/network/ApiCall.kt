@@ -223,6 +223,7 @@ interface ApiCall {
         @Part("post_hashtag") postHashtag: RequestBody,
         @Part("lat") lat: RequestBody,
         @Part("long") long: RequestBody,
+        @Part("loc_name") locName: RequestBody,
         @Part imagesPartList: MutableList<MultipartBody.Part>,
     ): Response<AddNewPostResponse>
 
@@ -243,6 +244,8 @@ interface ApiCall {
         @Field("user_id") userId: String,
         @Field("post_id") postId: String,
         @Field("comment_title") commentTitle: String,
+        @Field("date") date: String,
+        @Field("time") time: String,
     ): Response<AddCommentResponse>
 
     @GET("api/comment_list_against_post")

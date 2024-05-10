@@ -24,7 +24,7 @@ object Utils {
 
     private const val PREF_NAME = "userData"
     private const val KEY_USER_DATA = "uData"
-    const val CHANNEL_ID_ = "channel_id"
+    const val CHANNEL_ID_ = "channel_id_"
 
     var storyDetail: CalendarStoryData?= null
     var allActivitiesData: AllActivitiesData?= null

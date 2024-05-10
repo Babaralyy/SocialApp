@@ -83,6 +83,7 @@ class PostsViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
         postHashtag: RequestBody,
         lat: RequestBody,
         long: RequestBody,
+        locName: RequestBody,
         imagesPartList: MutableList<MultipartBody.Part>,
     ) {
         viewModelScope.launch(handler) {
@@ -96,6 +97,7 @@ class PostsViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
                 postHashtag,
                 lat,
                 long,
+                locName,
                 imagesPartList,
             )
             try {
@@ -117,7 +119,7 @@ class PostsViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
         time: String
     ) {
         viewModelScope.launch(handler) {
-            _loading.value = true
+//            _loading.value = true
             val response = mvpRepository.likePost(token, userId, postId, date, time)
 
             try {
@@ -126,7 +128,7 @@ class PostsViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
             } catch (e: Exception) {
                 likePostResponseMutableLiveData.value = response
             } finally {
-                _loading.value = false
+//                _loading.value = false
             }
         }
     }
@@ -165,7 +167,7 @@ class PostsViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
 
     fun savePost(token: String, userId: String, postId: String) {
         viewModelScope.launch(handler) {
-            _loading.value = true
+//            _loading.value = true
             val response = mvpRepository.savePost(token, userId, postId)
 
             try {
@@ -174,7 +176,7 @@ class PostsViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
             } catch (e: Exception) {
                 savePostResponseMutableLiveData.value = response
             } finally {
-                _loading.value = false
+//                _loading.value = false
             }
         }
     }

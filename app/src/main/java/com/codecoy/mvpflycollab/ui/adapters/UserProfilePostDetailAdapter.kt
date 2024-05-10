@@ -37,7 +37,7 @@ class UserProfilePostDetailAdapter(
             .into(holder.mBinding.ivUser)
 
         holder.mBinding.tvUserName.text = postsData.userData?.name
-        holder.mBinding.tvLocation.text = postsData.userData?.username
+        holder.mBinding.tvUser.text = postsData.userData?.username
 
         if (postsData.images.isNotEmpty()) {
 
@@ -73,17 +73,31 @@ class UserProfilePostDetailAdapter(
         }
 
 
-        if (postsData.userLikeStatus == "liked") {
-            holder.mBinding.ivLikeimage.setImageResource(R.drawable.like_post)
-        } else if (postsData.userLikeStatus == "unliked") {
-            holder.mBinding.ivLikeimage.setImageResource(R.drawable.dislike_post)
+        if (!postsData.locName.isNullOrEmpty()){
+            holder.mBinding.tvLocation.text = postsData.locName
         }
 
-        if (postsData.userSaveStatus == "saved") {
-            holder.mBinding.ivSaveImage.setImageResource(R.drawable.save_post_filled)
+        when (postsData.userLikeStatus) {
+            "liked" -> {
+                holder.mBinding.ivLikeimage.setImageResource(R.drawable.like_post)
+                holder.mBinding.ivLikeimage.tag = R.drawable.like_post
+            }
+
+            "unliked" -> {
+                holder.mBinding.ivLikeimage.setImageResource(R.drawable.dislike_post)
+                holder.mBinding.ivLikeimage.tag = R.drawable.dislike_post
+            }
         }
-        else if (postsData.userSaveStatus == "unsaved") {
-            holder.mBinding.ivSaveImage.setImageResource(R.drawable.unsaved_post)
+
+        when (postsData.userSaveStatus) {
+            "saved" -> {
+                holder.mBinding.ivSaveImage.setImageResource(R.drawable.save_post_filled)
+                holder.mBinding.ivSaveImage.tag = R.drawable.save_post_filled
+            }
+            "unsaved" -> {
+                holder.mBinding.ivSaveImage.setImageResource(R.drawable.unsaved_post)
+                holder.mBinding.ivSaveImage.tag = R.drawable.unsaved_post
+            }
         }
 
 //        holder.mBinding.tvLocation.text = "Tokyo, Japan"

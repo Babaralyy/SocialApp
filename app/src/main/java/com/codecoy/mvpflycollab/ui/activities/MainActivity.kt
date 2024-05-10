@@ -1,5 +1,6 @@
 package com.codecoy.mvpflycollab.ui.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -61,16 +62,24 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    override fun onNewIntent(intent: Intent?) {
+
+        super.onNewIntent(intent)
+    }
+
     private suspend fun connectToSocket() {
         withContext<Socket?>(Dispatchers.IO) {
             suspendCancellableCoroutine { continuation ->
                 try {
                     socketManager.connect()
 
+
+
                     SocketManager.socket?.on("user_got_online") {
                         runOnUiThread {
                             val jsonObject = it[0] as JSONObject
-                            jsonObject.let {
+                            Log.i(TAG, "main socket:: message $jsonObject")
+                          /*  jsonObject.let {
                                 val jsonData = it.getJSONObject("data")
                                 jsonData.let { it1 ->
                                     val userData = it1.getJSONObject("response")
@@ -100,10 +109,10 @@ class MainActivity : AppCompatActivity() {
                                             onlineUsersMutableLiveData.value = onlineUsersList
                                         }
 
-                                        Log.i(TAG, "main socket:: message $onlineUsersList")
+
                                     }
                                 }
-                            }
+                            }*/
 
                         }
                     }

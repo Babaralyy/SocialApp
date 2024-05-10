@@ -141,12 +141,12 @@ class MembersFragment : Fragment(), MembersCallback {
     }
 
     override fun onMemberClick(memberData: CollaboratorsListData) {
-        try {
-            Utils.userId = memberData.id.toString()
-            findNavController().navigate(MembersFragmentDirections.actionMembersFragmentToUserProfileDetailsFragment())
-        } catch (e: Exception){
-            Log.i(Constant.TAG, "clickListeners:: ${e.message}")
-        }
+//        try {
+//            Utils.userId = memberData.id.toString()
+//            findNavController().navigate(MembersFragmentDirections.actionMembersFragmentToUserProfileDetailsFragment())
+//        } catch (e: Exception){
+//            Log.i(Constant.TAG, "clickListeners:: ${e.message}")
+//        }
     }
 
 /*    override fun onAttach(context: Context) {

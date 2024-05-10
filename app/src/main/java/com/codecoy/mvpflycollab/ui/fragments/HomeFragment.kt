@@ -4,6 +4,8 @@ import android.Manifest
 import android.app.Dialog
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.VectorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -28,6 +30,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import com.bumptech.glide.Glide
 import com.codecoy.mvpflycollab.R
 import com.codecoy.mvpflycollab.callbacks.HomeCallback
@@ -307,7 +310,7 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
                 if (storiesResponse != null && storiesResponse.success == true) {
 
                     try {
-                        getAllPosts()
+//                        getAllPosts()
                     } catch (e: Exception) {
                         Log.i(TAG, "navControllerException:: ${e.message}")
                     }
@@ -357,7 +360,7 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
                 if (postResponse != null && postResponse.success == true) {
 
                     try {
-                        getAllPosts()
+//                        getAllPosts()
                     } catch (e: Exception) {
                         Log.i(TAG, "navControllerException:: ${e.message}")
                     }
@@ -408,7 +411,8 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
 
                     try {
                         levelsResponse.userLevelsData?.let {
-                            Utils.saveLevelsToSharedPreferences(requireContext(),
+                            Utils.saveLevelsToSharedPreferences(
+                                requireContext(),
                                 it
                             )
                         }
@@ -734,11 +738,15 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
             val comment = bottomBinding.etComment.text.toString().trim()
             if (comment.isNotEmpty()) {
                 bottomBinding.etComment.setText("")
+                val currentDate = Utils.formatDate(Date())
+                val currentTime = Utils.getCurrentTime(Calendar.getInstance().time)
                 commentsViewModel.addComment(
                     "Bearer " + currentUser?.token.toString(),
                     currentUser?.id.toString(),
                     postsData.id.toString(),
-                    comment
+                    comment,
+                    currentDate,
+                    currentTime
                 )
             } else {
                 Toast.makeText(requireContext(), "Please add comment", Toast.LENGTH_SHORT).show()
@@ -749,6 +757,20 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
     override fun onLikeClick(postsData: UserPostsData, postItemView: PostItemViewBinding) {
 
         this.postItemViewBinding = postItemView
+        val tag = postItemView.ivLikeimage.tag
+        when (tag) {
+            R.drawable.like_post -> {
+                postItemView.ivLikeimage.setImageResource(R.drawable.dislike_post)
+                postItemView.ivLikeimage.tag = (R.drawable.dislike_post)
+            }
+
+            R.drawable.dislike_post -> {
+                postItemView.ivLikeimage.setImageResource(R.drawable.like_post)
+                postItemView.ivLikeimage.tag = (R.drawable.like_post)
+            }
+        }
+        Log.i(TAG, "onLikeClick:: $tag")
+
 
         val currentDate = Utils.formatDate(Date())
         val currentTime = Utils.getCurrentTime(Calendar.getInstance().time)
@@ -774,7 +796,21 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
         }
     }
 
-    override fun onSaveClick(postsData: UserPostsData, mBinding: PostItemViewBinding) {
+    override fun onSaveClick(postsData: UserPostsData, postItemView: PostItemViewBinding) {
+
+        val tag = postItemView.ivSaveImage.tag
+        when (tag) {
+            R.drawable.save_post_filled -> {
+                postItemView.ivSaveImage.setImageResource(R.drawable.unsaved_post)
+                postItemView.ivSaveImage.tag = R.drawable.unsaved_post
+            }
+
+            R.drawable.unsaved_post -> {
+                postItemView.ivSaveImage.setImageResource(R.drawable.save_post_filled)
+                postItemView.ivSaveImage.tag = R.drawable.save_post_filled
+            }
+        }
+
         viewModel.savePost(
             "Bearer " + currentUser?.token.toString(),
             currentUser?.id.toString(),

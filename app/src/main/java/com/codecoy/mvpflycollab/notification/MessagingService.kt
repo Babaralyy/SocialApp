@@ -25,7 +25,6 @@ class MessagingService : FirebaseMessagingService() {
     private val bookingGroup = "com.android.example.AUDIO"
     private var summaryId: Long = 1
 
-
     override fun onNewToken(deviceToken: String) {
         super.onNewToken(deviceToken)
 
@@ -40,6 +39,7 @@ class MessagingService : FirebaseMessagingService() {
         super.onMessageReceived(p0)
         Log.i(TAG, "onMessageReceived:: onMessageReceived ${p0.data}")
         val state = Utils.fetchNotificationStateFromPref(this)
+        Log.i(TAG, "onMessageReceived:: state $state")
         if (state){
             showNotification(p0.data)
         }
@@ -78,14 +78,17 @@ class MessagingService : FirebaseMessagingService() {
             .setGroupSummary(true)
             .setAutoCancel(true)
 
+
         with(NotificationManagerCompat.from(this)) {
             // notificationId is a unique int for each notification that you must define
             if (ActivityCompat.checkSelfPermission(
                     this@MessagingService,
                     Manifest.permission.POST_NOTIFICATIONS
                 ) == PackageManager.PERMISSION_GRANTED
-            ) {
+            ) {  Log.i(TAG, "onMessageReceived:: notify if")
                 notify((++summaryId).toInt(), builder.build())
+            } else {
+                Log.i(TAG, "onMessageReceived:: notify else")
             }
         }
     }

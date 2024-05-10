@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.codecoy.mvpflycollab.callbacks.ChatsCallback
+import com.codecoy.mvpflycollab.chat.socket.SocketManager
 import com.codecoy.mvpflycollab.databinding.FragmentStartChatBinding
 import com.codecoy.mvpflycollab.datamodels.UserChatListData
 import com.codecoy.mvpflycollab.datamodels.UserFollowingData
@@ -26,9 +27,18 @@ import com.codecoy.mvpflycollab.viewmodels.ChatViewModel
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.codecoy.mvpflycollab.viewmodels.UserViewModel
 import com.google.android.material.snackbar.Snackbar
+import io.socket.client.Socket
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
+import java.net.URISyntaxException
+import kotlin.coroutines.resumeWithException
 
 
 class StartChatFragment : Fragment(), ChatsCallback {
+
 
     private lateinit var activity: MainActivity
     private var currentUser: UserLoginData? = null
@@ -80,6 +90,51 @@ class StartChatFragment : Fragment(), ChatsCallback {
             this,
             MvpViewModelFactory(userRepository)
         )[ChatViewModel::class.java]
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        try {
+            GlobalScope.launch {
+                try {
+                    connectToSocket()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+
+        } catch (e: URISyntaxException) {
+            e.printStackTrace()
+        }
+    }
+
+    private suspend fun connectToSocket() {
+        withContext<Socket?>(Dispatchers.IO) {
+            suspendCancellableCoroutine { continuation ->
+                try {
+                    SocketManager.socket?.on("get_conversation") {
+                        activity.runOnUiThread {
+                            getChatUserList()
+                            Log.i(Constant.TAG, "main socket:: message ${it[0]}")
+                        }
+                    }
+                    SocketManager.socket?.on(Socket.EVENT_CONNECT_ERROR) { error ->
+                        activity.runOnUiThread {
+                            Log.i(Constant.TAG, "main socket:: $error ")
+                        }
+
+                    }
+                    SocketManager.socket?.on(Socket.EVENT_DISCONNECT) {
+                        activity.runOnUiThread {
+                            Log.i(Constant.TAG, "main socket:: message $it")
+                        }
+                    }
+                } catch (e: URISyntaxException) {
+                    continuation.resumeWithException(e)
+                }
+            }
+        }
     }
 
     private fun getChatUserList() {

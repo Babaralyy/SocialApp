@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.codecoy.mvpflycollab.R
 import com.codecoy.mvpflycollab.callbacks.HomeCallback
 import com.codecoy.mvpflycollab.databinding.CommentsBottomDialogLayBinding
 import com.codecoy.mvpflycollab.databinding.FragmentUserPostsBinding
@@ -174,7 +175,7 @@ class UserPostsFragment : Fragment(), HomeCallback {
                 if (storiesResponse != null && storiesResponse.success == true) {
 
                     try {
-                        getProfileData()
+//                        getProfileData()
                     } catch (e: Exception) {
                         Log.i(TAG, "navControllerException:: ${e.message}")
                     }
@@ -226,7 +227,7 @@ class UserPostsFragment : Fragment(), HomeCallback {
                 if (postResponse != null && postResponse.success == true) {
 
                     try {
-                        getProfileData()
+//                        getProfileData()
                     } catch (e: Exception) {
                         Log.i(TAG, "navControllerException:: ${e.message}")
                     }
@@ -352,11 +353,15 @@ class UserPostsFragment : Fragment(), HomeCallback {
             val comment = bottomBinding.etComment.text.toString().trim()
             if (comment.isNotEmpty()) {
                 bottomBinding.etComment.setText("")
+                val currentDate = Utils.formatDate(Date())
+                val currentTime = Utils.getCurrentTime(Calendar.getInstance().time)
                 commentsViewModel.addComment(
                     "Bearer " + currentUser?.token.toString(),
                     currentUser?.id.toString(),
                     postsData.id.toString(),
-                    comment
+                    comment,
+                    currentDate,
+                    currentTime
                 )
             } else {
                 Toast.makeText(requireContext(), "Please add comment", Toast.LENGTH_SHORT).show()
@@ -377,6 +382,20 @@ class UserPostsFragment : Fragment(), HomeCallback {
 
     override fun onLikeClick(postsData: UserPostsData, postItemView: PostItemViewBinding) {
 
+
+        val tag = postItemView.ivLikeimage.tag
+        when (tag) {
+            R.drawable.like_post -> {
+                postItemView.ivLikeimage.setImageResource(R.drawable.dislike_post)
+                postItemView.ivLikeimage.tag = (R.drawable.dislike_post)
+            }
+
+            R.drawable.dislike_post -> {
+                postItemView.ivLikeimage.setImageResource(R.drawable.like_post)
+                postItemView.ivLikeimage.tag = (R.drawable.like_post)
+            }
+        }
+
         val currentDate = Utils.formatDate(Date())
         val currentTime = Utils.getCurrentTime(Calendar.getInstance().time)
         postViewModel.likePost(
@@ -392,7 +411,21 @@ class UserPostsFragment : Fragment(), HomeCallback {
 
     }
 
-    override fun onSaveClick(postsData: UserPostsData, mBinding: PostItemViewBinding) {
+    override fun onSaveClick(postsData: UserPostsData, postItemView: PostItemViewBinding) {
+
+        val tag = postItemView.ivSaveImage.tag
+        when (tag) {
+            R.drawable.save_post_filled -> {
+                postItemView.ivSaveImage.setImageResource(R.drawable.unsaved_post)
+                postItemView.ivSaveImage.tag = R.drawable.unsaved_post
+            }
+
+            R.drawable.unsaved_post -> {
+                postItemView.ivSaveImage.setImageResource(R.drawable.save_post_filled)
+                postItemView.ivSaveImage.tag = R.drawable.save_post_filled
+            }
+        }
+
         postViewModel.savePost(
             "Bearer " + currentUser?.token.toString(),
             currentUser?.id.toString(),

@@ -128,6 +128,7 @@ class MvpRepository(private val apiCall: ApiCall) {
         postHashtag: RequestBody,
         lat: RequestBody,
         long: RequestBody,
+        locName: RequestBody,
         imagesPartList: MutableList<MultipartBody.Part>,
     ) = apiCall.addNewPost(
         token,
@@ -138,6 +139,7 @@ class MvpRepository(private val apiCall: ApiCall) {
         postHashtag,
         lat,
         long,
+        locName,
         imagesPartList,
     )
 
@@ -156,8 +158,10 @@ class MvpRepository(private val apiCall: ApiCall) {
         token: String,
         userId: String,
         postId: String,
-        commentTitle: String
-    ) = apiCall.addComment(token, userId, postId, commentTitle)
+        commentTitle: String,
+        date: String,
+        time: String
+    ) = apiCall.addComment(token, userId, postId, commentTitle, date, time)
 
     suspend fun allStories(token: String, userId: String) =
         apiCall.allStories(token, userId)

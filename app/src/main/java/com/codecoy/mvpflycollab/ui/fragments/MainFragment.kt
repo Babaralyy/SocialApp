@@ -7,8 +7,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -38,18 +36,11 @@ import com.codecoy.mvpflycollab.utils.Constant.TAG
 import com.codecoy.mvpflycollab.utils.Utils
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.codecoy.mvpflycollab.viewmodels.PostsViewModel
-import com.google.android.gms.common.api.Status
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.api.model.RectangularBounds
 import com.google.android.libraries.places.api.net.PlacesClient
-import com.google.android.libraries.places.api.net.PlacesStatusCodes
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 
 
@@ -377,12 +368,12 @@ class MainFragment : Fragment(), ImageClickCallback {
             return
         }
 
-        addNewPost(description)
+        addNewPost(description, loc)
         bottomBinding?.etDes?.setText("")
 
     }
 
-    private fun addNewPost(description: String) {
+    private fun addNewPost(description: String, loc: String) {
         imagePartList.clear()
 
         imagePartList = viewModel.mediaImgList.mapNotNull { item ->
@@ -402,6 +393,7 @@ class MainFragment : Fragment(), ImageClickCallback {
             Utils.createTextRequestBody("#Chill #Enjoy #2k24 2"),
             Utils.createTextRequestBody("2.345786348789"),
             Utils.createTextRequestBody("2.389786348754"),
+            Utils.createTextRequestBody(loc),
             imagePartList,
         )
 

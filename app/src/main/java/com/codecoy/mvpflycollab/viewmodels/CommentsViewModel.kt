@@ -49,11 +49,13 @@ class CommentsViewModel(private val mvpRepository: MvpRepository) : ViewModel() 
         token: String,
         userId: String,
         postId: String,
-        commentTitle: String
+        commentTitle: String,
+        date: String,
+        time: String
     ) {
         viewModelScope.launch(handler) {
             _loading.value = true
-            val response = mvpRepository.addComment(token, userId, postId, commentTitle)
+            val response = mvpRepository.addComment(token, userId, postId, commentTitle, date, time)
 
             try {
                 addCommentsResponseMutableLiveData.value = response

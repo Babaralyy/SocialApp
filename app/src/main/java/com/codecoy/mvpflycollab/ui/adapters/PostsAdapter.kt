@@ -39,7 +39,7 @@ class PostsAdapter(
             View.INVISIBLE
         }
 
-        if (currentUser?.id.toString() != postsData.userId){
+        if (currentUser?.id.toString() != postsData.userId) {
             holder.mBinding.ivmenu.visibility = View.INVISIBLE
         } else {
             holder.mBinding.ivmenu.visibility = View.VISIBLE
@@ -52,15 +52,17 @@ class PostsAdapter(
             .into(holder.mBinding.ivUser)
 
         holder.mBinding.tvUserName.text = postsData.userData?.name
-        holder.mBinding.tvLocation.text = postsData.userData?.username
+        holder.mBinding.tvUser.text = postsData.userData?.username
 
         if (postsData.images.isNotEmpty()) {
-            if (postsData.images.size == 1){
+            if (postsData.images.size == 1) {
                 holder.mBinding.tvCount.visibility = View.INVISIBLE
-            }else {
+            } else {
                 holder.mBinding.tvCount.visibility = View.VISIBLE
                 holder.mBinding.tvCount.text = "1/${postsData.images.size}"
             }
+
+
 
 
             val sliderView = holder.mBinding.sliderLay.imageSlider
@@ -88,14 +90,31 @@ class PostsAdapter(
 
         }
 
+        if (!postsData.locName.isNullOrEmpty()){
+            holder.mBinding.tvLocation.text = postsData.locName
+        }
+
         when (postsData.userLikeStatus) {
-            "liked" -> holder.mBinding.ivLikeimage.setImageResource(R.drawable.like_post)
-            "unliked" -> holder.mBinding.ivLikeimage.setImageResource(R.drawable.dislike_post)
+            "liked" -> {
+                holder.mBinding.ivLikeimage.setImageResource(R.drawable.like_post)
+                holder.mBinding.ivLikeimage.tag = R.drawable.like_post
+            }
+
+            "unliked" -> {
+                holder.mBinding.ivLikeimage.setImageResource(R.drawable.dislike_post)
+                holder.mBinding.ivLikeimage.tag = R.drawable.dislike_post
+            }
         }
 
         when (postsData.userSaveStatus) {
-            "saved" -> holder.mBinding.ivSaveImage.setImageResource(R.drawable.save_post_filled)
-            "unsaved" -> holder.mBinding.ivSaveImage.setImageResource(R.drawable.unsaved_post)
+            "saved" -> {
+                holder.mBinding.ivSaveImage.setImageResource(R.drawable.save_post_filled)
+                holder.mBinding.ivSaveImage.tag = R.drawable.save_post_filled
+            }
+            "unsaved" -> {
+                holder.mBinding.ivSaveImage.setImageResource(R.drawable.unsaved_post)
+                holder.mBinding.ivSaveImage.tag = R.drawable.unsaved_post
+            }
         }
 
 //        holder.mBinding.tvLocation.text = "Tokyo, Japan"
