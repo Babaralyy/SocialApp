@@ -20,6 +20,11 @@
             app:destination="@id/mainFragment"
             app:popUpTo="@id/nav_graph.xml"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_splashFragment_to_completeProfileFragment"
+            app:destination="@id/completeProfileFragment"
+            app:popUpTo="@id/nav_graph.xml"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/welcomeFragment"
@@ -32,6 +37,14 @@
         <action
             android:id="@+id/action_welcomeFragment_to_signInFragment"
             app:destination="@id/signInFragment" />
+        <action
+            android:id="@+id/action_welcomeFragment_to_completeProfileFragment"
+            app:destination="@id/completeProfileFragment" />
+        <action
+            android:id="@+id/action_welcomeFragment_to_mainFragment"
+            app:destination="@id/mainFragment"
+            app:popUpTo="@id/nav_graph.xml"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/signUpFragment"
@@ -362,6 +375,17 @@
         <action
             android:id="@+id/action_chatListFragment_to_chatFragment2"
             app:destination="@id/chatFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/completeProfileFragment"
+        android:name="com.codecoy.mvpflycollab.ui.fragments.CompleteProfileFragment"
+        android:label="fragment_complete_profile"
+        tools:layout="@layout/fragment_complete_profile">
+        <action
+            android:id="@+id/action_completeProfileFragment_to_mainFragment"
+            app:destination="@id/mainFragment"
+            app:popUpTo="@id/nav_graph.xml"
+            app:popUpToInclusive="true" />
     </fragment>
 
 </navigation>

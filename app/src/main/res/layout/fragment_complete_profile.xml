@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/ic_background">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:context=".ui.fragments.EditProfileFragment">
+        tools:context=".ui.fragments.CompleteProfileFragment">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/topLay"
@@ -28,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/lato"
                 android:gravity="center"
-                android:text="@string/edit_profile"
+                android:text="Complete Profile"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -48,7 +47,8 @@
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="@+id/tvEditProfile"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/tvEditProfile" />
+                app:layout_constraintTop_toTopOf="@+id/tvEditProfile"
+                android:visibility="invisible"/>
 
             <TextView
                 android:id="@+id/tvDone"
@@ -62,7 +62,8 @@
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="@+id/tvEditProfile"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/tvEditProfile" />
+                app:layout_constraintTop_toTopOf="@+id/tvEditProfile"
+                android:visibility="invisible"/>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -92,7 +93,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_15sdp"
                 android:fontFamily="@font/lato"
-                android:text="@string/change_profilephoto"
+                android:text="Upload Profile"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -299,7 +300,7 @@
             android:backgroundTint="@color/purple"
             android:fontFamily="@font/lato_bold"
             android:padding="@dimen/_10sdp"
-            android:text="@string/update"
+            android:text="@string/save"
             android:textSize="16sp"
             app:cornerRadius="@dimen/_5sdp"
             app:layout_constraintEnd_toEndOf="@id/EmailLayout"

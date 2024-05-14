@@ -113,10 +113,19 @@ class ChatFragment : Fragment() {
 
         mBinding.tvChat.text = Utils.chatName
 
-        chatViewModel.oneTwoOneChat(
-            "Bearer " + currentUser?.token.toString(),
-            currentUser?.id.toString(), Utils.receiverId.toString()
-        )
+        if (Utils.senderId != 0){
+            chatViewModel.oneTwoOneChat(
+                "Bearer " + currentUser?.token.toString(),
+                Utils.senderId.toString(), Utils.receiverId.toString()
+            )
+        } else {
+            chatViewModel.oneTwoOneChat(
+                "Bearer " + currentUser?.token.toString(),
+                currentUser?.id.toString(), Utils.receiverId.toString()
+            )
+        }
+
+
     }
 
     private fun setUpViewModel() {

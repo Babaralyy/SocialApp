@@ -222,15 +222,13 @@ class EditProfileFragment : Fragment() {
         var webUrl: String? = null
 
 
-        if (viewModel.selectedImage == null) {
-            img = currentUser?.profileImg.toString()
+        img = if (viewModel.selectedImage == null) {
+            currentUser?.profileImg.toString()
         } else {
-            img = viewModel.selectedImage
+            viewModel.selectedImage
         }
-        if (fullName.isEmpty()) {
-            name = currentUser?.name.toString()
-        } else {
-            name = fullName
+        name = fullName.ifEmpty {
+            currentUser?.name.toString()
         }
         if (mobileNumber.isNotEmpty()) {
             if (!Patterns.PHONE.matcher(mobileNumber).matches()) {
@@ -242,15 +240,11 @@ class EditProfileFragment : Fragment() {
            number = currentUser?.phone.toString()
         }
 
-        if (url.isEmpty()) {
-            webUrl = currentUser?.websiteUrl.toString()
-        } else {
-            webUrl = url
+        webUrl = url.ifEmpty {
+            currentUser?.websiteUrl.toString()
         }
-        if (me.isEmpty()) {
-            aboutMe = currentUser?.aboutMe.toString()
-        } else {
-            aboutMe = me
+        aboutMe = me.ifEmpty {
+            currentUser?.aboutMe.toString()
         }
 
         val updateProfileBody =

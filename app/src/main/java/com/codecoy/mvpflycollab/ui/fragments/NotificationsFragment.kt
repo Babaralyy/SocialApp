@@ -1,6 +1,7 @@
 package com.codecoy.mvpflycollab.ui.fragments
 
 import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -10,20 +11,25 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.codecoy.mvpflycollab.R
+import com.codecoy.mvpflycollab.callbacks.NotificationCallback
 import com.codecoy.mvpflycollab.databinding.FragmentNotificationsBinding
 import com.codecoy.mvpflycollab.datamodels.NotificationListData
 import com.codecoy.mvpflycollab.datamodels.UserLoginData
 import com.codecoy.mvpflycollab.network.ApiCall
 import com.codecoy.mvpflycollab.repo.MvpRepository
+import com.codecoy.mvpflycollab.ui.activities.MainActivity
 import com.codecoy.mvpflycollab.ui.adapters.NotificationsAdapter
 import com.codecoy.mvpflycollab.utils.Constant
 import com.codecoy.mvpflycollab.utils.Utils
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.codecoy.mvpflycollab.viewmodels.NotificationViewModel
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
-class NotificationsFragment : Fragment() {
+class NotificationsFragment : Fragment(), NotificationCallback {
 
+    private lateinit var activity: MainActivity
     private lateinit var notificationsAdapter: NotificationsAdapter
 
     private lateinit var viewModel: NotificationViewModel
@@ -113,6 +119,7 @@ class NotificationsFragment : Fragment() {
         }
     }
 
+
     private fun setNotificationAdapter(notificationList: ArrayList<NotificationListData>) {
         if (notificationList.isNotEmpty()){
             mBinding.tvNoData.visibility = View.GONE
@@ -120,8 +127,20 @@ class NotificationsFragment : Fragment() {
             mBinding.tvNoData.visibility = View.VISIBLE
         }
 
-        notificationsAdapter = NotificationsAdapter(notificationList, requireContext())
+        notificationsAdapter = NotificationsAdapter(notificationList, requireContext(), this)
         mBinding.rvNotification.adapter = notificationsAdapter
 
     }
+
+    override fun onNotificationClick(notData: NotificationListData) {
+        Utils.postId = notData.postId.toString()
+        activity.findViewById<BottomNavigationView>(R.id.bottomNavigation).selectedItemId = R.id.navigation_home
+        activity.replaceFragment(HomeFragment())
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        (context as MainActivity).also { activity = it }
+    }
+
 }

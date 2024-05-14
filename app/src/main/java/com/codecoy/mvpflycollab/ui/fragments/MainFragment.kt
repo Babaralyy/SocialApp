@@ -115,8 +115,12 @@ class MainFragment : Fragment(), ImageClickCallback {
             override fun handleOnBackPressed() {
                 if (mBinding.bottomNavigation.selectedItemId != R.id.navigation_home) {
                     mBinding.bottomNavigation.selectedItemId = R.id.navigation_home
+
+                    Log.i(TAG, "handleOnBackPressed:: if")
+
                 } else {
-                    super.handleOnBackCancelled()
+                    activity.finish()
+                    Log.i(TAG, "handleOnBackPressed:: else")
                 }
             }
         }

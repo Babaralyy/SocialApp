@@ -54,6 +54,9 @@ import com.codecoy.mvpflycollab.utils.Utils
 import com.codecoy.mvpflycollab.viewmodels.CommentsViewModel
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.codecoy.mvpflycollab.viewmodels.PostsViewModel
+import com.google.android.gms.auth.api.Auth
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import de.hdodenhof.circleimageview.CircleImageView
@@ -78,6 +81,7 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
 
     private lateinit var postItemViewBinding: PostItemViewBinding
 
+    private lateinit var googleApiClient: GoogleApiClient
 
     private lateinit var bottomBinding: CommentsBottomDialogLayBinding
     private lateinit var bottomSheetDialog: BottomSheetDialog
@@ -130,6 +134,7 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
         getLevels()
         setUpBottomDialog()
         responseFromViewModel()
+        initGoogleSignIn()
 
         mBinding.ivMessenger.setOnClickListener {
             try {
@@ -183,6 +188,19 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
         requestNotificationPermission()
 
     }
+
+    // Initialize Google Sign-In
+    private fun initGoogleSignIn() {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestEmail()
+            .build()
+
+        googleApiClient = GoogleApiClient.Builder(requireContext())
+            .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+            .build()
+        googleApiClient.connect()
+    }
+
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun requestNotificationPermission() {
@@ -548,6 +566,11 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
         }
 
         setDrawerItemClick(R.id.iLogout) {
+
+            Auth.GoogleSignInApi.signOut(googleApiClient).setResultCallback {
+
+            }
+
             Utils.clearSharedPreferences(requireContext())
             Utils.saveNotificationStateIntoPref(activity, false)
             navigateTo { MainFragmentDirections.actionMainFragmentToSignInFragment() }
@@ -603,6 +626,14 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
         }
 
         postsAdapter.setItemList(userPostsData)
+        if (Utils.postId != null) {
+            val index = userPostsData.indexOfFirst { it.id == Utils.postId?.toInt() }
+            // Print the index
+            if (index != -1) {
+                mBinding.rvPosts.smoothScrollToPosition(index)
+            }
+            Utils.postId = null
+        }
 
     }
 

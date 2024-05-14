@@ -12,10 +12,12 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.codecoy.mvpflycollab.R
 import com.codecoy.mvpflycollab.callbacks.HomeCallback
 import com.codecoy.mvpflycollab.databinding.CommentsBottomDialogLayBinding
 import com.codecoy.mvpflycollab.databinding.FragmentSavedPostsBinding
 import com.codecoy.mvpflycollab.databinding.PostItemViewBinding
+import com.codecoy.mvpflycollab.datamodels.CommentsData
 import com.codecoy.mvpflycollab.datamodels.UserLoginData
 import com.codecoy.mvpflycollab.datamodels.UserPostsData
 import com.codecoy.mvpflycollab.network.ApiCall
@@ -32,6 +34,8 @@ import com.codecoy.mvpflycollab.viewmodels.CommentsViewModel
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.codecoy.mvpflycollab.viewmodels.PostsViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import java.util.Calendar
+import java.util.Date
 
 
 class SavedPostsFragment : Fragment(), HomeCallback {
@@ -171,7 +175,7 @@ class SavedPostsFragment : Fragment(), HomeCallback {
                 if (storiesResponse != null && storiesResponse.success == true) {
 
                     try {
-                        getAllSavedPosts()
+//                        getAllSavedPosts()
                     } catch (e: Exception) {
                         Log.i(TAG, "navControllerException:: ${e.message}")
                     }
@@ -196,7 +200,7 @@ class SavedPostsFragment : Fragment(), HomeCallback {
                 if (postResponse != null && postResponse.success == true) {
 
                     try {
-                        getAllSavedPosts()
+//                        getAllSavedPosts()
                     } catch (e: Exception) {
                         Log.i(TAG, "navControllerException:: ${e.message}")
                     }
@@ -221,7 +225,7 @@ class SavedPostsFragment : Fragment(), HomeCallback {
                 if (postResponse != null && postResponse.success == true) {
 
                     try {
-                        getAllSavedPosts()
+//                        getAllSavedPosts()
                     } catch (e: Exception) {
                         Log.i(TAG, "navControllerException:: ${e.message}")
                     }
@@ -286,19 +290,169 @@ class SavedPostsFragment : Fragment(), HomeCallback {
     }
 
     override fun onCommentsClick(postsData: UserPostsData) {
+        showBottomCommentDialog(postsData)
+    }
+
+    override fun onLikeClick(postsData: UserPostsData, postItemView: PostItemViewBinding) {
+        this.postItemViewBinding = postItemView
+        val tag = postItemView.ivLikeimage.tag
+        when (tag) {
+            R.drawable.like_post -> {
+                postItemView.ivLikeimage.setImageResource(R.drawable.dislike_post)
+                postItemView.ivLikeimage.tag = (R.drawable.dislike_post)
+            }
+
+            R.drawable.dislike_post -> {
+                postItemView.ivLikeimage.setImageResource(R.drawable.like_post)
+                postItemView.ivLikeimage.tag = (R.drawable.like_post)
+            }
+        }
+        Log.i(TAG, "onLikeClick:: $tag")
+
+
+        val currentDate = Utils.formatDate(Date())
+        val currentTime = Utils.getCurrentTime(Calendar.getInstance().time)
+        viewModel.likePost(
+            "Bearer " + currentUser?.token.toString(),
+            currentUser?.id.toString(),
+            postsData.id.toString(),
+            currentDate,
+            currentTime
+        )
+    }
+
+    override fun onUserClick(postsData: UserPostsData, postItemView: PostItemViewBinding) {
 
     }
 
-    override fun onLikeClick(postsData: UserPostsData, mBinding: PostItemViewBinding) {
+    override fun onSaveClick(postsData: UserPostsData, postItemView: PostItemViewBinding) {
+        val tag = postItemView.ivSaveImage.tag
+        when (tag) {
+            R.drawable.save_post_filled -> {
+                postItemView.ivSaveImage.setImageResource(R.drawable.unsaved_post)
+                postItemView.ivSaveImage.tag = R.drawable.unsaved_post
+            }
 
+            R.drawable.unsaved_post -> {
+                postItemView.ivSaveImage.setImageResource(R.drawable.save_post_filled)
+                postItemView.ivSaveImage.tag = R.drawable.save_post_filled
+            }
+        }
+
+        viewModel.savePost(
+            "Bearer " + currentUser?.token.toString(),
+            currentUser?.id.toString(),
+            postsData.id.toString()
+        )
     }
 
-    override fun onUserClick(postsData: UserPostsData, mBinding: PostItemViewBinding) {
+    private fun showBottomCommentDialog(postsData: UserPostsData) {
 
+        commentsViewModel.loading.observe(this) { isLoading ->
+            if (isLoading) {
+                bottomBinding.progressBar.visibility = View.VISIBLE
+            } else {
+                bottomBinding.progressBar.visibility = View.GONE
+            }
+        }
+
+
+        commentsViewModel.allCommentsResponseLiveData.observe(this) { response ->
+
+            Log.i(TAG, "registerUser:: response ${response.body()}")
+
+            if (response.code() == 200) {
+                val commentsResponse = response.body()
+                if (commentsResponse != null && commentsResponse.success == true) {
+
+                    try {
+                        setUpCommentsRecyclerView(commentsResponse.commentsData)
+                    } catch (e: Exception) {
+                        Log.i(TAG, "navControllerException:: ${e.message}")
+                    }
+
+                } else {
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
+                        .show()
+                }
+            } else if (response.code() == 401) {
+
+            } else {
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        commentsViewModel.addCommentsResponseLiveData.observe(this) { response ->
+
+            Log.i(TAG, "registerUser:: response ${response.body()}")
+
+            if (response.code() == 200) {
+                val commentsResponse = response.body()
+                if (commentsResponse != null && commentsResponse.success == true) {
+
+                    try {
+                        commentsViewModel.allCommentsAgainstPost(
+                            "Bearer " + currentUser?.token.toString(),
+                            postsData.id.toString()
+                        )
+                        getAllSavedPosts()
+
+                    } catch (e: Exception) {
+                        Log.i(TAG, "navControllerException:: ${e.message}")
+                    }
+
+                } else {
+                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
+                        .show()
+                }
+            } else if (response.code() == 401) {
+
+            } else {
+                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+
+        viewModel.exceptionLiveData.observe(this) { exception ->
+            if (exception != null) {
+                Log.i(TAG, "addJourneyResponseLiveData:: exception $exception")
+                bottomBinding.progressBar.visibility = View.GONE
+            }
+        }
+
+        commentsViewModel.allCommentsAgainstPost(
+            "Bearer " + currentUser?.token.toString(),
+            postsData.id.toString()
+        )
+        bottomSheetDialog.show()
+
+        bottomBinding.ivSendComment.setOnClickListener {
+            val comment = bottomBinding.etComment.text.toString().trim()
+            if (comment.isNotEmpty()) {
+                bottomBinding.etComment.setText("")
+                val currentDate = Utils.formatDate(Date())
+                val currentTime = Utils.getCurrentTime(Calendar.getInstance().time)
+                commentsViewModel.addComment(
+                    "Bearer " + currentUser?.token.toString(),
+                    currentUser?.id.toString(),
+                    postsData.id.toString(),
+                    comment,
+                    currentDate,
+                    currentTime
+                )
+            } else {
+                Toast.makeText(requireContext(), "Please add comment", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
-    override fun onSaveClick(postsData: UserPostsData, mBinding: PostItemViewBinding) {
+    private fun setUpCommentsRecyclerView(commentsData: ArrayList<CommentsData>) {
 
+        val hasComments = commentsData.isNotEmpty()
+        bottomBinding.tvNoComment.visibility = if (hasComments) View.GONE else View.VISIBLE
+
+        postCommentsAdapter = PostCommentsAdapter(commentsData, requireContext())
+        bottomBinding.rvComments.adapter = postCommentsAdapter
     }
 
 //    override fun onAttach(context: Context) {

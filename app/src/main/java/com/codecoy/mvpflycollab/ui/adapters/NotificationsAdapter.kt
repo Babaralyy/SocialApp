@@ -6,14 +6,15 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.codecoy.mvpflycollab.R
+import com.codecoy.mvpflycollab.callbacks.NotificationCallback
 import com.codecoy.mvpflycollab.databinding.NotificationItemViewBinding
-import com.codecoy.mvpflycollab.datamodels.AllActivitiesData
 import com.codecoy.mvpflycollab.datamodels.NotificationListData
 import com.codecoy.mvpflycollab.utils.Constant
 
 class NotificationsAdapter(
     private val notList: MutableList<NotificationListData>,
     var context: Context,
+    var notificationCallback: NotificationCallback
 
     ) : RecyclerView.Adapter<NotificationsAdapter.ViewHolder>() {
 
@@ -32,7 +33,7 @@ class NotificationsAdapter(
             .placeholder(R.drawable.loading_svg)
             .into(holder.mBinding.ivProfile)
 
-        holder.mBinding.tvName.text = notData.user?.name
+        holder.mBinding.tvName.text = notData.likedBy
         holder.mBinding.tvTime.text = "${notData.time}  ${notData.date}"
         when(notData.type.toString()){
             "like" -> {
@@ -51,7 +52,7 @@ class NotificationsAdapter(
 
 
         holder.itemView.setOnClickListener{
-
+            notificationCallback.onNotificationClick(notData)
         }
     }
 

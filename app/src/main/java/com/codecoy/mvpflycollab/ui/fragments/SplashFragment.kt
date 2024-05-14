@@ -37,8 +37,14 @@ class SplashFragment : Fragment() {
             // Retrieve user using Flow
                 val user = Utils.getUserFromSharedPreferences(requireContext())
                 if (user?.id != null) {
-                    val action = SplashFragmentDirections.actionSplashFragmentToMainFragment()
-                    findNavController().navigate(action)
+                    if (user.profileImg == "Google_Login"){
+                        val action = SplashFragmentDirections.actionSplashFragmentToCompleteProfileFragment()
+                        findNavController().navigate(action)
+                    } else {
+                        val action = SplashFragmentDirections.actionSplashFragmentToMainFragment()
+                        findNavController().navigate(action)
+                    }
+
                 } else {
                     val action = SplashFragmentDirections.actionSplashFragmentToWelcomeFragment()
                     findNavController().navigate(action)

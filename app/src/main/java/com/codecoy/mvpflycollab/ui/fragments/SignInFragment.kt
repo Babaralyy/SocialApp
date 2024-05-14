@@ -209,7 +209,7 @@ class SignInFragment : Fragment() {
 
     private fun userLogin(email: String, password: String) {
         if (deviceToken != null){
-            val userLoginBody = UserLoginBody(email, password, deviceToken)
+            val userLoginBody = UserLoginBody(email = email, password = password, deviceToken = deviceToken, loginType = "normal")
             viewModel.userLogin(userLoginBody)
         } else {
             showSnackBar(mBinding.root, "Something went wrong")

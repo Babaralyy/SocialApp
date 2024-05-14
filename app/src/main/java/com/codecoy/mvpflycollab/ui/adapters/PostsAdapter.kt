@@ -39,11 +39,6 @@ class PostsAdapter(
             View.INVISIBLE
         }
 
-        if (currentUser?.id.toString() != postsData.userId) {
-            holder.mBinding.ivmenu.visibility = View.INVISIBLE
-        } else {
-            holder.mBinding.ivmenu.visibility = View.VISIBLE
-        }
 
         Glide
             .with(context)
@@ -61,9 +56,6 @@ class PostsAdapter(
                 holder.mBinding.tvCount.visibility = View.VISIBLE
                 holder.mBinding.tvCount.text = "1/${postsData.images.size}"
             }
-
-
-
 
             val sliderView = holder.mBinding.sliderLay.imageSlider
             val adapter = ImageSliderAdapter(context, postsData.images)
