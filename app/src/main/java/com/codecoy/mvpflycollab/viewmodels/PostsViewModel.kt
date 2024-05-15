@@ -57,6 +57,7 @@ class PostsViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
     val levelsResponseLiveData: LiveData<Response<UserLevelsResponse>> get() = levelsResponseMutableLiveData
 
     var mediaImgList: MutableList<Uri> = arrayListOf()
+    var mediaVidList: MutableList<Uri> = arrayListOf()
 
     fun allUserPosts(token: String, userId: String) {
         viewModelScope.launch(handler) {
@@ -85,6 +86,7 @@ class PostsViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
         long: RequestBody,
         locName: RequestBody,
         imagesPartList: MutableList<MultipartBody.Part>,
+        videosPartList: MutableList<MultipartBody.Part>
     ) {
         viewModelScope.launch(handler) {
             _loading.value = true
@@ -99,6 +101,7 @@ class PostsViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
                 long,
                 locName,
                 imagesPartList,
+                videosPartList
             )
             try {
                 addNewPostResponseMutableLiveData.value = response

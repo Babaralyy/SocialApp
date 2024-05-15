@@ -24,13 +24,18 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.codecoy.mvpflycollab.R
 import com.codecoy.mvpflycollab.callbacks.ImageClickCallback
+import com.codecoy.mvpflycollab.callbacks.playlistdetailsvideo.VideoClickCallback
 import com.codecoy.mvpflycollab.databinding.FragmentMainBinding
 import com.codecoy.mvpflycollab.databinding.NewPostBottomDialogLayBinding
 import com.codecoy.mvpflycollab.datamodels.UserLoginData
 import com.codecoy.mvpflycollab.network.ApiCall
 import com.codecoy.mvpflycollab.repo.MvpRepository
 import com.codecoy.mvpflycollab.ui.activities.MainActivity
+import com.codecoy.mvpflycollab.ui.adapters.AddPostImagesAdapter
+import com.codecoy.mvpflycollab.ui.adapters.AddPostVideosAdapter
+import com.codecoy.mvpflycollab.ui.adapters.JourneyDetailImageAdapter
 import com.codecoy.mvpflycollab.ui.adapters.ShowPostImageAdapter
+import com.codecoy.mvpflycollab.ui.adapters.journey.ShowJourneyVideoAdapter
 import com.codecoy.mvpflycollab.utils.Constant
 import com.codecoy.mvpflycollab.utils.Constant.TAG
 import com.codecoy.mvpflycollab.utils.Utils
@@ -44,13 +49,15 @@ import com.google.android.material.snackbar.Snackbar
 import okhttp3.MultipartBody
 
 
-class MainFragment : Fragment(), ImageClickCallback {
+class MainFragment : Fragment(), ImageClickCallback, VideoClickCallback{
 
     private lateinit var placesClient: PlacesClient
 
     private lateinit var viewModel: PostsViewModel
     private lateinit var activity: MainActivity
-    private lateinit var showPostImageAdapter: ShowPostImageAdapter
+
+    private lateinit var addPostImagesAdapter: AddPostImagesAdapter
+    private lateinit var addPostVideosAdapter: AddPostVideosAdapter
 
     private var currentUser: UserLoginData? = null
 
@@ -58,6 +65,7 @@ class MainFragment : Fragment(), ImageClickCallback {
     private var bottomSheetDialog: BottomSheetDialog? = null
 
     private lateinit var imagePartList: MutableList<MultipartBody.Part>
+    private lateinit var videoPartList: MutableList<MultipartBody.Part>
 
     private var dialog: Dialog? = null
 
@@ -68,34 +76,66 @@ class MainFragment : Fragment(), ImageClickCallback {
 
     private val placeNames = mutableListOf<String>()
 
-    private val requestImgPermissionLauncher = registerForActivityResult(
+    private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (isGranted) {
-            pickImgMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         } else {
             imagePermission()
         }
     }
 
-    private val pickImgMedia =
-        registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(5)) { uris ->
+    private val pickMedia =
+        registerForActivityResult((ActivityResultContracts.PickMultipleVisualMedia(5))) { uris ->
             // Callback is invoked after the user selects a media item or closes the photo picker.
             if (uris != null) {
                 showSingleImage(uris)
             } else {
-                showSnackBar(mBinding.root, "No media selected")
+                Toast.makeText(requireContext(), "No media selected", Toast.LENGTH_SHORT).show()
             }
         }
 
-    private fun showSingleImage(uriList: List<Uri>) {
-        for (item in uriList) {
+    private fun showSingleImage(uris: List<Uri>) {
+
+        for (item in uris) {
             viewModel.mediaImgList.add(item)
         }
+        addPostImagesAdapter = AddPostImagesAdapter(viewModel.mediaImgList, requireContext(), this)
+        bottomBinding?.rvPostImage?.adapter = addPostImagesAdapter
 
-        showPostImageAdapter = ShowPostImageAdapter(viewModel.mediaImgList, requireContext(), this)
-        bottomBinding?.rvMediaImage?.adapter = showPostImageAdapter
     }
+
+    private val requestVidPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            pickVidMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly))
+        } else {
+            videoPermission()
+        }
+    }
+
+    private val pickVidMedia =
+        registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(2)) { uris ->
+            // Callback is invoked after the user selects a media item or closes the photo picker.
+            if (uris != null) {
+                showSingleVideo(uris)
+            } else {
+                Toast.makeText(requireContext(), "No media selected", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+    private fun showSingleVideo(uris: List<Uri>) {
+
+        for (item in uris) {
+            viewModel.mediaVidList.add(item)
+        }
+
+        addPostVideosAdapter = AddPostVideosAdapter(viewModel.mediaVidList, requireContext(), this)
+        bottomBinding?.rvPostVideo?.adapter = addPostVideosAdapter
+    }
+
 
     private lateinit var mBinding: FragmentMainBinding
     override fun onCreateView(
@@ -136,10 +176,12 @@ class MainFragment : Fragment(), ImageClickCallback {
 
         textViewList = arrayListOf()
         fragmentList = arrayListOf()
+        imagePartList = arrayListOf()
+        videoPartList = arrayListOf()
 
         dialog = Constant.getDialog(requireContext())
         currentUser = Utils.getUserFromSharedPreferences(requireContext())
-        imagePartList = arrayListOf()
+
         activity.replaceFragment(HomeFragment())
 
         // Initialize Places API
@@ -158,6 +200,35 @@ class MainFragment : Fragment(), ImageClickCallback {
 //            activity.replaceFragment(CalendarFragment())
         }
 
+    }
+
+    private fun videoPermission() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // If Android version is 13 or above
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.READ_MEDIA_IMAGES
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                requestVidPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES)
+            } else {
+                pickVidMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly))
+            }
+        } else {
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                Toast.makeText(requireContext(), "Permission not granted", Toast.LENGTH_SHORT).show()
+                // Request the permission
+                requestVidPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+
+            } else {
+                pickVidMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly))
+            }
+        }
     }
 
     private fun setUpBottomNav() {
@@ -209,13 +280,12 @@ class MainFragment : Fragment(), ImageClickCallback {
         }
 
         viewModel.addNewPostResponseLiveData.observe(this) { response ->
-            Log.i(Constant.TAG, "registerUser:: response $response")
+            Log.i(TAG, "registerUser:: response ${response.body()}")
 
             when (response.code()) {
                 200 -> {
                     val userResponse = response.body()
                     if (userResponse?.success == true) {
-                        viewModel.mediaImgList.clear()
                         bottomSheetDialog?.dismiss()
                         val menuItem = mBinding.bottomNavigation.menu.findItem(R.id.navigation_home)
                         menuItem?.isChecked = true
@@ -254,7 +324,9 @@ class MainFragment : Fragment(), ImageClickCallback {
         bottomSheetDialog = BottomSheetDialog(requireContext())
         bottomBinding?.root?.let { bottomSheetDialog?.setContentView(it) }
 
-        bottomBinding?.rvMediaImage?.layoutManager =
+        bottomBinding?.rvPostImage?.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, true)
+        bottomBinding?.rvPostVideo?.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, true)
 
     }
@@ -271,8 +343,14 @@ class MainFragment : Fragment(), ImageClickCallback {
     }
 
     private fun showAddPostBottomDialog() {
-        bottomBinding?.tvMediaImage?.setOnClickListener {
+
+        bottomBinding?.tvName?.text = currentUser?.name
+
+        bottomBinding?.tvNewImage?.setOnClickListener {
             imagePermission()
+        }
+        bottomBinding?.tvNewVideo?.setOnClickListener {
+            videoPermission()
         }
 
         // Start fetching predictions when the user starts typing
@@ -383,11 +461,20 @@ class MainFragment : Fragment(), ImageClickCallback {
         imagePartList = viewModel.mediaImgList.mapNotNull { item ->
             Utils.getRealPathFromImgURI(requireContext(), item).let { path ->
                 Utils.getFileFromPath(path)?.let { file ->
-                    Utils.getPartFromFile("image/*", "post_images[]", file)
+                    Utils.getPartFromFile("image/*", "img_url[]", file)
+                }
+            }
+        }.toMutableList()
+        videoPartList.clear()
+        videoPartList = viewModel.mediaVidList.mapNotNull { item ->
+            Utils.getRealPathFromImgURI(requireContext(), item).let { path ->
+                Utils.getFileFromPath(path)?.let { file ->
+                    Utils.getPartFromFile("video/*", "video_url[]", file)
                 }
             }
         }.toMutableList()
 
+        
         viewModel.addNewPost(
             "Bearer " + currentUser?.token.toString(),
             Utils.createTextRequestBody(currentUser?.id.toString()),
@@ -399,30 +486,39 @@ class MainFragment : Fragment(), ImageClickCallback {
             Utils.createTextRequestBody("2.389786348754"),
             Utils.createTextRequestBody(loc),
             imagePartList,
+            videoPartList
         )
-
     }
 
     private fun imagePermission() {
 
-        val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            Manifest.permission.READ_MEDIA_IMAGES
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // If Android version is 13 or above
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.READ_MEDIA_IMAGES
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                requestPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES)
+            } else {
+                pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            }
         } else {
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        }
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                Toast.makeText(requireContext(), "Permission not granted", Toast.LENGTH_SHORT).show()
+                // Request the permission
+                requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
 
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                permission
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            showSnackBar(mBinding.root, "Permission not granted")
-
-            requestImgPermissionLauncher.launch(permission)
-        } else {
-            pickImgMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            } else {
+                pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            }
         }
     }
+
 
     override fun onImageClick(imgPath: Uri) {
 
@@ -430,11 +526,22 @@ class MainFragment : Fragment(), ImageClickCallback {
 
     override fun onImgRemove(position: Int) {
         viewModel.mediaImgList.removeAt(position)
-        showPostImageAdapter.notifyDataSetChanged()
+        addPostImagesAdapter.notifyDataSetChanged()
+    }
+
+    override fun onVideoClick(videoPath: Uri) {
+
+    }
+
+    override fun onVidRemove(position: Int) {
+        viewModel.mediaVidList.removeAt(position)
+        addPostVideosAdapter.notifyDataSetChanged()
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         (context as MainActivity).also { activity = it }
     }
+
+
 }

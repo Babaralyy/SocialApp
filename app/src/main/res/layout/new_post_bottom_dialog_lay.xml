@@ -16,9 +16,11 @@
 
 
         <TextView
-            android:id="@+id/tvActivity"
+            android:id="@+id/tv_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/_20sdp"
             android:fontFamily="@font/lato_bold"
@@ -65,25 +67,47 @@
 
 
         <TextView
-            android:id="@+id/tv_media_image"
+            android:id="@+id/tv_new_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_15sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_15sdp"
+            android:text="@string/add_new_image"
+            android:textSize="14sp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:textColor="@color/purple" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_post_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_15sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_15sdp"
+            android:minHeight="@dimen/_40sdp"/>
+
+        <TextView
+            android:id="@+id/tv_new_video"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_15sdp"
             android:layout_marginTop="@dimen/_10sdp"
             android:layout_marginEnd="@dimen/_15sdp"
             android:fontFamily="@font/lato"
-            android:text="@string/add_image"
+            android:text="+ Add New Video"
             android:textColor="@color/purple"
             android:textSize="16sp" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_media_image"
+            android:id="@+id/rv_post_video"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="@dimen/_55sdp"
             android:layout_marginStart="@dimen/_15sdp"
             android:layout_marginTop="@dimen/_10sdp"
-            android:layout_marginEnd="@dimen/_15sdp" />
+            android:layout_marginEnd="@dimen/_15sdp"
+            android:minHeight="@dimen/_40sdp"/>
 
 
         <com.google.android.material.button.MaterialButton

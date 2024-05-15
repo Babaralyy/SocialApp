@@ -39,7 +39,9 @@
             app:destination="@id/signInFragment" />
         <action
             android:id="@+id/action_welcomeFragment_to_completeProfileFragment"
-            app:destination="@id/completeProfileFragment" />
+            app:destination="@id/completeProfileFragment"
+            app:popUpTo="@id/nav_graph.xml"
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_welcomeFragment_to_mainFragment"
             app:destination="@id/mainFragment"

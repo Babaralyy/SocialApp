@@ -36,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_4sdp"
-            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginTop="@dimen/_10sdp"
             android:text="@string/dummy"
             android:fontFamily="@font/lato"
             android:textColor="@color/white"
@@ -55,7 +55,8 @@
             android:fontFamily="@font/lato"
             android:textSize="12sp"
             app:layout_constraintStart_toEndOf="@id/ivUser"
-            app:layout_constraintTop_toBottomOf="@+id/tvUserName" />
+            app:layout_constraintTop_toBottomOf="@+id/tvUserName"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/tv_location"
@@ -74,7 +75,7 @@
             android:layout_width="@dimen/_10sdp"
             android:layout_height="@dimen/_10sdp"
             android:layout_marginStart="@dimen/_5sdp"
-            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_15sdp"
             android:src="@drawable/ic_bluetick"
             app:layout_constraintStart_toEndOf="@id/tvUserName"
             app:layout_constraintBottom_toTopOf="@+id/tv_user"

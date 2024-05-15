@@ -9,6 +9,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.Body
 import retrofit2.http.Header
+import retrofit2.http.Part
 
 
 class MvpRepository(private val apiCall: ApiCall) {
@@ -130,6 +131,7 @@ class MvpRepository(private val apiCall: ApiCall) {
         long: RequestBody,
         locName: RequestBody,
         imagesPartList: MutableList<MultipartBody.Part>,
+      videosPartList: MutableList<MultipartBody.Part>
     ) = apiCall.addNewPost(
         token,
         userId,
@@ -141,6 +143,7 @@ class MvpRepository(private val apiCall: ApiCall) {
         long,
         locName,
         imagesPartList,
+        videosPartList
     )
 
     suspend fun likePost(

@@ -225,6 +225,7 @@ interface ApiCall {
         @Part("long") long: RequestBody,
         @Part("loc_name") locName: RequestBody,
         @Part imagesPartList: MutableList<MultipartBody.Part>,
+        @Part videosPartList: MutableList<MultipartBody.Part>
     ): Response<AddNewPostResponse>
 
     @FormUrlEncoded

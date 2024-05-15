@@ -208,7 +208,9 @@ class CompleteProfileFragment : Fragment() {
                 val userData = response.body()
                 if (userData != null && userData.success == true && userData.userList != null) {
                     val data = userData.userList
-                    val updatedData= UserLoginData(data?.id, data?.profileImg, data?.name, data?.username, data?.phone, data?.email, data?.emailVerifiedAt, data?.deviceToken, data?.websiteUrl, data?.aboutMe, data?.createdAt, data?.updatedAt, currentUser?.token.toString())
+                    val updatedData= UserLoginData(data?.id, data?.profileImg, data?.name, data?.username, data?.phone, data?.email, data?.emailVerifiedAt,
+                        data?.deviceToken, data?.websiteUrl, data?.aboutMe, data?.socketId, data?.online,  data?.level, data?.consecutiveDays, data?.lastLoginAt,
+                        data?.loginType, data?.createdAt, data?.updatedAt, currentUser?.token.toString())
                     Utils.saveUserToSharedPreferences(requireContext(), updatedData)
                     lifecycleScope.launch {
                         try {

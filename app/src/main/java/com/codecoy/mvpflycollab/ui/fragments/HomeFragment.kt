@@ -4,8 +4,6 @@ import android.Manifest
 import android.app.Dialog
 import android.content.Context
 import android.content.pm.PackageManager
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.VectorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -240,6 +238,9 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
     }
 
     private fun getAllPosts() {
+
+        Log.i(TAG, "getAllPosts:: ${currentUser?.id.toString()} ${currentUser?.token.toString()}")
+
         viewModel.allUserPosts(
             "Bearer " + currentUser?.token.toString(),
             currentUser?.id.toString()
