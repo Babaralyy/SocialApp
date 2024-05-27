@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/post_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/posts"
+        android:scaleType="centerCrop" />
+
+    <androidx.media3.ui.PlayerView
+        android:id="@+id/post_video_player"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:foregroundGravity="center"
+        android:gravity="center"
+        app:show_buffering="always"
+        app:surface_type="texture_view"
+        app:use_controller="false"
+        android:visibility="gone" />
+
+</FrameLayout>

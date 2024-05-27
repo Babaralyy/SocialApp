@@ -11,6 +11,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
@@ -21,23 +22,29 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.codecoy.mvpflycollab.R
 import com.codecoy.mvpflycollab.callbacks.ImageClickCallback
 import com.codecoy.mvpflycollab.callbacks.playlistdetailsvideo.VideoClickCallback
+import com.codecoy.mvpflycollab.chat.socket.SocketManager
 import com.codecoy.mvpflycollab.databinding.FragmentMainBinding
 import com.codecoy.mvpflycollab.databinding.NewPostBottomDialogLayBinding
+import com.codecoy.mvpflycollab.databinding.ShowImageDialogBinding
+import com.codecoy.mvpflycollab.databinding.ShowVideoDialogBinding
+import com.codecoy.mvpflycollab.datamodels.MessageEvent
 import com.codecoy.mvpflycollab.datamodels.UserLoginData
 import com.codecoy.mvpflycollab.network.ApiCall
 import com.codecoy.mvpflycollab.repo.MvpRepository
 import com.codecoy.mvpflycollab.ui.activities.MainActivity
 import com.codecoy.mvpflycollab.ui.adapters.AddPostImagesAdapter
 import com.codecoy.mvpflycollab.ui.adapters.AddPostVideosAdapter
-import com.codecoy.mvpflycollab.ui.adapters.JourneyDetailImageAdapter
-import com.codecoy.mvpflycollab.ui.adapters.ShowPostImageAdapter
-import com.codecoy.mvpflycollab.ui.adapters.journey.ShowJourneyVideoAdapter
 import com.codecoy.mvpflycollab.utils.Constant
 import com.codecoy.mvpflycollab.utils.Constant.TAG
+import com.codecoy.mvpflycollab.utils.MyApplicationClass
 import com.codecoy.mvpflycollab.utils.Utils
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.codecoy.mvpflycollab.viewmodels.PostsViewModel
@@ -46,15 +53,29 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
+import io.socket.client.Socket
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody
+import org.greenrobot.eventbus.EventBus
+import org.json.JSONObject
+import java.net.URISyntaxException
+import kotlin.coroutines.resumeWithException
 
 
-class MainFragment : Fragment(), ImageClickCallback, VideoClickCallback{
+class MainFragment : Fragment(), ImageClickCallback, VideoClickCallback {
 
     private lateinit var placesClient: PlacesClient
 
     private lateinit var viewModel: PostsViewModel
     private lateinit var activity: MainActivity
+
+
 
     private lateinit var addPostImagesAdapter: AddPostImagesAdapter
     private lateinit var addPostVideosAdapter: AddPostVideosAdapter
@@ -146,6 +167,7 @@ class MainFragment : Fragment(), ImageClickCallback, VideoClickCallback{
 
         inIt()
 
+
         return mBinding.root
     }
 
@@ -172,6 +194,7 @@ class MainFragment : Fragment(), ImageClickCallback, VideoClickCallback{
         )
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     private fun inIt() {
 
         textViewList = arrayListOf()
@@ -200,7 +223,63 @@ class MainFragment : Fragment(), ImageClickCallback, VideoClickCallback{
 //            activity.replaceFragment(CalendarFragment())
         }
 
+        try {
+            GlobalScope.launch {
+                try {
+                    connectToSocket()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+
+        } catch (e: URISyntaxException) {
+            e.printStackTrace()
+        }
+
     }
+
+    private suspend fun connectToSocket() {
+        withContext<Socket?>(Dispatchers.IO) {
+            suspendCancellableCoroutine { continuation ->
+                try {
+
+                    SocketManager.socket?.on("user_got_online") {
+
+                        CoroutineScope(Dispatchers.Main).launch {
+                            val jsonObject = it[0] as JSONObject
+                            Log.i(TAG, "main socket:: message $jsonObject")
+                        }
+                    }
+                    SocketManager.socket?.on(Socket.EVENT_CONNECT_ERROR) { error ->
+                        CoroutineScope(Dispatchers.Main).launch {
+                            Log.i(TAG, "main socket:: $error ")
+                        }
+                    }
+                    SocketManager.socket?.on(Socket.EVENT_DISCONNECT) {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            Log.i(TAG, "main socket:: message $it")
+                        }
+                    }
+                } catch (e: URISyntaxException) {
+                    continuation.resumeWithException(e)
+                }
+            }
+        }
+    }
+
+
+    private fun emmitOnlineEvent() {
+        val jSONObject = JSONObject()
+        jSONObject.put("message", "Online")
+        jSONObject.put("user_id", currentUser?.id.toString())
+        jSONObject.put(
+            "token",
+            "Bearer " + currentUser?.token.toString()
+        )
+        SocketManager.socket?.emit("set_online", jSONObject)
+        Log.i(TAG, "main socket:: emit")
+    }
+
 
     private fun videoPermission() {
 
@@ -221,7 +300,8 @@ class MainFragment : Fragment(), ImageClickCallback, VideoClickCallback{
                     Manifest.permission.READ_EXTERNAL_STORAGE
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-                Toast.makeText(requireContext(), "Permission not granted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Permission not granted", Toast.LENGTH_SHORT)
+                    .show()
                 // Request the permission
                 requestVidPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
 
@@ -240,21 +320,25 @@ class MainFragment : Fragment(), ImageClickCallback, VideoClickCallback{
                 }
 
                 R.id.navigation_calendar -> {
+                    EventBus.getDefault().post(MessageEvent("Main Stop"))
                     activity.replaceFragment(CalendarFragment())
                     return@setOnItemSelectedListener true
                 }
 
                 R.id.navigation_add_post -> {
+                    EventBus.getDefault().post(MessageEvent("Main Stop"))
                     showAddPostBottomDialog()
                     return@setOnItemSelectedListener true
                 }
 
                 R.id.navigation_requests -> {
+                    EventBus.getDefault().post(MessageEvent("Main Stop"))
                     activity.replaceFragment(RequestsFragment())
                     return@setOnItemSelectedListener true
                 }
 
                 R.id.navigation_notification -> {
+                    EventBus.getDefault().post(MessageEvent("Main Stop"))
                     activity.replaceFragment(NotificationsFragment())
                     return@setOnItemSelectedListener true
                 }
@@ -271,6 +355,8 @@ class MainFragment : Fragment(), ImageClickCallback, VideoClickCallback{
             mBinding.bottomNavigation.selectedItemId = R.id.navigation_calendar
             Utils.isFromProfile = false
         }
+
+        emmitOnlineEvent()
     }
 
     private fun responseFromViewModel() {
@@ -286,6 +372,7 @@ class MainFragment : Fragment(), ImageClickCallback, VideoClickCallback{
                 200 -> {
                     val userResponse = response.body()
                     if (userResponse?.success == true) {
+                        clearNewPostViews()
                         bottomSheetDialog?.dismiss()
                         val menuItem = mBinding.bottomNavigation.menu.findItem(R.id.navigation_home)
                         menuItem?.isChecked = true
@@ -299,7 +386,7 @@ class MainFragment : Fragment(), ImageClickCallback, VideoClickCallback{
                     // Handle 401 Unauthorized
                 }
 
-                else -> showSnackBar(mBinding.root, "Something went wrong")
+                else -> showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
@@ -307,10 +394,9 @@ class MainFragment : Fragment(), ImageClickCallback, VideoClickCallback{
         viewModel.exceptionLiveData.observe(this) { exception ->
 
             exception?.let {
-                Log.i(TAG, "addJourneyResponseLiveData:: exception $exception")
                 dialog?.dismiss()
+                showSnackBar(mBinding.root, exception.message.toString())
             }
-
         }
     }
 
@@ -402,36 +488,20 @@ class MainFragment : Fragment(), ImageClickCallback, VideoClickCallback{
                     placesClient.fetchPlace(placeRequest)
                         .addOnSuccessListener { fetchPlaceResponse ->
                             val place = fetchPlaceResponse.place
-
-
-
-
-//                            place.name?.let { placeNames.add(it) }
-
-
-
-
-
                             Log.i(TAG, "searchLocation:: ${place.name}")
 
-//                            bottomBinding?.etLoc?.setText(place.name)
                         }
                         .addOnFailureListener { exception ->
-                            Toast.makeText(
-                                requireContext(),
-                                "Failed to fetch place details: $exception",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            showSnackBar(mBinding.root, "Failed to fetch place details: $exception")
                         }
 
 
                 } else {
-                    Toast.makeText(requireContext(), "No results found", Toast.LENGTH_SHORT).show()
+                    showSnackBar(mBinding.root, "No results found")
                 }
             }
             .addOnFailureListener { exception ->
-                Toast.makeText(requireContext(), "Error: ${exception.message}", Toast.LENGTH_SHORT)
-                    .show()
+                showSnackBar(mBinding.root, exception.message.toString())
             }
 
     }
@@ -445,12 +515,22 @@ class MainFragment : Fragment(), ImageClickCallback, VideoClickCallback{
             bottomBinding?.etDes?.error = "Description is required"
             return
         }
-        if (viewModel.mediaImgList.isEmpty()) {
-            showSnackBar(mBinding.root, "Please add post image")
+        if (viewModel.mediaImgList.isEmpty() && viewModel.mediaVidList.isEmpty()) {
+            Toast.makeText(
+                requireContext(),
+                "Please add at least one image or video.",
+                Toast.LENGTH_SHORT
+            ).show()
             return
         }
 
+        try {
+            bottomSheetDialog?.dismiss()
+        } catch (e: Exception) {
+            Log.i(TAG, "checkBottomCredentials:: ${e.message}")
+        }
         addNewPost(description, loc)
+
         bottomBinding?.etDes?.setText("")
 
     }
@@ -474,7 +554,7 @@ class MainFragment : Fragment(), ImageClickCallback, VideoClickCallback{
             }
         }.toMutableList()
 
-        
+
         viewModel.addNewPost(
             "Bearer " + currentUser?.token.toString(),
             Utils.createTextRequestBody(currentUser?.id.toString()),
@@ -509,7 +589,8 @@ class MainFragment : Fragment(), ImageClickCallback, VideoClickCallback{
                     Manifest.permission.READ_EXTERNAL_STORAGE
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-                Toast.makeText(requireContext(), "Permission not granted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Permission not granted", Toast.LENGTH_SHORT)
+                    .show()
                 // Request the permission
                 requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
 
@@ -519,9 +600,34 @@ class MainFragment : Fragment(), ImageClickCallback, VideoClickCallback{
         }
     }
 
+    private fun clearNewPostViews() {
+        try {
+            bottomBinding?.etDes?.clearFocus()
+            bottomBinding?.etLoc?.clearFocus()
+
+            bottomBinding?.etDes?.text = null
+            bottomBinding?.etLoc?.text = null
+
+            viewModel.mediaImgList.clear()
+            viewModel.mediaVidList.clear()
+            imagePartList.clear()
+            videoPartList.clear()
+
+            addPostImagesAdapter =
+                AddPostImagesAdapter(viewModel.mediaImgList, requireContext(), this)
+            bottomBinding?.rvPostImage?.adapter = addPostImagesAdapter
+
+            addPostVideosAdapter =
+                AddPostVideosAdapter(viewModel.mediaVidList, requireContext(), this)
+            bottomBinding?.rvPostVideo?.adapter = addPostVideosAdapter
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
 
     override fun onImageClick(imgPath: Uri) {
-
+        showImageDialog(image = imgPath)
     }
 
     override fun onImgRemove(position: Int) {
@@ -530,13 +636,109 @@ class MainFragment : Fragment(), ImageClickCallback, VideoClickCallback{
     }
 
     override fun onVideoClick(videoPath: Uri) {
-
+        showVideoDialog(videoPath = videoPath)
     }
 
     override fun onVidRemove(position: Int) {
         viewModel.mediaVidList.removeAt(position)
         addPostVideosAdapter.notifyDataSetChanged()
     }
+
+    private fun showVideoDialog(videoPath: Uri? = null, videoUrl: String? = null) {
+
+        val videoBinding = ShowVideoDialogBinding.inflate(layoutInflater)
+
+        val dialog = Dialog(requireContext())
+        dialog.setContentView(videoBinding.root)
+        dialog.setCancelable(false)
+
+        // Set window flags to make the dialog full screen
+        val window = dialog.window
+        window?.setLayout(
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.MATCH_PARENT
+        )
+
+        val player = ExoPlayer.Builder(requireContext()).build()
+        videoBinding.videoPlayer.player = player
+
+        videoBinding.btnClose.setOnClickListener {
+            player.release()
+            dialog.dismiss()
+        }
+
+        Log.i(TAG, "showVideoDialog:: videoPath $videoPath videoUrl $videoUrl ")
+
+        if (videoPath != null) {
+            videoBinding.videoView.visibility = View.VISIBLE
+            videoBinding.videoPlayer.visibility = View.GONE
+            videoBinding.videoView.setVideoURI(videoPath)
+            videoBinding.videoView.start()
+        } else {
+
+            videoBinding.videoPlayer.visibility = View.VISIBLE
+            videoBinding.videoView.visibility = View.GONE
+
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val mediaItem = withContext(Dispatchers.IO) {
+                        MediaItem.fromUri(videoUrl.toString())
+                    }
+                    withContext(Dispatchers.Main) {
+                        player.setMediaItem(mediaItem)
+                        player.repeatMode = Player.REPEAT_MODE_ONE
+                        player.prepare()
+                        player.play()
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error preparing video playback: ${e.message}")
+                }
+            }
+        }
+
+        dialog.show()
+
+    }
+
+
+    private fun showImageDialog(image: Uri? = null, imageUrl: String? = null) {
+
+        val imageBinding = ShowImageDialogBinding.inflate(layoutInflater)
+
+        val dialog = Dialog(requireContext())
+        dialog.setContentView(imageBinding.root)
+        dialog.setCancelable(false)
+
+        // Set window flags to make the dialog full screen
+        val window = dialog.window
+        window?.setLayout(
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.MATCH_PARENT
+        )
+
+
+        imageBinding.btnClose.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        if (imageUrl != null) {
+            Glide
+                .with(requireContext())
+                .load(imageUrl)
+                .placeholder(R.drawable.img)
+                .into(imageBinding.imageView)
+        } else {
+            imageBinding.imageView.setImageURI(image)
+        }
+
+        dialog.show()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().post(MessageEvent("Main Stop"))
+    }
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)

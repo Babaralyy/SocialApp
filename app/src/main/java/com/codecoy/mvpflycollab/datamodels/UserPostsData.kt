@@ -15,9 +15,7 @@ data class UserPostsData(
     @SerializedName("updated_at") var updatedAt: String? = null,
     @SerializedName("user_like_status") var userLikeStatus: String? = null,
     @SerializedName("user_save_status") var userSaveStatus: String? = null,
-//    @SerializedName("user_data") var userData: UserDetailsForPost? = UserDetailsForPost(),
     @SerializedName("user") var userData: UserDetailsForPost? = UserDetailsForPost(),
-//    @SerializedName("images") var images: ArrayList<UserPostsImages> = arrayListOf(),
     @SerializedName("post_images") var images: ArrayList<UserPostsImages> = arrayListOf(),
     @SerializedName("total_likes") var totalLikes: Int? = null,
     @SerializedName("total_comments") var totalComments: Int? = null

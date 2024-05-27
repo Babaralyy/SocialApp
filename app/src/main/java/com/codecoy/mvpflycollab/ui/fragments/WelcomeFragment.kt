@@ -64,10 +64,7 @@ class WelcomeFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-
-
         // Check for existing Google Sign In account, if the user is already signed in
-        // the GoogleSignInAccount will be non-null.
         val account = GoogleSignIn.getLastSignedInAccount(requireContext())
 
     }
@@ -117,12 +114,13 @@ class WelcomeFragment : Fragment() {
             }
         }
         mBinding.googleLay.setOnClickListener {
+            dialog?.show()
             val signInIntent = mGoogleSignInClient?.signInIntent
             someActivityResultContract.launch(signInIntent)
 
         }
         mBinding.facebookLay.setOnClickListener {
-            Toast.makeText(requireContext(), "Pending", Toast.LENGTH_SHORT).show()
+            showSnackBar(mBinding.root, "Pending")
         }
     }
 
@@ -174,20 +172,19 @@ class WelcomeFragment : Fragment() {
                         }
                     }
                 } else {
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message.toString())
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.body()?.message.toString())
             }
         }
 
 
         viewModel.exceptionLiveData.observe(this){ exception ->
             if (exception != null){
-                Log.i(TAG, "signinLiveData:: exception $exception")
+                showSnackBar(mBinding.root, exception.message.toString())
                 dialog?.dismiss()
             }
         }
@@ -207,6 +204,7 @@ class WelcomeFragment : Fragment() {
     // Define your contract
     private val someActivityResultContract = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
+            dialog?.dismiss()
             // Handle the result here
             val data: Intent? = result.data
             val task: Task<GoogleSignInAccount> =
@@ -214,7 +212,8 @@ class WelcomeFragment : Fragment() {
             handleSignInResult(task)
 
         } else {
-            showSnackBar(mBinding.root, "Something went wrong")
+            dialog?.dismiss()
+            showSnackBar(mBinding.root, "Canceled")
         }
     }
 
@@ -232,8 +231,6 @@ class WelcomeFragment : Fragment() {
             userLogin(email, name)
 
         } catch (e: ApiException) {
-            // The ApiException status code indicates the detailed failure reason.
-            // Please refer to the GoogleSignInStatusCodes class reference for more information.
             Log.i(TAG, "signInResult:failed code=" + e.statusCode)
             showSnackBar(mBinding.root, e.message.toString())
         }
@@ -244,7 +241,7 @@ class WelcomeFragment : Fragment() {
             val userLoginBody = UserLoginBody(email = email, password = null, name = name, deviceToken = deviceToken, loginType = "google")
             viewModel.userLogin(userLoginBody)
         } else {
-            showSnackBar(mBinding.root, "Something went wrong")
+            showSnackBar(mBinding.root, "Device token not found")
         }
 
     }
@@ -257,7 +254,7 @@ class WelcomeFragment : Fragment() {
 
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
             if (!task.isSuccessful) {
-                Log.i(ContentValues.TAG, "Fetching FCM registration token failed", task.exception)
+                showSnackBar(mBinding.root,  task.exception?.message.toString())
                 return@OnCompleteListener
             }
 
@@ -266,7 +263,7 @@ class WelcomeFragment : Fragment() {
 
             Utils.deviceTokenIntoPref(requireContext(), "tokenInfo", deviceToken.toString())
 
-            Log.i(ContentValues.TAG, "deviceToken:: ----> $deviceToken")
+            Log.i(TAG, "deviceToken:: ----> $deviceToken")
 
         })
     }

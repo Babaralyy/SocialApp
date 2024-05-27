@@ -27,6 +27,7 @@ import com.codecoy.mvpflycollab.utils.Constant
 import com.codecoy.mvpflycollab.utils.Utils
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.codecoy.mvpflycollab.viewmodels.UserViewModel
+import com.google.android.material.snackbar.Snackbar
 
 
 class UserProfileDetailsFragment : Fragment(), UserProfilePostCallback {
@@ -57,8 +58,6 @@ class UserProfileDetailsFragment : Fragment(), UserProfilePostCallback {
 
         dialog = Constant.getDialog(requireContext())
         currentUser = Utils.getUserFromSharedPreferences(requireContext())
-
-
 
         setUpViewModel()
         getProfileData()
@@ -96,17 +95,20 @@ class UserProfileDetailsFragment : Fragment(), UserProfilePostCallback {
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
 
         viewModel.exceptionLiveData.observe(this) { exception ->
             if (exception != null) {
-                Log.i(Constant.TAG, "addJourneyResponseLiveData:: exception $exception")
+                showSnackBar(mBinding.root, exception.message.toString())
                 dialog?.dismiss()
             }
         }
+    }
+    private fun showSnackBar(view: View, message: String) {
+        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show()
     }
     private fun setUpViewModel() {
 

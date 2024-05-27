@@ -34,6 +34,7 @@ import com.codecoy.mvpflycollab.utils.Constant.TAG
 import com.codecoy.mvpflycollab.utils.Utils
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.codecoy.mvpflycollab.viewmodels.UserViewModel
+import com.google.android.material.snackbar.Snackbar
 import java.util.ArrayList
 import java.util.Calendar
 import java.util.Date
@@ -82,8 +83,7 @@ class ProfileDetailFragment : Fragment(), UserFollowCallback, UserProfilePostCal
         getAllUsers()
         getProfileData()
         clickListeners()
-
-
+        responseFromViewModel()
     }
 
     private fun clickListeners() {
@@ -132,7 +132,7 @@ class ProfileDetailFragment : Fragment(), UserFollowCallback, UserProfilePostCal
 
     override fun onResume() {
         super.onResume()
-        responseFromViewModel()
+
     }
     private fun getProfileData() {
         viewModel.userProfile("Bearer " + currentUser?.token.toString(), currentUser?.id.toString())
@@ -167,13 +167,12 @@ class ProfileDetailFragment : Fragment(), UserFollowCallback, UserProfilePostCal
                     }
 
                 } else {
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
@@ -193,13 +192,12 @@ class ProfileDetailFragment : Fragment(), UserFollowCallback, UserProfilePostCal
                     }
 
                 } else {
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
@@ -218,13 +216,12 @@ class ProfileDetailFragment : Fragment(), UserFollowCallback, UserProfilePostCal
                     }
 
                 } else {
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
@@ -248,14 +245,14 @@ class ProfileDetailFragment : Fragment(), UserFollowCallback, UserProfilePostCal
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
 
         viewModel.exceptionLiveData.observe(this) { exception ->
             if (exception != null) {
-                Log.i(TAG, "addJourneyResponseLiveData:: exception $exception")
+                showSnackBar(mBinding.root, exception.message.toString())
                 dialog?.dismiss()
             }
         }
@@ -373,6 +370,9 @@ class ProfileDetailFragment : Fragment(), UserFollowCallback, UserProfilePostCal
         dialog.show()
     }
 
+    private fun showSnackBar(view: View, message: String) {
+        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show()
+    }
 
 /*    override fun onAttach(context: Context) {
         super.onAttach(context)

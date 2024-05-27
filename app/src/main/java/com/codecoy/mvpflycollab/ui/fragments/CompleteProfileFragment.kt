@@ -162,7 +162,6 @@ class CompleteProfileFragment : Fragment() {
             }
         }
 
-
         val updateProfileBody =
             UpdateProfileBody(
                 currentUser?.id.toString(),
@@ -172,9 +171,8 @@ class CompleteProfileFragment : Fragment() {
                 url,
                 me
             )
-        Log.i(Constant.TAG, "checkCredentials:: ${currentUser?.token.toString()} $updateProfileBody")
-        viewModel.updateProfile("Bearer " + currentUser?.token.toString(), updateProfileBody)
 
+        viewModel.updateProfile("Bearer " + currentUser?.token.toString(), updateProfileBody)
     }
 
     private fun setUpViewModel() {
@@ -220,13 +218,12 @@ class CompleteProfileFragment : Fragment() {
                         }
                     }
                 } else {
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message.toString())
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
@@ -243,20 +240,19 @@ class CompleteProfileFragment : Fragment() {
                         .into(mBinding.ivProfile)
 
                 } else {
-
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message.toString())
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
         viewModel.exceptionLiveData.observe(this){ exception ->
             if (exception != null){
                 dialog?.dismiss()
+                showSnackBar(mBinding.root, exception.message.toString())
             }
         }
     }

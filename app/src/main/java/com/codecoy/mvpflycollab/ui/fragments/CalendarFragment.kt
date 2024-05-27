@@ -57,6 +57,7 @@ import com.codecoy.mvpflycollab.viewmodels.ActivityViewModel
 import com.codecoy.mvpflycollab.repo.MvpRepository
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -290,10 +291,8 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
         viewModel.loading.observe(this) { isLoading ->
             if (isLoading) {
                 dialog?.show()
-                Log.i(TAG, "calendar_dialog --> :: show")
             } else {
                 dialog?.dismiss()
-                Log.i(TAG, "calendar_dialog --> :: dismiss")
             }
         }
 
@@ -304,16 +303,13 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
 
                     setUpRecyclerView(allActivitiesList.allActivitiesData)
 
+                } else {
+                    showSnackBar(mBinding.root, response.body()?.message.toString())
                 }
-                /*    else {
-
-                        Toast.makeText(activity, response.body()?.message, Toast.LENGTH_SHORT)
-                            .show()
-                    }*/
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
@@ -324,15 +320,14 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
 
                     setActivitiesOnCalendar(allActivitiesList.response)
 
+                } else {
+                    showSnackBar(mBinding.root, response.body()?.message.toString())
+
                 }
-                /*   else {
-                       Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                           .show()
-                   }*/
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
@@ -354,19 +349,19 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
                     bottomSheetDialog?.dismiss()
 
                 } else {
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message.toString())
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
         viewModel.exceptionLiveData.observe(this) { exception ->
             if (exception != null) {
                 Log.i(TAG, "addJourneyResponseLiveData:: exception $exception")
+                showSnackBar(mBinding.root, exception.message.toString())
                 dialog?.dismiss()
             }
         }
@@ -650,7 +645,11 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
             return
         }
 
-
+        try {
+            bottomSheetDialog?.dismiss()
+        }catch (e: Exception){
+            Log.i(TAG, "checkBottomCredentials:: ${e.message}")
+        }
         addNewActivity(event, note, date, sTime, eTime)
 
 
@@ -885,6 +884,11 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
         }
 
         dialog.show()
+    }
+
+
+    private fun showSnackBar(view: View, message: String) {
+        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show()
     }
 
 

@@ -6,6 +6,8 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -28,21 +30,24 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.codecoy.mvpflycollab.R
 import com.codecoy.mvpflycollab.callbacks.HomeCallback
+import com.codecoy.mvpflycollab.callbacks.RemovePlayer
 import com.codecoy.mvpflycollab.callbacks.StoryCallback
 import com.codecoy.mvpflycollab.databinding.CommentsBottomDialogLayBinding
 import com.codecoy.mvpflycollab.databinding.FragmentHomeBinding
 import com.codecoy.mvpflycollab.databinding.PostItemViewBinding
 import com.codecoy.mvpflycollab.datamodels.CalendarStoryData
 import com.codecoy.mvpflycollab.datamodels.CommentsData
+import com.codecoy.mvpflycollab.datamodels.MessageEvent
 import com.codecoy.mvpflycollab.datamodels.UserLoginData
 import com.codecoy.mvpflycollab.datamodels.UserPostsData
 import com.codecoy.mvpflycollab.network.ApiCall
 import com.codecoy.mvpflycollab.repo.MvpRepository
 import com.codecoy.mvpflycollab.ui.activities.MainActivity
+import com.codecoy.mvpflycollab.ui.adapters.ImageSliderAdapter
 import com.codecoy.mvpflycollab.ui.adapters.PostCommentsAdapter
 import com.codecoy.mvpflycollab.ui.adapters.PostsAdapter
 import com.codecoy.mvpflycollab.ui.adapters.stories.StoriesAdapter
@@ -58,12 +63,13 @@ import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import de.hdodenhof.circleimageview.CircleImageView
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
 import java.util.Calendar
 import java.util.Date
 
 
-class HomeFragment : Fragment(), HomeCallback, StoryCallback {
-
+class HomeFragment: Fragment(), HomeCallback, StoryCallback {
 
     private lateinit var activity: MainActivity
 
@@ -74,7 +80,11 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
     private var currentUser: UserLoginData? = null
 
     private lateinit var storiesAdapter: StoriesAdapter
-    private lateinit var postsAdapter: PostsAdapter
+
+
+    lateinit var postsAdapter: PostsAdapter
+
+
     private lateinit var postCommentsAdapter: PostCommentsAdapter
 
     private lateinit var postItemViewBinding: PostItemViewBinding
@@ -83,6 +93,9 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
 
     private lateinit var bottomBinding: CommentsBottomDialogLayBinding
     private lateinit var bottomSheetDialog: BottomSheetDialog
+
+    private var currentPage = 1
+    private var isLoading = false
 
 
     private val requestPermissionLauncher = registerForActivityResult(
@@ -93,7 +106,7 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
             // app.
 
         } else {
-            showSnackBar(mBinding.root, "Please allow notification persmission")
+            showSnackBar(mBinding.root, "Please allow notification permission")
         }
     }
 
@@ -184,8 +197,13 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
     override fun onResume() {
         super.onResume()
         requestNotificationPermission()
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this)
+        }
 
     }
+
+
 
     // Initialize Google Sign-In
     private fun initGoogleSignIn() {
@@ -239,11 +257,12 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
 
     private fun getAllPosts() {
 
-        Log.i(TAG, "getAllPosts:: ${currentUser?.id.toString()} ${currentUser?.token.toString()}")
 
+
+        Log.i(TAG, "getAllPosts:: ${currentUser?.id.toString()} ${currentUser?.token.toString()}")
         viewModel.allUserPosts(
             "Bearer " + currentUser?.token.toString(),
-            currentUser?.id.toString()
+            currentUser?.id.toString(), currentPage
         )
     }
 
@@ -279,19 +298,19 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
                 if (postsResponse != null && postsResponse.success == true) {
 
                     try {
-                        setUpPostsRecyclerView(postsResponse.userPostsData)
+                        setUpPostsRecyclerView(postsResponse.userPostsResponseData.data)
                     } catch (e: Exception) {
                         Log.i(TAG, "navControllerException:: ${e.message}")
                     }
 
                 } else {
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    mBinding.group.visibility = View.VISIBLE
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
@@ -310,13 +329,12 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
                     }
 
                 } else {
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
@@ -335,13 +353,12 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
                     }
 
                 } else {
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
@@ -360,13 +377,12 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
                     }
 
                 } else {
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
@@ -385,13 +401,12 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
                     }
 
                 } else {
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
@@ -410,13 +425,12 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
                     }
 
                 } else {
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
@@ -440,20 +454,18 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
                     }
 
                 } else {
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
         viewModel.exceptionLiveData.observe(this) { exception ->
 
             exception.let {
-                Log.i(TAG, "addJourneyResponseLiveData:: exception $it")
 //                dialog?.dismiss()
                 mBinding.progressBar.visibility = View.GONE
                 showSnackBar(mBinding.root, it.message.toString())
@@ -620,13 +632,18 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
     }
 
     private fun setUpPostsRecyclerView(userPostsData: ArrayList<UserPostsData>) {
+
+
         if (userPostsData.isNotEmpty()) {
-            mBinding.group.visibility = View.GONE
+//            mBinding.group.visibility = View.GONE
+            ++currentPage
         } else {
-            mBinding.group.visibility = View.VISIBLE
+//            mBinding.group.visibility = View.VISIBLE
         }
 
+        postsAdapter.releaseAllPlayers()
         postsAdapter.setItemList(userPostsData)
+
         if (Utils.postId != null) {
             val index = userPostsData.indexOfFirst { it.id == Utils.postId?.toInt() }
             // Print the index
@@ -635,6 +652,60 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
             }
             Utils.postId = null
         }
+
+        isLoading = false
+
+        mBinding.rvPosts.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                // Find the center item
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val centerPosition =
+                    layoutManager.findFirstVisibleItemPosition() + (layoutManager.findLastVisibleItemPosition() - layoutManager.findFirstVisibleItemPosition()) / 2
+
+
+                if (!isLoading && layoutManager.findLastVisibleItemPosition() == postsAdapter.itemCount - 1) {
+                    isLoading = true
+
+                    Log.i(TAG, "onScrolled:: inside $currentPage")
+                    getAllPosts()
+                }
+
+   /*             val totalItemCount = layoutManager.itemCount
+                val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
+
+                Log.i(TAG, "onScrolled:: totalItemCount $totalItemCount lastVisibleItem $lastVisibleItem")
+
+                if (totalItemCount - 1 <= lastVisibleItem) {
+                    ++currentPage
+                    Log.i(TAG, "onScrolled:: inside $currentPage")
+                    getAllPosts()
+                }
+*/
+                try {
+                    for (i in 0 until layoutManager.childCount) {
+                        val view = layoutManager.getChildAt(i)
+                        val viewHolder =
+                            view?.let { recyclerView.getChildViewHolder(it) } as PostsAdapter.ViewHolder
+                        val viewPager = viewHolder.getViewPager()
+                        val adapter = viewPager.adapter as ImageSliderAdapter
+
+                        if (layoutManager.findViewByPosition(centerPosition) == view) {
+                            // Play the video in the center item
+                            adapter.playPlayer(viewPager.currentItem)
+                        } else {
+                            // Pause videos in non-center items
+                            adapter.pausePlayer(viewPager.currentItem)
+                        }
+                    }
+                }catch (e: Exception){
+                    Log.i(TAG, "onScrolled:: ${e.message}")
+                }
+
+
+            }
+        })
 
     }
 
@@ -713,13 +784,12 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
                     }
 
                 } else {
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
@@ -743,20 +813,19 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
                     }
 
                 } else {
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
         viewModel.exceptionLiveData.observe(this) { exception ->
             if (exception != null) {
-                Log.i(TAG, "addJourneyResponseLiveData:: exception $exception")
                 bottomBinding.progressBar.visibility = View.GONE
+                showSnackBar(mBinding.root, exception.message.toString())
             }
         }
 
@@ -864,5 +933,28 @@ class HomeFragment : Fragment(), HomeCallback, StoryCallback {
         super.onAttach(context)
 
         (context as MainActivity).also { activity = it }
+    }
+
+
+    @Subscribe
+    fun onMessageEvent(event: MessageEvent) {
+        postsAdapter.releaseAllPlayers()
+    }
+
+    override fun onStop() {
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this)
+        }
+        super.onStop()
+        Log.i(TAG, "lifecycle callbacks:: onStop ")
+
+    }
+
+    override fun onDestroy() {
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this)
+        }
+        super.onDestroy()
+        Log.i(TAG, "lifecycle callbacks:: onDestroy ")
     }
 }

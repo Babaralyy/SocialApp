@@ -53,6 +53,7 @@ import com.codecoy.mvpflycollab.ui.adapters.playlist.PlaylistDetailImageAdapter
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.codecoy.mvpflycollab.viewmodels.PlaylistViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -176,6 +177,12 @@ class PlayListDetailFragment : Fragment(), VideoClickCallback, PlaylistDetailCal
         setUpViewModel()
         setUpBottomDialog()
 
+        viewModel.allPlaylistDetailsList(
+            "Bearer " + currentUser?.token.toString(),
+            allPlaylistData?.id.toString()
+        )
+        responseFromViewModel()
+
         mBinding.floatingActionButton.setOnClickListener {
             showBottomDialog()
         }
@@ -196,11 +203,7 @@ class PlayListDetailFragment : Fragment(), VideoClickCallback, PlaylistDetailCal
 
     override fun onResume() {
         super.onResume()
-        viewModel.allPlaylistDetailsList(
-            "Bearer " + currentUser?.token.toString(),
-            allPlaylistData?.id.toString()
-        )
-        responseFromViewModel()
+
     }
 
     private fun responseFromViewModel() {
@@ -223,14 +226,12 @@ class PlayListDetailFragment : Fragment(), VideoClickCallback, PlaylistDetailCal
                     setUpDetailData(playDetailsList.response)
 
                 } else {
-
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
@@ -251,13 +252,12 @@ class PlayListDetailFragment : Fragment(), VideoClickCallback, PlaylistDetailCal
 
                     bottomSheetDialog.dismiss()
                 } else {
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
@@ -271,21 +271,20 @@ class PlayListDetailFragment : Fragment(), VideoClickCallback, PlaylistDetailCal
 
                 } else {
 
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
 
         viewModel.exceptionLiveData.observe(this) { exception ->
             if (exception != null) {
-                Log.i(TAG, "addJourneyResponseLiveData:: exception $exception")
                 dialog?.dismiss()
+                showSnackBar(mBinding.root, exception.message.toString())
             }
         }
     }
@@ -548,7 +547,7 @@ class PlayListDetailFragment : Fragment(), VideoClickCallback, PlaylistDetailCal
     }
 
     override fun onImageClick(imgPath: Uri) {
-
+        showImageDialog(image = imgPath)
     }
     override fun onImgRemove(position: Int) {
         viewModel.imagesList.removeAt(position)
@@ -560,29 +559,9 @@ class PlayListDetailFragment : Fragment(), VideoClickCallback, PlaylistDetailCal
     }
 
     override fun onVideoClick(videoPath: Uri) {
-        showVideoDialog(videoPath)
+        showVideoDialog(videoPath = videoPath)
     }
 
-    private fun showVideoDialog(videoPath: Uri) {
-
-        val videoBinding = ShowVideoDialogBinding.inflate(layoutInflater)
-
-        val dialog = Dialog(requireContext())
-        dialog.setContentView(videoBinding.root)
-        dialog.setCancelable(true)
-
-        // Initialize MediaController
-        mediaController = MediaController(requireContext())
-        mediaController.setAnchorView(videoBinding.videoView)
-
-        // Set MediaController to VideoView
-        videoBinding.videoView.setMediaController(mediaController)
-
-        videoBinding.videoView.setVideoURI(videoPath)
-        videoBinding.videoView.start()
-
-        dialog.show()
-    }
 
     override fun onImageUrlClick(s: String) {
         showImageDialog(imageUrl = s)
@@ -645,6 +624,7 @@ class PlayListDetailFragment : Fragment(), VideoClickCallback, PlaylistDetailCal
         if (videoPath != null) {
             videoBinding.videoView.visibility = View.VISIBLE
             videoBinding.videoView.setVideoURI(videoPath)
+            videoBinding.videoView.start()
         } else {
 
             videoBinding.videoPlayer.visibility = View.VISIBLE
@@ -669,6 +649,9 @@ class PlayListDetailFragment : Fragment(), VideoClickCallback, PlaylistDetailCal
 
         dialog.show()
 
+    }
+    private fun showSnackBar(view: View, message: String) {
+        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show()
     }
 
 /*    override fun onAttach(context: Context) {

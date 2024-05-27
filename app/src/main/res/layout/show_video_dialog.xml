@@ -33,4 +33,5 @@
         app:show_buffering="always"
         app:surface_type="texture_view"
         app:use_controller="true"/>
+
 </RelativeLayout>

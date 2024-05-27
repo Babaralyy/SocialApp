@@ -51,6 +51,7 @@ import com.codecoy.mvpflycollab.ui.adapters.ShowActivityVideoAdapter
 import com.codecoy.mvpflycollab.ui.adapters.journey.ShowJourneyVideoAdapter
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -171,6 +172,8 @@ class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallba
 
         setUpBottomDialog()
         clickListeners()
+        responseFromViewModel()
+        getJourneyDetails()
 
         mBinding.rvJourneyDetail.layoutManager = LinearLayoutManager(requireContext())
 
@@ -180,6 +183,10 @@ class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallba
             mBinding.floatingActionButton.visibility = View.VISIBLE
         }
 
+    }
+
+    private fun getJourneyDetails() {
+        viewModel.allJourneyDetailsList("Bearer " + currentUser?.token.toString(), allJourneyData?.id.toString())
     }
 
     private fun clickListeners() {
@@ -214,8 +221,8 @@ class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallba
 
     override fun onResume() {
         super.onResume()
-        viewModel.allJourneyDetailsList("Bearer " + currentUser?.token.toString(), allJourneyData?.id.toString())
-        responseFromViewModel()
+
+
     }
 
     private fun responseFromViewModel() {
@@ -237,13 +244,12 @@ class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallba
 
                 } else {
 
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message.toString())
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
@@ -259,13 +265,12 @@ class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallba
                     clearNewJourneyViews()
                     bottomSheetDialog.dismiss()
                 } else {
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message.toString())
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
@@ -273,6 +278,7 @@ class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallba
             if (exception != null) {
                 Log.i(TAG, "addJourneyResponseLiveData:: exception $exception")
                 dialog?.dismiss()
+                showSnackBar(mBinding.root, exception.message.toString())
             }
         }
     }
@@ -417,7 +423,7 @@ class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallba
             return
         }
 
-        if (viewModel.mediaImgList.isEmpty() && viewModel.mediaVidList.isEmpty()){
+        if (viewModel.mediaImgList.isEmpty()){
             Toast.makeText(requireContext(), "Please add media", Toast.LENGTH_SHORT).show()
             return
         }
@@ -531,7 +537,7 @@ class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallba
     }
 
     override fun onImageClick(imgPath: Uri) {
-//        showImageDialog(imgPath)
+        showImageDialog(image = imgPath)
     }
     override fun onImgRemove(position: Int) {
         viewModel.mediaImgList.removeAt(position)
@@ -632,9 +638,14 @@ class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallba
 
     }
 
-/*    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        (context as MainActivity).also { activity = it }
-    }*/
+    private fun showSnackBar(view: View, message: String) {
+        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show()
+    }
+
+
+    /*    override fun onAttach(context: Context) {
+            super.onAttach(context)
+            (context as MainActivity).also { activity = it }
+        }*/
 
 }

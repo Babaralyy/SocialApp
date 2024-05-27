@@ -24,7 +24,7 @@ object Utils {
 
     private const val PREF_NAME = "userData"
     private const val KEY_USER_DATA = "uData"
-    const val CHANNEL_ID_ = "channel_id_"
+    const val CHANNEL_ID_ = "fly_collab_channel_id"
 
     var storyDetail: CalendarStoryData?= null
     var allActivitiesData: AllActivitiesData?= null
@@ -37,6 +37,7 @@ object Utils {
     var userId: String? = null
 
     var receiverId: Int = 0
+    var notReceiverId: Int = 0
     var senderId: Int = 0
     var socketId: String? = null
     var chatName: String? = null

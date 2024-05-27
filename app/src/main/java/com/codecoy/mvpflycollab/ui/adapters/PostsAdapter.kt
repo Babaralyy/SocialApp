@@ -2,6 +2,7 @@ package com.codecoy.mvpflycollab.ui.adapters
 
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,7 @@ import com.codecoy.mvpflycollab.databinding.PostItemViewBinding
 import com.codecoy.mvpflycollab.datamodels.UserLoginData
 import com.codecoy.mvpflycollab.datamodels.UserPostsData
 import com.codecoy.mvpflycollab.utils.Constant
+import com.codecoy.mvpflycollab.utils.Constant.TAG
 import com.codecoy.mvpflycollab.utils.Utils
 import java.util.Locale
 
@@ -24,6 +26,8 @@ class PostsAdapter(
     private var homeCallback: HomeCallback
 ) : RecyclerView.Adapter<PostsAdapter.ViewHolder>() {
     private var currentUser: UserLoginData? = null
+
+    private val imageAdapters = mutableListOf<ImageSliderAdapter>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         currentUser = Utils.getUserFromSharedPreferences(context)
@@ -61,10 +65,28 @@ class PostsAdapter(
             val adapter = ImageSliderAdapter(context, postsData.images)
             sliderView.adapter = adapter
 
+            imageAdapters.add(adapter)
+
             sliderView.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
                 override fun onPageScrollStateChanged(state: Int) {
-                    // Unused
+          /*          val adapter =  holder.mBinding.sliderLay.imageSlider.adapter as ImageSliderAdapter
+
+                    if (state == ViewPager.SCROLL_STATE_IDLE) {
+                        val currentPosition =  holder.mBinding.sliderLay.imageSlider.currentItem
+                        val previousPosition = adapter.currentPlayingPosition
+
+                        // Pause the player that is out of the screen
+                        if (previousPosition != currentPosition) {
+                            adapter.pausePlayer(previousPosition)
+                        }
+
+                        // Resume the player if it's a video and it's the current view
+                        if (postsData.images[currentPosition].type != "img") {
+                            adapter.playPlayer(currentPosition)
+                        }
+                    }*/
                 }
+
 
                 override fun onPageScrolled(
                     position: Int,
@@ -77,12 +99,36 @@ class PostsAdapter(
                 override fun onPageSelected(position: Int) {
                     // Here you get the position of the currently selected image
                     holder.mBinding.tvCount.text = "${(position + 1)}/${postsData.images.size}"
+
+                    val adapter =
+                        holder.mBinding.sliderLay.imageSlider.adapter as ImageSliderAdapter
+                    val previousPosition = adapter.currentPlayingPosition
+
+
+                    try {
+                        // Pause the previous player
+                        if (previousPosition != position) {
+                            adapter.pausePlayer(previousPosition)
+                        }
+                    }catch (e: Exception){
+                        Log.i(TAG, "onPageSelected:: ${e.message}")
+                    }
+
+                    try {
+                        // Resume the new player if it is a video
+                        if (postsData.images[position].type != "img") {
+                            adapter.playPlayer(position)
+                        }
+                    }catch (e: Exception){
+                        Log.i(TAG, "onPageSelected:: ${e.message}")
+                    }
+
                 }
             })
 
         }
 
-        if (!postsData.locName.isNullOrEmpty()){
+        if (!postsData.locName.isNullOrEmpty()) {
             holder.mBinding.tvLocation.text = postsData.locName
         }
 
@@ -103,6 +149,7 @@ class PostsAdapter(
                 holder.mBinding.ivSaveImage.setImageResource(R.drawable.save_post_filled)
                 holder.mBinding.ivSaveImage.tag = R.drawable.save_post_filled
             }
+
             "unsaved" -> {
                 holder.mBinding.ivSaveImage.setImageResource(R.drawable.unsaved_post)
                 holder.mBinding.ivSaveImage.tag = R.drawable.unsaved_post
@@ -141,12 +188,29 @@ class PostsAdapter(
         return postsList.size
     }
 
-    class ViewHolder(val mBinding: PostItemViewBinding) : RecyclerView.ViewHolder(mBinding.root)
+    fun releaseAllPlayers() {
+        for (adapter in imageAdapters) {
+            adapter.releaseAllPlayers()
+        }
+    }
+
+
+    class ViewHolder(val mBinding: PostItemViewBinding) : RecyclerView.ViewHolder(mBinding.root){
+
+        fun getViewPager(): ViewPager {
+            return mBinding.sliderLay.imageSlider
+        }
+
+    }
 
     fun setItemList(userPostsData: ArrayList<UserPostsData>) {
-        postsList.clear()
+//        postsList.clear()
+//        postsList.addAll(userPostsData)
+//        notifyDataSetChanged()
+
+        val startPosition = postsList.size
         postsList.addAll(userPostsData)
-        notifyDataSetChanged()
+        notifyItemRangeInserted(startPosition, userPostsData.size)
     }
 
 
@@ -171,4 +235,6 @@ class PostsAdapter(
         notifyDataSetChanged()
 
     }
+
+
 }

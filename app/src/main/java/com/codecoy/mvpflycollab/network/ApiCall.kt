@@ -210,6 +210,7 @@ interface ApiCall {
     suspend fun allUserPosts(
         @Header("Authorization") token: String,
         @Query("user_id") userId: String,
+        @Query("page") page: Int,
     ): Response<UserPostsResponse>
 
     @Multipart

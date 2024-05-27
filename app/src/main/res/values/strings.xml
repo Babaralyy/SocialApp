@@ -164,4 +164,6 @@
 
     <string name="channel_name">FlyCollab</string>
     <string name="channel_description">This is about collab.</string>
+    <string name="no_following_requests">No following requests</string>
+    <string name="no_collaborating_requests">No collaborating requests</string>
 </resources>

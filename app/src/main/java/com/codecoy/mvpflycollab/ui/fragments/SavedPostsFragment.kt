@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.codecoy.mvpflycollab.R
 import com.codecoy.mvpflycollab.callbacks.HomeCallback
 import com.codecoy.mvpflycollab.databinding.CommentsBottomDialogLayBinding
@@ -23,6 +24,7 @@ import com.codecoy.mvpflycollab.datamodels.UserPostsData
 import com.codecoy.mvpflycollab.network.ApiCall
 import com.codecoy.mvpflycollab.repo.MvpRepository
 import com.codecoy.mvpflycollab.ui.activities.MainActivity
+import com.codecoy.mvpflycollab.ui.adapters.ImageSliderAdapter
 import com.codecoy.mvpflycollab.ui.adapters.PostCommentsAdapter
 import com.codecoy.mvpflycollab.ui.adapters.PostsAdapter
 import com.codecoy.mvpflycollab.ui.adapters.SavedPostsAdapter
@@ -34,6 +36,7 @@ import com.codecoy.mvpflycollab.viewmodels.CommentsViewModel
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.codecoy.mvpflycollab.viewmodels.PostsViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.snackbar.Snackbar
 import java.util.Calendar
 import java.util.Date
 
@@ -148,19 +151,18 @@ class SavedPostsFragment : Fragment(), HomeCallback {
                 if (postsResponse != null && postsResponse.success == true) {
 
                     try {
-                        setUpPostsRecyclerView(postsResponse.userPostsData)
+                        setUpPostsRecyclerView(postsResponse.userPostsResponseData.data)
                     } catch (e: Exception) {
                         Log.i(TAG, "navControllerException:: ${e.message}")
                     }
 
                 } else {
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
@@ -181,13 +183,12 @@ class SavedPostsFragment : Fragment(), HomeCallback {
                     }
 
                 } else {
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
@@ -206,13 +207,12 @@ class SavedPostsFragment : Fragment(), HomeCallback {
                     }
 
                 } else {
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
@@ -231,13 +231,12 @@ class SavedPostsFragment : Fragment(), HomeCallback {
                     }
 
                 } else {
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
@@ -268,13 +267,16 @@ class SavedPostsFragment : Fragment(), HomeCallback {
 
         viewModel.exceptionLiveData.observe(this) { exception ->
             if (exception != null) {
-                Log.i(TAG, "addJourneyResponseLiveData:: exception $exception")
+                showSnackBar(mBinding.root, exception.message.toString())
                 dialog?.dismiss()
             }
         }
     }
 
     private fun setUpPostsRecyclerView(userPostsData: ArrayList<UserPostsData>) {
+
+        savedPostsAdapter.releaseAllPlayers()
+
         if (userPostsData.isNotEmpty()) {
             mBinding.tvNoPost.visibility = View.GONE
         } else {
@@ -282,6 +284,39 @@ class SavedPostsFragment : Fragment(), HomeCallback {
         }
 
         savedPostsAdapter.setItemList(userPostsData)
+
+        mBinding.rvSavedPosts.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                // Find the center item
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val centerPosition =
+                    layoutManager.findFirstVisibleItemPosition() + (layoutManager.findLastVisibleItemPosition() - layoutManager.findFirstVisibleItemPosition()) / 2
+
+
+                try {
+                    for (i in 0 until layoutManager.childCount) {
+                        val view = layoutManager.getChildAt(i)
+                        val viewHolder =
+                            view?.let { recyclerView.getChildViewHolder(it) } as PostsAdapter.ViewHolder
+                        val viewPager = viewHolder.getViewPager()
+                        val adapter = viewPager.adapter as ImageSliderAdapter
+
+                        if (layoutManager.findViewByPosition(centerPosition) == view) {
+                            // Play the video in the center item
+                            adapter.playPlayer(viewPager.currentItem)
+                        } else {
+                            // Pause videos in non-center items
+                            adapter.pausePlayer(viewPager.currentItem)
+                        }
+                    }
+                }catch (e: Exception){
+                    Log.i(TAG, "onScrolled:: ${e.message}")
+                }
+
+            }
+        })
 
     }
 
@@ -372,13 +407,12 @@ class SavedPostsFragment : Fragment(), HomeCallback {
                     }
 
                 } else {
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
@@ -402,20 +436,19 @@ class SavedPostsFragment : Fragment(), HomeCallback {
                     }
 
                 } else {
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
 
         viewModel.exceptionLiveData.observe(this) { exception ->
             if (exception != null) {
-                Log.i(TAG, "addJourneyResponseLiveData:: exception $exception")
+                showSnackBar(mBinding.root, exception.message.toString())
                 bottomBinding.progressBar.visibility = View.GONE
             }
         }
@@ -453,6 +486,14 @@ class SavedPostsFragment : Fragment(), HomeCallback {
 
         postCommentsAdapter = PostCommentsAdapter(commentsData, requireContext())
         bottomBinding.rvComments.adapter = postCommentsAdapter
+    }
+    private fun showSnackBar(view: View, message: String) {
+        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show()
+    }
+
+    override fun onStop() {
+        savedPostsAdapter.releaseAllPlayers()
+        super.onStop()
     }
 
 //    override fun onAttach(context: Context) {

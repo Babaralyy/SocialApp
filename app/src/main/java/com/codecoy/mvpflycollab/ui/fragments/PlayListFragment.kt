@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -21,9 +22,12 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.codecoy.mvpflycollab.R
+import com.codecoy.mvpflycollab.callbacks.ImageClickCallback
+import com.codecoy.mvpflycollab.callbacks.JourneyDetailCallback
 import com.codecoy.mvpflycollab.callbacks.PlaylistCallback
 import com.codecoy.mvpflycollab.databinding.BottomsheetNewplaylistBinding
 import com.codecoy.mvpflycollab.databinding.FragmentPlayListBinding
+import com.codecoy.mvpflycollab.databinding.ShowImageDialogBinding
 import com.codecoy.mvpflycollab.datamodels.AllPlaylistData
 import com.codecoy.mvpflycollab.datamodels.UserLoginData
 import com.codecoy.mvpflycollab.network.ApiCall
@@ -35,13 +39,14 @@ import com.codecoy.mvpflycollab.repo.MvpRepository
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.codecoy.mvpflycollab.viewmodels.PlaylistViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.snackbar.Snackbar
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
 
 
-class PlayListFragment : Fragment(), PlaylistCallback {
+class PlayListFragment : Fragment(), PlaylistCallback, JourneyDetailCallback {
 
     private lateinit var bottomBinding: BottomsheetNewplaylistBinding
     private lateinit var bottomSheetDialog: BottomSheetDialog
@@ -102,6 +107,7 @@ class PlayListFragment : Fragment(), PlaylistCallback {
         clickListeners()
         setUpViewModel()
         setUpBottomDialog()
+        responseFromViewModel()
 
         viewModel.allPlayList(
             "Bearer " + currentUser?.token.toString(),
@@ -122,7 +128,7 @@ class PlayListFragment : Fragment(), PlaylistCallback {
     override fun onResume() {
         super.onResume()
 
-        responseFromViewModel()
+
     }
 
     private fun clickListeners() {
@@ -145,6 +151,10 @@ class PlayListFragment : Fragment(), PlaylistCallback {
 
         bottomBinding.tvAddImg.setOnClickListener {
             imagePermission()
+        }
+
+        bottomBinding.ivPlayImg.setOnClickListener {
+            showImageDialog(imageUrl = viewModel.selectedImage)
         }
         bottomSheetDialog.show()
     }
@@ -170,6 +180,11 @@ class PlayListFragment : Fragment(), PlaylistCallback {
         }
 
         if (title.isNotEmpty() && des.isNotEmpty() && !viewModel.selectedImage.isNullOrEmpty()) {
+            try {
+                bottomSheetDialog.dismiss()
+            }catch (e: Exception){
+                Log.i(Constant.TAG, "checkBottomCredentials:: ${e.message}")
+            }
             addNewPlaylist(title, des)
         }
     }
@@ -260,13 +275,12 @@ class PlayListFragment : Fragment(), PlaylistCallback {
                     }
 
                 } else {
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
@@ -285,13 +299,12 @@ class PlayListFragment : Fragment(), PlaylistCallback {
 
                 } else {
 
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
@@ -314,20 +327,19 @@ class PlayListFragment : Fragment(), PlaylistCallback {
                     bottomSheetDialog.dismiss()
 
                 } else {
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
         viewModel.exceptionLiveData.observe(this) { exception ->
             if (exception != null) {
-                Log.i(Constant.TAG, "addJourneyResponseLiveData:: exception $exception")
                 dialog?.dismiss()
+                showSnackBar(mBinding.root, exception.message.toString())
             }
         }
     }
@@ -368,6 +380,51 @@ class PlayListFragment : Fragment(), PlaylistCallback {
 
         }
     }
+
+    private fun showSnackBar(view: View, message: String) {
+        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show()
+    }
+
+    override fun onImgClick(imageData: String) {
+
+    }
+
+    override fun onVidClick(imageData: String) {
+
+    }
+
+    private fun showImageDialog(image: Uri? = null, imageUrl: String? = null) {
+
+        val imageBinding = ShowImageDialogBinding.inflate(layoutInflater)
+
+        val dialog = Dialog(requireContext())
+        dialog.setContentView(imageBinding.root)
+        dialog.setCancelable(false)
+
+        // Set window flags to make the dialog full screen
+        val window = dialog.window
+        window?.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT)
+
+
+        imageBinding.btnClose.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        if (imageUrl != null) {
+            Glide
+                .with(requireContext())
+                .load(Constant.MEDIA_BASE_URL + imageUrl)
+                .placeholder(R.drawable.loading_svg)
+                .into(imageBinding.imageView)
+        } else {
+            imageBinding.imageView.setImageURI(image)
+        }
+
+        dialog.show()
+    }
+
+
+
 
     /*    override fun onAttach(context: Context) {
             super.onAttach(context)

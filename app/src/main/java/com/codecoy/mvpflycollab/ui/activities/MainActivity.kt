@@ -30,7 +30,7 @@ import kotlin.coroutines.resumeWithException
 
 class MainActivity : AppCompatActivity() {
 
-    private val socketManager = SocketManager()
+
     private var currentUser: UserLoginData? = null
 
     var onlineUsersMutableLiveData = MutableLiveData<MutableList<OnlineUserData>>()
@@ -42,96 +42,17 @@ class MainActivity : AppCompatActivity() {
         inIt()
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
+
     private fun inIt() {
         onlineUsersList = mutableListOf()
         currentUser = Utils.getUserFromSharedPreferences(this)
-
-        try {
-            GlobalScope.launch {
-                try {
-                    connectToSocket()
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
-
-        } catch (e: URISyntaxException) {
-            e.printStackTrace()
-        }
     }
 
 
-    override fun onNewIntent(intent: Intent?) {
+/*    override fun onNewIntent(intent: Intent?) {
 
         super.onNewIntent(intent)
-    }
-
-    private suspend fun connectToSocket() {
-        withContext<Socket?>(Dispatchers.IO) {
-            suspendCancellableCoroutine { continuation ->
-                try {
-                    socketManager.connect()
-
-
-
-                    SocketManager.socket?.on("user_got_online") {
-                        runOnUiThread {
-                            val jsonObject = it[0] as JSONObject
-                            Log.i(TAG, "main socket:: message $jsonObject")
-                          /*  jsonObject.let {
-                                val jsonData = it.getJSONObject("data")
-                                jsonData.let { it1 ->
-                                    val userData = it1.getJSONObject("response")
-                                    userData.let { it2 ->
-                                        val onlineUserData = OnlineUserData(
-                                            it2.getInt("id"),
-                                            it2.getString("profile_img"),
-                                            it2.getString("name"),
-                                            it2.getString("username"),
-                                            it2.getString("phone"),
-                                            it2.getString("email"),
-                                            it2.getString("email_verified_at"),
-                                            it2.getString("device_token"),
-                                            it2.getString("website_url"),
-                                            it2.getString("about_me"),
-                                            it2.getString("socket_id"),
-                                            it2.getBoolean("online"),
-                                            it2.getString("created_at"),
-                                            it2.getString("updated_at"),
-                                        )
-
-                                        if (onlineUserData.id != currentUser?.id){
-                                            onlineUsersList.removeIf { it3 ->
-                                                it3.id == onlineUserData.id
-                                            }
-                                            onlineUsersList.add(onlineUserData)
-                                            onlineUsersMutableLiveData.value = onlineUsersList
-                                        }
-
-
-                                    }
-                                }
-                            }*/
-
-                        }
-                    }
-                    SocketManager.socket?.on(Socket.EVENT_CONNECT_ERROR) { error ->
-                        CoroutineScope(Dispatchers.Main).launch {
-                            Log.i(TAG, "main socket:: $error ")
-                        }
-                    }
-                    SocketManager.socket?.on(Socket.EVENT_DISCONNECT) {
-                        CoroutineScope(Dispatchers.Main).launch {
-                            Log.i(TAG, "main socket:: message $it")
-                        }
-                    }
-                } catch (e: URISyntaxException) {
-                    continuation.resumeWithException(e)
-                }
-            }
-        }
-    }
+    }*/
 
 
     fun replaceFragment(fragment: Fragment) {
@@ -140,23 +61,6 @@ class MainActivity : AppCompatActivity() {
             .commit()
     }
 
-
-    override fun onResume() {
-        super.onResume()
-        emmitOnlineEvent()
-    }
-
-    private fun emmitOnlineEvent() {
-        val jSONObject = JSONObject()
-        jSONObject.put("message", "Online")
-        jSONObject.put("user_id", currentUser?.id.toString())
-        jSONObject.put(
-            "token",
-            "Bearer " + currentUser?.token.toString()
-        )
-        SocketManager.socket?.emit("set_online", jSONObject)
-        Log.i(TAG, "main socket:: emit")
-    }
 
     private fun emmitOfflineEvent() {
         val jSONObject = JSONObject()

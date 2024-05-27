@@ -21,10 +21,20 @@
         app:layout_constraintStart_toEndOf="@+id/ivBack"
         app:layout_constraintTop_toTopOf="parent" />
 
+
+    <ProgressBar
+        android:id="@+id/progress_circular"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        app:layout_constraintBottom_toBottomOf="@+id/tvChat"
+        app:layout_constraintEnd_toStartOf="@+id/btnnavv"
+        app:layout_constraintTop_toTopOf="@+id/tvChat"
+        android:visibility="gone"/>
+
     <androidx.appcompat.widget.SearchView
         android:id="@+id/svChat"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_margin="@dimen/_8sdp"
         android:focusable="true"
         android:focusableInTouchMode="true"
@@ -125,6 +135,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
+
+
 
         <EditText
             android:id="@+id/et_comment"

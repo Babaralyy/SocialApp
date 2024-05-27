@@ -59,6 +59,7 @@ import com.codecoy.mvpflycollab.viewmodels.ActivityViewModel
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -222,7 +223,7 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
             val clickedDayCalendar: Calendar = it.calendar
             getActivitiesAgainstDate(Utils.formatGeorgiaDate(clickedDayCalendar))
 
-            Log.i(Constant.TAG, "onDayClick:: date:$formattedDate")
+            Log.i(TAG, "onDayClick:: date:$formattedDate")
         }
     }
 
@@ -297,13 +298,12 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
 
                 } else {
 
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message.toString())
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
@@ -316,13 +316,12 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
 
                 } else {
 
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
@@ -350,19 +349,18 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
                     }
 
                 } else {
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
         viewModel.exceptionLiveData.observe(this) { exception ->
             if (exception != null) {
-                Log.i(TAG, "addJourneyResponseLiveData:: exception $exception")
+                showSnackBar(mBinding.root, exception.message.toString())
                 dialog?.dismiss()
             }
         }
@@ -826,6 +824,11 @@ class FollowingCalendarFragment : Fragment(), ShareActivityCallback, VideoClickC
         }
 
         dialog.show()
+    }
+
+
+    private fun showSnackBar(view: View, message: String) {
+        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show()
     }
 
     override fun onAttach(context: Context) {

@@ -8,6 +8,7 @@ import android.app.PendingIntent
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Bundle
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
@@ -19,12 +20,14 @@ import com.codecoy.mvpflycollab.utils.Utils
 import com.codecoy.mvpflycollab.utils.Utils.CHANNEL_ID_
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import org.json.JSONObject
 
 
 class MessagingService : FirebaseMessagingService() {
 
     private val bookingGroup = "com.android.example.AUDIO"
     private var summaryId: Long = 1
+
 
     override fun onNewToken(deviceToken: String) {
         super.onNewToken(deviceToken)
@@ -47,29 +50,47 @@ class MessagingService : FirebaseMessagingService() {
     }
 
     private fun showNotification(data: MutableMap<String, String>) {
-        var notificationPendingIntent: PendingIntent? = null
 
-        if (data["title"] == "Like" || data["title"] == "Comment") {
-            // Create a PendingIntent to navigate to the NotificationFragment
-            notificationPendingIntent = NavDeepLinkBuilder(applicationContext)
-                .setGraph(R.navigation.nav_graph)
-                .setDestination(R.id.mainFragment)
-                .createPendingIntent()
+        val bundle = Bundle()
 
-            Utils.postId = data["post_id"].toString()
-        } else if(data["title"] == "Chat"){
-            // Create a PendingIntent to navigate to the NotificationFragment
-            notificationPendingIntent = NavDeepLinkBuilder(applicationContext)
-                .setGraph(R.navigation.nav_graph)
-                .setDestination(R.id.chatFragment)
-                .createPendingIntent()
 
-            Utils.receiverId = data["receiver_id"]?.toInt() ?: 0
-            Utils.senderId = data["sender_id"]?.toInt() ?: 0
-            Utils.chatName = data["sender_name"]
+        val notificationPendingIntent: PendingIntent? = when (data["title"]) {
+            "Like", "Comment" -> {
+
+                val jsonObject = JSONObject()
+                jsonObject.put("post_id", data["post_id"].toString())
+
+                bundle.putString("json_data", jsonObject.toString())
+
+                // Create a PendingIntent to navigate to the NotificationFragment
+                NavDeepLinkBuilder(applicationContext)
+                    .setGraph(R.navigation.nav_graph)
+                    .setDestination(R.id.mainFragment)
+                    .setArguments(bundle)
+                    .createPendingIntent()
+            }
+
+            "Chat" -> {
+
+                val jsonObject = JSONObject()
+                jsonObject.put("receiver_id", data["receiver_id"]?.toInt() ?: 0)
+                jsonObject.put("sender_id", data["sender_id"]?.toInt() ?: 0)
+                jsonObject.put("sender_name", data["sender_name"])
+                jsonObject.put("sender_socket_id", data["sender_socket_id"])
+
+
+                bundle.putString("json_data", jsonObject.toString())
+
+                // Create a PendingIntent to navigate to the NotificationFragment
+                NavDeepLinkBuilder(applicationContext)
+                    .setGraph(R.navigation.nav_graph)
+                    .setDestination(R.id.chatFragment)
+                    .setArguments(bundle)
+                    .createPendingIntent()
+            }
+
+            else -> null
         }
-
-
 
         val name = getString(R.string.channel_name)
         val descriptionText = getString(R.string.channel_description)
@@ -108,4 +129,5 @@ class MessagingService : FirebaseMessagingService() {
             }
         }
     }
+
 }

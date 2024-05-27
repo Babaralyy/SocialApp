@@ -59,10 +59,10 @@ class PostsViewModel(private val mvpRepository: MvpRepository) : ViewModel() {
     var mediaImgList: MutableList<Uri> = arrayListOf()
     var mediaVidList: MutableList<Uri> = arrayListOf()
 
-    fun allUserPosts(token: String, userId: String) {
+    fun allUserPosts(token: String, userId: String, page: Int) {
         viewModelScope.launch(handler) {
             _loading.value = true
-            val response = mvpRepository.allUserPosts(token, userId)
+            val response = mvpRepository.allUserPosts(token, userId, page)
 
             try {
                 allUsersPostsResponseMutableLiveData.value = response

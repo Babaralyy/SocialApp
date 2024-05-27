@@ -24,6 +24,7 @@ import com.codecoy.mvpflycollab.utils.Constant
 import com.codecoy.mvpflycollab.utils.Utils
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.codecoy.mvpflycollab.viewmodels.UserViewModel
+import com.google.android.material.snackbar.Snackbar
 import java.util.ArrayList
 
 
@@ -95,20 +96,19 @@ class UserFollowingFragment : Fragment() {
                     }
 
                 } else {
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
 
         viewModel.exceptionLiveData.observe(this) { exception ->
             if (exception != null) {
-                Log.i(Constant.TAG, "addJourneyResponseLiveData:: exception $exception")
+                showSnackBar(mBinding.root, exception.message.toString())
                 dialog?.dismiss()
             }
         }
@@ -134,6 +134,10 @@ class UserFollowingFragment : Fragment() {
             this,
             MvpViewModelFactory(userRepository)
         )[UserViewModel::class.java]
+    }
+
+    private fun showSnackBar(view: View, message: String) {
+        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show()
     }
 
     override fun onAttach(context: Context) {

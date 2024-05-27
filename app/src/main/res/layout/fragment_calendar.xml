@@ -68,8 +68,7 @@
         app:layout_constraintEnd_toEndOf="@id/rvEvents"
         app:layout_constraintStart_toStartOf="@id/rvEvents"
         app:layout_constraintTop_toTopOf="@id/rvEvents"
-        app:layout_constraintBottom_toBottomOf="@id/rvEvents"
-        android:visibility="gone"/>
+        app:layout_constraintBottom_toBottomOf="@id/rvEvents" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton"

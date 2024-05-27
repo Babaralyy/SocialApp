@@ -2,7 +2,6 @@ package com.codecoy.mvpflycollab.ui.fragments
 
 import android.app.Dialog
 import android.content.ContentValues
-import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -19,7 +18,6 @@ import androidx.navigation.fragment.findNavController
 import com.codecoy.mvpflycollab.databinding.FragmentSignInBinding
 import com.codecoy.mvpflycollab.datamodels.UserLoginBody
 import com.codecoy.mvpflycollab.network.ApiCall
-import com.codecoy.mvpflycollab.ui.activities.MainActivity
 import com.codecoy.mvpflycollab.utils.Constant
 import com.codecoy.mvpflycollab.utils.Utils
 import com.codecoy.mvpflycollab.repo.MvpRepository
@@ -57,18 +55,24 @@ class SignInFragment : Fragment() {
 
         setUpViewModel()
         clickListeners()
+        getDeviceToken()
 
 
         Handler(Looper.getMainLooper()).postDelayed({
+            try {
+                deviceToken = Utils.fetchDeviceTokenFromPref(requireContext(), "tokenInfo")
 
-            deviceToken = Utils.fetchDeviceTokenFromPref(requireContext(), "tokenInfo")
+                Log.i(TAG, "deviceToken:: deviceToken $deviceToken")
 
-            Log.i(ContentValues.TAG, "deviceToken:: deviceToken $deviceToken")
-
-            if (deviceToken == null) {
-                getDeviceToken()
-                Log.i(ContentValues.TAG, "deviceToken:: deviceToken --> getDeviceToken is called")
+                if (deviceToken == null) {
+                    getDeviceToken()
+                    Log.i(TAG, "deviceToken:: deviceToken --> getDeviceToken is called")
+                }
+                
+            }catch (e: Exception){
+                Log.i(TAG, "inIt: ${e.message}")
             }
+           
 
         }, 2000)
 
@@ -78,16 +82,13 @@ class SignInFragment : Fragment() {
 
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
             if (!task.isSuccessful) {
-                Log.i(ContentValues.TAG, "Fetching FCM registration token failed", task.exception)
+                showSnackBar(mBinding.root,  task.exception.toString())
                 return@OnCompleteListener
             }
-
             // Get new FCM registration token
             deviceToken = task.result
 
             Utils.deviceTokenIntoPref(requireContext(), "tokenInfo", deviceToken.toString())
-
-            Log.i(ContentValues.TAG, "deviceToken:: ----> $deviceToken")
 
         })
     }
@@ -117,7 +118,7 @@ class SignInFragment : Fragment() {
                 val action = SignInFragmentDirections.actionSignInFragmentToSignUpFragment()
                 findNavController().navigate(action)
             }catch (e: Exception){
-                Log.i(Constant.TAG, "navControllerException:: ${e.message}")
+                Log.i(TAG, "navControllerException:: ${e.message}")
             }
         }
 
@@ -184,7 +185,7 @@ class SignInFragment : Fragment() {
                                 SignInFragmentDirections.actionSignInFragmentToMainFragment()
                             findNavController().navigate(action)
                         } catch (e: Exception) {
-                            Log.i(TAG, "navControllerException:: ${e.message}")
+                            showSnackBar(mBinding.root, e.message.toString())
                         }
                     }
                 } else {
@@ -194,14 +195,14 @@ class SignInFragment : Fragment() {
             } else if (response.code() == 401) {
 
             } else {
-                showSnackBar(mBinding.root, "Some thing went wrong ")
+                showSnackBar(mBinding.root, response.body()?.message.toString())
             }
         }
 
 
         viewModel.exceptionLiveData.observe(this){ exception ->
             if (exception != null){
-                Log.i(TAG, "signinLiveData:: exception $exception")
+                showSnackBar(mBinding.root, exception.message.toString())
                 dialog?.dismiss()
             }
         }
@@ -212,7 +213,8 @@ class SignInFragment : Fragment() {
             val userLoginBody = UserLoginBody(email = email, password = password, deviceToken = deviceToken, loginType = "normal")
             viewModel.userLogin(userLoginBody)
         } else {
-            showSnackBar(mBinding.root, "Something went wrong")
+            getDeviceToken()
+            showSnackBar(mBinding.root, "Device token not found")
         }
 
     }

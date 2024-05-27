@@ -37,6 +37,7 @@ import com.codecoy.mvpflycollab.viewmodels.JourneyViewModel
 import com.codecoy.mvpflycollab.repo.MvpRepository
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.snackbar.Snackbar
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -106,7 +107,7 @@ class JourneyFragment : Fragment(), JourneyCallback {
         setUpViewModel()
 
         setUpBottomDialog()
-
+        responseFromViewModel()
         getAllJourney()
 
 
@@ -137,7 +138,7 @@ class JourneyFragment : Fragment(), JourneyCallback {
     override fun onResume() {
         super.onResume()
 
-        responseFromViewModel()
+
     }
 
     private fun clickListeners() {
@@ -183,14 +184,14 @@ class JourneyFragment : Fragment(), JourneyCallback {
                     }
 
                 }
-            /*    else {
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
-                }*/
+                else {
+                    mBinding.tvNoDataFound.visibility = View.VISIBLE
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
+                }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
@@ -210,14 +211,12 @@ class JourneyFragment : Fragment(), JourneyCallback {
                         .into(bottomBinding.ivJourneyImg)
 
                 } else {
-
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
@@ -239,14 +238,13 @@ class JourneyFragment : Fragment(), JourneyCallback {
                     bottomSheetDialog.dismiss()
 
                 }
-               /* else {
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
-                }*/
+                else {
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
+                }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
@@ -258,22 +256,25 @@ class JourneyFragment : Fragment(), JourneyCallback {
                 val deleteJourneyResponse = response.body()
                 if (deleteJourneyResponse != null && deleteJourneyResponse.success == true) {
                     getAllJourney()
+                } else {
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                 }
 
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
         viewModel.exceptionLiveData.observe(this) { exception ->
             if (exception != null) {
-                Log.i(TAG, "addJourneyResponseLiveData:: exception $exception")
+                showSnackBar(mBinding.root, exception.message.toString())
                 dialog?.dismiss()
             }
         }
     }
+
 
     private fun clearBottomView() {
         try {
@@ -338,6 +339,11 @@ class JourneyFragment : Fragment(), JourneyCallback {
             return
         }
         if (viewModel.selectedImage != null && title.isNotEmpty() && description.isNotEmpty()) {
+            try {
+                bottomSheetDialog.dismiss()
+            }catch (e: Exception){
+                Log.i(TAG, "checkBottomCredentials:: ${e.message}")
+            }
             addNewJourney(title, description)
         }
     }
@@ -427,6 +433,10 @@ class JourneyFragment : Fragment(), JourneyCallback {
         }
         val dialog = builder.create()
         dialog.show()
+    }
+
+    private fun showSnackBar(view: View, message: String) {
+        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show()
     }
 
 /*    override fun onAttach(context: Context) {

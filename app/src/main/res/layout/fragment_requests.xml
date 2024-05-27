@@ -78,11 +78,10 @@
         android:layout_below="@id/tv_followers_request"
         android:layout_centerHorizontal="true"
         android:gravity="center"
-        android:text="No following requests"
+        android:text="@string/no_following_requests"
         android:textColor="@color/white"
         android:textSize="14sp"
-        android:fontFamily="@font/lato"
-        android:visibility="gone"/>
+        android:fontFamily="@font/lato" />
 
     <TextView
         android:id="@+id/tv_col_data"
@@ -93,10 +92,9 @@
         android:layout_below="@id/tv_collaborate_request"
         android:layout_centerHorizontal="true"
         android:gravity="center"
-        android:text="No collaborating requests"
+        android:text="@string/no_collaborating_requests"
         android:textColor="@color/white"
         android:textSize="14sp"
-        android:fontFamily="@font/lato"
-        android:visibility="gone"/>
+        android:fontFamily="@font/lato" />
 
 </RelativeLayout>

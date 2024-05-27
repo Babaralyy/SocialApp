@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.codecoy.mvpflycollab.R
+import com.codecoy.mvpflycollab.callbacks.JourneyDetailCallback
 import com.codecoy.mvpflycollab.callbacks.PlaylistCallback
 import com.codecoy.mvpflycollab.databinding.NewPlaylistItemViewBinding
 import com.codecoy.mvpflycollab.datamodels.AllPlaylistData
@@ -14,7 +15,8 @@ import com.codecoy.mvpflycollab.utils.Constant
 class PlayListAdapter(
     private val playList: MutableList<AllPlaylistData>,
     private var context: Context,
-    private var playlistCallback: PlaylistCallback
+    private var playlistCallback: PlaylistCallback,
+
 ) : RecyclerView.Adapter<PlayListAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(

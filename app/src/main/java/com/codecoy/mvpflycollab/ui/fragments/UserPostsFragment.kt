@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.codecoy.mvpflycollab.R
 import com.codecoy.mvpflycollab.callbacks.HomeCallback
 import com.codecoy.mvpflycollab.databinding.CommentsBottomDialogLayBinding
@@ -24,7 +25,9 @@ import com.codecoy.mvpflycollab.datamodels.UserProfileResponse
 import com.codecoy.mvpflycollab.network.ApiCall
 import com.codecoy.mvpflycollab.repo.MvpRepository
 import com.codecoy.mvpflycollab.ui.activities.MainActivity
+import com.codecoy.mvpflycollab.ui.adapters.ImageSliderAdapter
 import com.codecoy.mvpflycollab.ui.adapters.PostCommentsAdapter
+import com.codecoy.mvpflycollab.ui.adapters.PostsAdapter
 import com.codecoy.mvpflycollab.ui.adapters.UserProfilePostDetailAdapter
 import com.codecoy.mvpflycollab.utils.Constant
 import com.codecoy.mvpflycollab.utils.Constant.TAG
@@ -34,6 +37,7 @@ import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.codecoy.mvpflycollab.viewmodels.PostsViewModel
 import com.codecoy.mvpflycollab.viewmodels.UserViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.snackbar.Snackbar
 import java.util.Calendar
 import java.util.Date
 
@@ -158,11 +162,12 @@ class UserPostsFragment : Fragment(), HomeCallback {
 
                 } else {
                     Log.i(TAG, "responseFromViewModel:: ${response.message()}")
+
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
@@ -181,13 +186,12 @@ class UserPostsFragment : Fragment(), HomeCallback {
                     }
 
                 } else {
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
@@ -207,13 +211,12 @@ class UserPostsFragment : Fragment(), HomeCallback {
                     }
 
                 } else {
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
@@ -233,32 +236,67 @@ class UserPostsFragment : Fragment(), HomeCallback {
                     }
 
                 } else {
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
         viewModel.exceptionLiveData.observe(this) { exception ->
             if (exception != null) {
-                Log.i(TAG, "addJourneyResponseLiveData:: exception $exception")
-//                dialog?.dismiss()
                 mBinding.progressBar.visibility = View.GONE
+                showSnackBar(mBinding.root, exception.message.toString())
+
+//                dialog?.dismiss()
+
             }
         }
     }
+    private fun showSnackBar(view: View, message: String) {
+        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show()
+    }
 
     private fun setUpProfileData(userProfileResponse: UserProfileResponse) {
+
+
+        userProfilePostsAdapter.releaseAllPlayers()
 
         userProfilePostsAdapter.setItemList(userProfileResponse.posts)
         if (Utils.isUserProfile){
             mBinding.rvPosts.smoothScrollToPosition(Utils.scrollPosition)
             Utils.isUserProfile = false
         }
+
+        mBinding.rvPosts.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                // Find the center item
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val centerPosition =
+                    layoutManager.findFirstVisibleItemPosition() + (layoutManager.findLastVisibleItemPosition() - layoutManager.findFirstVisibleItemPosition()) / 2
+
+                for (i in 0 until layoutManager.childCount) {
+                    val view = layoutManager.getChildAt(i)
+                    val viewHolder =
+                        view?.let { recyclerView.getChildViewHolder(it) } as PostsAdapter.ViewHolder
+                    val viewPager = viewHolder.getViewPager()
+                    val adapter = viewPager.adapter as ImageSliderAdapter
+
+                    if (layoutManager.findViewByPosition(centerPosition) == view) {
+                        // Play the video in the center item
+                        adapter.playPlayer(viewPager.currentItem)
+                    } else {
+                        // Pause videos in non-center items
+                        adapter.pausePlayer(viewPager.currentItem)
+                    }
+                }
+            }
+        })
+
     }
 
     override fun onMenuClick(postsData: UserPostsData, mBinding: PostItemViewBinding) {
@@ -295,13 +333,12 @@ class UserPostsFragment : Fragment(), HomeCallback {
                     }
 
                 } else {
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
@@ -326,20 +363,19 @@ class UserPostsFragment : Fragment(), HomeCallback {
                     }
 
                 } else {
-                    Toast.makeText(requireContext(), response.body()?.message, Toast.LENGTH_SHORT)
-                        .show()
+                    showSnackBar(mBinding.root, response.body()?.message ?: "Unknown error")
                 }
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
         viewModel.exceptionLiveData.observe(this) { exception ->
             if (exception != null) {
-                Log.i(TAG, "addJourneyResponseLiveData:: exception $exception")
                 bottomBinding.progressBar.visibility = View.GONE
+                showSnackBar(mBinding.root, exception.message.toString())
             }
         }
 
@@ -431,6 +467,11 @@ class UserPostsFragment : Fragment(), HomeCallback {
             currentUser?.id.toString(),
             postsData.id.toString()
         )
+    }
+
+    override fun onStop() {
+        userProfilePostsAdapter.releaseAllPlayers()
+        super.onStop()
     }
 
     override fun onAttach(context: Context) {

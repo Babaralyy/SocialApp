@@ -16,6 +16,7 @@ import com.codecoy.mvpflycollab.ui.activities.MainActivity
 import com.codecoy.mvpflycollab.utils.Constant
 import com.codecoy.mvpflycollab.utils.Constant.TAG
 import com.codecoy.mvpflycollab.utils.Utils
+import com.google.android.material.snackbar.Snackbar
 
 
 class AboutProfileFragment : Fragment() {
@@ -61,7 +62,7 @@ class AboutProfileFragment : Fragment() {
                 findNavController().navigate(action)
 
             } catch (e: Exception) {
-                Log.i(TAG, "inIt:: ${e.message}")
+                showSnackBar(mBinding.root, e.message.toString())
             }
         }
 
@@ -73,7 +74,7 @@ class AboutProfileFragment : Fragment() {
                 findNavController().navigate(action)
 
             } catch (e: Exception) {
-                Log.i(TAG, "inIt:: ${e.message}")
+                showSnackBar(mBinding.root, e.message.toString())
             }
         }
 
@@ -85,7 +86,7 @@ class AboutProfileFragment : Fragment() {
                 findNavController().navigate(action)
 
             } catch (e: Exception) {
-                Log.i(TAG, "inIt:: ${e.message}")
+                showSnackBar(mBinding.root, e.message.toString())
             }
         }
 
@@ -95,9 +96,13 @@ class AboutProfileFragment : Fragment() {
                 findNavController().navigate(AboutProfileFragmentDirections.actionAboutProfileFragmentToMainFragment())
                 Utils.isFromProfile = true
             } catch (e: Exception) {
-                Log.i(TAG, "inIt:: ${e.message}")
+                showSnackBar(mBinding.root, e.message.toString())
             }
         }
+    }
+
+    private fun showSnackBar(view: View, message: String) {
+        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show()
     }
 
 /*    override fun onAttach(context: Context) {

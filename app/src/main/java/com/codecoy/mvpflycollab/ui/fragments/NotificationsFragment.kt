@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.codecoy.mvpflycollab.R
@@ -25,6 +24,7 @@ import com.codecoy.mvpflycollab.utils.Utils
 import com.codecoy.mvpflycollab.viewmodels.MvpViewModelFactory
 import com.codecoy.mvpflycollab.viewmodels.NotificationViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.snackbar.Snackbar
 
 
 class NotificationsFragment : Fragment(), NotificationCallback {
@@ -106,15 +106,15 @@ class NotificationsFragment : Fragment(), NotificationCallback {
             } else if (response.code() == 401) {
 
             } else {
-                Toast.makeText(requireContext(), "Some thing went wrong", Toast.LENGTH_SHORT).show()
+                showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
 
         viewModel.exceptionLiveData.observe(this) { exception ->
             if (exception != null) {
-                Log.i(Constant.TAG, "addJourneyResponseLiveData:: exception $exception")
                 dialog?.dismiss()
+                showSnackBar(mBinding.root, exception.message.toString())
             }
         }
     }
@@ -138,6 +138,9 @@ class NotificationsFragment : Fragment(), NotificationCallback {
         activity.replaceFragment(HomeFragment())
     }
 
+    private fun showSnackBar(view: View, message: String) {
+        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show()
+    }
     override fun onAttach(context: Context) {
         super.onAttach(context)
         (context as MainActivity).also { activity = it }

@@ -6,5 +6,5 @@ data class UserPostsResponse(
 
     @SerializedName("success"  ) var success  : Boolean?            = null,
     @SerializedName("message"  ) var message  : String?             = null,
-    @SerializedName("response" ) var userPostsData: ArrayList<UserPostsData> = arrayListOf()
+    @SerializedName("response" ) var userPostsResponseData: UserPostsResponseData = UserPostsResponseData()
 )

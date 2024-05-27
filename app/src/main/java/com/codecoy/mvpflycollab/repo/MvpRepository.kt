@@ -111,8 +111,8 @@ class MvpRepository(private val apiCall: ApiCall) {
         time: String
     ) = apiCall.followUser(token, userId, followerId, date, time)
 
-    suspend fun allUserPosts(token: String, userId: String) =
-        apiCall.allUserPosts(token, userId)
+    suspend fun allUserPosts(token: String, userId: String, page: Int) =
+        apiCall.allUserPosts(token, userId, page)
 
     suspend fun userProfile(token: String, userId: String) =
         apiCall.userProfile(token, userId)

@@ -168,16 +168,15 @@ class StartChatFragment : Fragment(), ChatsCallback {
                     // Handle 401 Unauthorized
                 }
 
-                else -> showSnackBar(mBinding.root, "Something went wrong")
+                else -> showSnackBar(mBinding.root, response.errorBody().toString())
             }
         }
 
         chatViewModel.exceptionLiveData.observe(this) { exception ->
             exception.let {
-                Log.i(Constant.TAG, "addJourneyResponseLiveData:: exception $exception")
                 dialog?.dismiss()
+                showSnackBar(mBinding.root, exception.message.toString())
             }
-
         }
     }
 
