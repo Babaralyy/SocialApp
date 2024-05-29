@@ -116,7 +116,8 @@ class PlayListDetailFragment : Fragment(), VideoClickCallback, PlaylistDetailCal
             viewModel.videoList.add(item)
         }
 
-        playlistDetailVideoAdapter = PlaylistDetailVideoAdapter(viewModel.videoList, requireContext(), this)
+        playlistDetailVideoAdapter =
+            PlaylistDetailVideoAdapter(viewModel.videoList, requireContext(), this)
         bottomBinding.rvMediaVideo.adapter = playlistDetailVideoAdapter
     }
 
@@ -139,12 +140,14 @@ class PlayListDetailFragment : Fragment(), VideoClickCallback, PlaylistDetailCal
                 Toast.makeText(requireContext(), "No media selected", Toast.LENGTH_SHORT).show()
             }
         }
+
     private fun showSingleImage(uris: List<Uri>) {
 
         for (item in uris) {
             viewModel.imagesList.add(item)
         }
-        playlistDetailImageAdapter = PlaylistDetailImageAdapter(viewModel.imagesList, requireContext(), this)
+        playlistDetailImageAdapter =
+            PlaylistDetailImageAdapter(viewModel.imagesList, requireContext(), this)
         bottomBinding.rvMediaImage.adapter = playlistDetailImageAdapter
 
     }
@@ -194,7 +197,7 @@ class PlayListDetailFragment : Fragment(), VideoClickCallback, PlaylistDetailCal
             }
         }
 
-        if (currentUser?.id.toString() != Utils.userId){
+        if (currentUser?.id.toString() != Utils.userId) {
             mBinding.floatingActionButton.visibility = View.GONE
         } else {
             mBinding.floatingActionButton.visibility = View.VISIBLE
@@ -305,10 +308,12 @@ class PlayListDetailFragment : Fragment(), VideoClickCallback, PlaylistDetailCal
             imagePartList.clear()
             videoPartList.clear()
 
-            playlistDetailImageAdapter = PlaylistDetailImageAdapter(viewModel.imagesList, requireContext(), this)
+            playlistDetailImageAdapter =
+                PlaylistDetailImageAdapter(viewModel.imagesList, requireContext(), this)
             bottomBinding.rvMediaImage.adapter = playlistDetailImageAdapter
 
-            playlistDetailVideoAdapter = PlaylistDetailVideoAdapter(viewModel.videoList, requireContext(), this)
+            playlistDetailVideoAdapter =
+                PlaylistDetailVideoAdapter(viewModel.videoList, requireContext(), this)
             bottomBinding.rvMediaVideo.adapter = playlistDetailVideoAdapter
 
         } catch (e: Exception) {
@@ -377,7 +382,10 @@ class PlayListDetailFragment : Fragment(), VideoClickCallback, PlaylistDetailCal
             videoPermission()
         }
 
-        bottomSheetDialog.show()
+        if (!bottomSheetDialog.isShowing) {
+            bottomSheetDialog.show()
+        }
+
     }
 
     private fun imagePermission() {
@@ -399,7 +407,8 @@ class PlayListDetailFragment : Fragment(), VideoClickCallback, PlaylistDetailCal
                     Manifest.permission.READ_EXTERNAL_STORAGE
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-                Toast.makeText(requireContext(), "Permission not granted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Permission not granted", Toast.LENGTH_SHORT)
+                    .show()
                 // Request the permission
                 requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
 
@@ -428,7 +437,8 @@ class PlayListDetailFragment : Fragment(), VideoClickCallback, PlaylistDetailCal
                     Manifest.permission.READ_EXTERNAL_STORAGE
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-                Toast.makeText(requireContext(), "Permission not granted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Permission not granted", Toast.LENGTH_SHORT)
+                    .show()
                 // Request the permission
                 requestVidPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
 
@@ -484,9 +494,17 @@ class PlayListDetailFragment : Fragment(), VideoClickCallback, PlaylistDetailCal
             Toast.makeText(requireContext(), "Please select date", Toast.LENGTH_SHORT).show()
             return
         }
-        if (title.isNotEmpty() && description.isNotEmpty() && date.isNotEmpty() && viewModel.videoList.isNotEmpty()) {
-            addNewPlaylistDetail(title, description, date)
+        if (viewModel.imagesList.isEmpty() && viewModel.videoList.isEmpty()) {
+            Toast.makeText(
+                requireContext(),
+                "Please add at least one image or video.",
+                Toast.LENGTH_SHORT
+            ).show()
+            return
         }
+
+        addNewPlaylistDetail(title, description, date)
+
     }
 
     private fun addNewPlaylistDetail(title: String, description: String, date: String) {
@@ -549,10 +567,12 @@ class PlayListDetailFragment : Fragment(), VideoClickCallback, PlaylistDetailCal
     override fun onImageClick(imgPath: Uri) {
         showImageDialog(image = imgPath)
     }
+
     override fun onImgRemove(position: Int) {
         viewModel.imagesList.removeAt(position)
         playlistDetailImageAdapter.notifyDataSetChanged()
     }
+
     override fun onVidRemove(position: Int) {
         viewModel.videoList.removeAt(position)
         playlistDetailVideoAdapter.notifyDataSetChanged()
@@ -581,7 +601,10 @@ class PlayListDetailFragment : Fragment(), VideoClickCallback, PlaylistDetailCal
 
         // Set window flags to make the dialog full screen
         val window = dialog.window
-        window?.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT)
+        window?.setLayout(
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.MATCH_PARENT
+        )
 
 
         imageBinding.btnClose.setOnClickListener {
@@ -611,7 +634,10 @@ class PlayListDetailFragment : Fragment(), VideoClickCallback, PlaylistDetailCal
 
         // Set window flags to make the dialog full screen
         val window = dialog.window
-        window?.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT)
+        window?.setLayout(
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.MATCH_PARENT
+        )
 
         val player = ExoPlayer.Builder(requireContext()).build()
         videoBinding.videoPlayer.player = player
@@ -650,13 +676,14 @@ class PlayListDetailFragment : Fragment(), VideoClickCallback, PlaylistDetailCal
         dialog.show()
 
     }
+
     private fun showSnackBar(view: View, message: String) {
         Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show()
     }
 
-/*    override fun onAttach(context: Context) {
-        super.onAttach(context)
+    /*    override fun onAttach(context: Context) {
+            super.onAttach(context)
 
-        (context as MainActivity).also { activity = it }
-    }*/
+            (context as MainActivity).also { activity = it }
+        }*/
 }

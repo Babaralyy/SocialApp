@@ -121,6 +121,18 @@ object Utils {
         return dateFormat.format(currentTime)
     }
 
+    fun isSecondTimeAhead(firstTime: String, secondTime: String): Boolean {
+        val timeFormat = SimpleDateFormat("hh:mm a", Locale.US)
+
+        val firstDate: Date? = timeFormat.parse(firstTime)
+        val secondDate: Date? = timeFormat.parse(secondTime)
+
+        if (firstDate != null && secondDate != null) {
+            return secondDate.after(firstDate)
+        }
+        throw IllegalArgumentException("Invalid time format")
+    }
+
     fun saveUserToSharedPreferences(context: Context, userData: UserLoginData) {
         sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()

@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         SocketManager.socket.let {
             SocketManager.socket?.disconnect()
-            SocketManager.socket?.off()
+           /* SocketManager.socket?.off()*/
         }
         super.onDestroy()
     }

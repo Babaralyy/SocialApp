@@ -346,7 +346,9 @@ class JourneyDetailFragment : Fragment(),JourneyDetailCallback, VideoClickCallba
             imagePermission()
         }
 
-        bottomSheetDialog.show()
+        if (!bottomSheetDialog.isShowing) {
+            bottomSheetDialog.show()
+        }
     }
 
     private fun videoPermission() {

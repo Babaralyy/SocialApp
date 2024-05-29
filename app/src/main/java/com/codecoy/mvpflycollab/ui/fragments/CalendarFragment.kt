@@ -498,66 +498,46 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
             checkBottomCredentials()
         }
 
-        bottomSheetDialog?.show()
+        if (bottomSheetDialog != null && bottomSheetDialog?.isShowing == false) {
+            bottomSheetDialog?.show()
+        }
+
     }
 
     private fun imagePermission() {
+        val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Manifest.permission.READ_MEDIA_IMAGES
+        } else {
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            // If Android version is 13 or above
-            if (ContextCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.READ_MEDIA_IMAGES
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                requestImgPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES)
-            } else {
-                pickImgMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        if (ContextCompat.checkSelfPermission(requireContext(), permission) != PackageManager.PERMISSION_GRANTED) {
+            requestImgPermissionLauncher.launch(permission)
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                Toast.makeText(requireContext(), "Permission not granted", Toast.LENGTH_SHORT).show()
             }
         } else {
-            if (ContextCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                Toast.makeText(requireContext(), "Permission not granted", Toast.LENGTH_SHORT)
-                    .show()
-                // Request the permission
-                requestImgPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-
-            } else {
-                pickImgMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-            }
+            pickImgMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
     }
 
+
     private fun videoPermission() {
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            // If Android version is 13 or above
-            if (ContextCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.READ_MEDIA_IMAGES
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                requestVidPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES)
-            } else {
-                pickVidMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly))
-            }
+        val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Manifest.permission.READ_MEDIA_IMAGES
         } else {
-            if (ContextCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                Toast.makeText(requireContext(), "Permission not granted", Toast.LENGTH_SHORT)
-                    .show()
-                // Request the permission
-                requestVidPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        }
 
-            } else {
-                pickVidMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly))
-            }
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                permission
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            Toast.makeText(requireContext(), "Permission not granted", Toast.LENGTH_SHORT).show()
+            requestVidPermissionLauncher.launch(permission)
+        } else {
+            pickVidMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly))
         }
     }
 
@@ -590,29 +570,28 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
 
         val timePickerDialog = TimePickerDialog(
             context,
-            { view, hourOfDay, minute ->
-                val amPm: String
-                val hourFormatted: Int
-                if (hourOfDay >= 12) {
-                    amPm = "PM"
-                    hourFormatted = if (hourOfDay == 12) hourOfDay else hourOfDay - 12
-                } else {
-                    amPm = "AM"
-                    hourFormatted = if (hourOfDay == 0) 12 else hourOfDay
-                }
-                if (flag) {
-                    bottomBinding?.etStartTime?.text =
-                        String.format("%02d:%02d %s", hourFormatted, minute, amPm)
-                } else {
-                    bottomBinding?.etEndTime?.text =
-                        String.format("%02d:%02d %s", hourFormatted, minute, amPm)
+            { _, hourOfDay, minute ->
+                val (amPm, hourFormatted) = when {
+                    hourOfDay == 0 -> "AM" to 12
+                    hourOfDay < 12 -> "AM" to hourOfDay
+                    hourOfDay == 12 -> "PM" to 12
+                    else -> "PM" to (hourOfDay - 12)
                 }
 
-            }, hour, minute, is24HourFormat
+                val formattedTime = String.format("%02d:%02d %s", hourFormatted, minute, amPm)
+                if (flag) {
+                    bottomBinding?.etStartTime?.text = formattedTime
+                } else {
+                    bottomBinding?.etEndTime?.text = formattedTime
+                }
+            },
+            hour, minute, is24HourFormat
         )
 
         timePickerDialog.show()
     }
+
+
 
     private fun checkBottomCredentials() {
 
@@ -637,7 +616,10 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
         }
 
         if (sTime.isEmpty()) {
-            Toast.makeText(requireContext(), "Please select start time", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.please_select_start_time), Toast.LENGTH_SHORT
+            ).show()
             return
         }
         if (eTime.isEmpty()) {
@@ -645,9 +627,27 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
             return
         }
 
+        if (!Utils.isSecondTimeAhead(sTime, eTime)) {
+            Toast.makeText(
+                requireContext(),
+                "The second time is not ahead of the first time.",
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+
+        if (viewModel.mediaImgList.isEmpty() && viewModel.mediaVidList.isEmpty()) {
+            Toast.makeText(
+                requireContext(),
+                "Please add at least one image or video.",
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+
         try {
             bottomSheetDialog?.dismiss()
-        }catch (e: Exception){
+        } catch (e: Exception) {
             Log.i(TAG, "checkBottomCredentials:: ${e.message}")
         }
         addNewActivity(event, note, date, sTime, eTime)
@@ -664,51 +664,29 @@ class CalendarFragment : Fragment(), ShareActivityCallback, VideoClickCallback, 
     ) {
 
         imagePartList.clear()
-
-        for (item in viewModel.mediaImgList) {
-
-            Utils.getRealPathFromImgURI(requireContext(), item)
-                .let {
-                    Log.i(TAG, "mediaImgList:: getRealPathFromURI $it")
-
-                    if (it != null) {
-                        Utils.getFileFromPath(it)?.let { file ->
-
-                            Log.i(TAG, "mediaImgList:: getFileFromPath $file")
-
-                            val part = Utils.getPartFromFile("image/*", "img_url[]", file)
-
-
-                            Log.i(TAG, "mediaImgList:: getPartFromFile $part")
-
-                            imagePartList.add(part)
-                        }
+        viewModel.mediaImgList.mapNotNull { item ->
+            Utils.getRealPathFromImgURI(requireContext(), item).let { realPath ->
+                Utils.getFileFromPath(realPath)?.let { file ->
+                    Utils.getPartFromFile("image/*", "img_url[]", file).also {
+                        imagePartList.add(it)
+                        Log.i(TAG, "mediaImgList:: getPartFromFile $it")
                     }
                 }
+            }
         }
+
         videoPartList.clear()
-
-        for (item in viewModel.mediaVidList) {
-
-            Utils.getRealPathFromVidURI(requireContext(), item)
-                .let {
-                    Log.i(TAG, "mediaVidList:: getRealPathFromURI $it")
-
-                    if (it != null) {
-                        Utils.getFileFromPath(it)?.let { file ->
-
-                            Log.i(TAG, "mediaVidList:: getFileFromPath $file")
-
-                            val part = Utils.getPartFromFile("video/*", "video_url[]", file)
-
-
-                            Log.i(TAG, "mediaVidList:: getPartFromFile $part")
-
-                            videoPartList.add(part)
-                        }
+        viewModel.mediaVidList.mapNotNull { item ->
+            Utils.getRealPathFromVidURI(requireContext(), item).let { realPath ->
+                Utils.getFileFromPath(realPath)?.let { file ->
+                    Utils.getPartFromFile("video/*", "video_url[]", file).also {
+                        videoPartList.add(it)
+                        Log.i(TAG, "mediaVidList:: getPartFromFile $it")
                     }
                 }
+            }
         }
+
 
         viewModel.addNewActivity(
             "Bearer " + currentUser?.token.toString(),

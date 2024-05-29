@@ -156,7 +156,10 @@ class PlayListFragment : Fragment(), PlaylistCallback, JourneyDetailCallback {
         bottomBinding.ivPlayImg.setOnClickListener {
             showImageDialog(imageUrl = viewModel.selectedImage)
         }
-        bottomSheetDialog.show()
+
+        if (!bottomSheetDialog.isShowing) {
+            bottomSheetDialog.show()
+        }
     }
 
 

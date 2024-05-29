@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "874659016722",
+    "project_id": "fly-collab",
+    "storage_bucket": "fly-collab.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:874659016722:android:d6ac80c5fbf693b4b1e8cb",
+        "android_client_info": {
+          "package_name": "com.codecoy.mvpflycollab"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB98gf9l-yUrO-Gc4CQSmLo34bFbMyt-8c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

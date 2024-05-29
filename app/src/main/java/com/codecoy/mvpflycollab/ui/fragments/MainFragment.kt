@@ -223,6 +223,9 @@ class MainFragment : Fragment(), ImageClickCallback, VideoClickCallback {
 //            activity.replaceFragment(CalendarFragment())
         }
 
+        MyApplicationClass.socketManager = SocketManager()
+        MyApplicationClass.socketManager?.connect()
+
         try {
             GlobalScope.launch {
                 try {
@@ -448,7 +451,11 @@ class MainFragment : Fragment(), ImageClickCallback, VideoClickCallback {
         bottomBinding?.btnAddPost?.setOnClickListener {
             checkBottomCredentials()
         }
-        bottomSheetDialog?.show()
+
+        if (bottomSheetDialog != null && bottomSheetDialog?.isShowing == false) {
+            bottomSheetDialog?.show()
+        }
+
     }
 
     private fun searchLocation(locationName: String) {

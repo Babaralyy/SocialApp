@@ -14,8 +14,8 @@ class MyApplicationClass : Application() {
     override fun onCreate() {
         super.onCreate()
         Log.i(TAG, "MyApplicationClass:: onCreate")
-        socketManager = SocketManager()
-        socketManager?.connect()
+
 
     }
+
 }

@@ -317,7 +317,9 @@ class JourneyFragment : Fragment(), JourneyCallback {
             checkBottomCredentials()
         }
 
-        bottomSheetDialog.show()
+        if (!bottomSheetDialog.isShowing) {
+            bottomSheetDialog.show()
+        }
     }
 
     private fun checkBottomCredentials() {

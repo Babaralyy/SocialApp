@@ -15,6 +15,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.util.Util
 import com.codecoy.mvpflycollab.R
 import com.codecoy.mvpflycollab.chat.socket.SocketManager
 import com.codecoy.mvpflycollab.databinding.FragmentChatBinding
@@ -56,6 +57,10 @@ class ChatFragment : Fragment() {
 
     private var jsonObject: JSONObject? = null
     private var socketManager: SocketManager? = null
+    private var newReceiverSocketId: String? = null
+    private var newSenderSocketId: String? = null
+
+    private var newUserId: Int? = null
 
     private var isSocketConnectionInitialized = false
 
@@ -110,6 +115,45 @@ class ChatFragment : Fragment() {
             mBinding.etComment.setText("")
 
         }
+
+        SocketManager.socket?.on("user_got_online") {
+            CoroutineScope(Dispatchers.Main).launch {
+                val jsonObject = it[0] as JSONObject
+
+                jsonObject.let {
+                    val jsonData = it["data"] as JSONObject
+                    jsonData.let { jsonDataObj ->
+                        val jsonResponse = jsonDataObj["response"] as JSONObject
+
+                        jsonResponse.let { jsonResponseObj ->
+                            newReceiverSocketId = jsonResponseObj["socket_id"].toString()
+                            newUserId = jsonResponseObj["id"] as Int?
+
+                            Log.i(
+                                TAG,
+                                "main socket:: user_got_online $newReceiverSocketId newUserId $newUserId  jsonObject $jsonObject"
+                            )
+                        }
+                    }
+                }
+
+            }
+        }
+
+
+        try {
+            GlobalScope.launch {
+                try {
+                    connectToSocket()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+
+        } catch (e: URISyntaxException) {
+            e.printStackTrace()
+        }
+
     }
 
     private fun getOneToOneChat() {
@@ -119,9 +163,9 @@ class ChatFragment : Fragment() {
             jsonObject = JSONObject(it)
         }
 
-        if (jsonObject != null ) {
+        if (jsonObject != null) {
 
-            if ( !isSocketConnectionInitialized){
+            if (!isSocketConnectionInitialized) {
                 isSocketConnectionInitialized = true
                 Handler(Looper.getMainLooper()).postDelayed({ newSocketConnection() }, 500)
             }
@@ -136,7 +180,9 @@ class ChatFragment : Fragment() {
             senderId.let {
                 Utils.receiverId = it?.toInt()!!
             }
-
+            socketId.let {
+                Utils.socketId = it
+            }
 
             mBinding.tvChat.text = senderName
 
@@ -147,6 +193,25 @@ class ChatFragment : Fragment() {
 
 
         } else {
+
+            Log.i(TAG, "MyApplicationClass:: getOneToOneChat: else ")
+            chatViewModel.oneTwoOneChat(
+                "Bearer " + currentUser?.token.toString(),
+                currentUser?.id.toString(), Utils.receiverId.toString()
+            )
+
+            mBinding.tvChat.text = Utils.chatName
+        }
+
+
+    }
+
+    private fun newSocketConnection() {
+        socketManager = SocketManager()
+        SocketManager.socket.let {
+            it?.connect()
+
+            Log.i(TAG, "main socket:: user_got_online socket connected")
 
 
             try {
@@ -160,70 +225,6 @@ class ChatFragment : Fragment() {
 
             } catch (e: URISyntaxException) {
                 e.printStackTrace()
-            }
-
-            Log.i(TAG, "MyApplicationClass:: getOneToOneChat: else ")
-            chatViewModel.oneTwoOneChat(
-                "Bearer " + currentUser?.token.toString(),
-                currentUser?.id.toString(), Utils.receiverId.toString()
-            )
-
-            mBinding.tvChat.text = Utils.chatName
-        }
-    }
-
-    private fun newSocketConnection() {
-        socketManager = SocketManager()
-        SocketManager.socket.let {
-            it?.connect()
-
-            Log.i(TAG, "main socket:: user_got_online socket connected")
-
-            val json = """
-                        {
-                          "data": {
-                            "success": true,
-                            "message": "User online status updated successfully",
-                            "response": {
-                              "id": 25,
-                              "profile_img": "images/7i1HwYmwDisRILsE8lRupNb4cLrHXte8PbRsfXKu.jpg",
-                              "name": "Restaurants",
-                              "username": "SmartResturant App-682",
-                              "phone": "03245869355",
-                              "email": "smartrestaurant786@gmail.com",
-                              "email_verified_at": null,
-                              "device_token": "dh_nYvPYQEqGW684PrrZnb:APA91bHJ6yDHfvbGDkWCfuOlZ552ffFH5L9P0xMwANfD6TMpX_Ic9zliz32k2B3_QuNXWRvp8XjYrRWI5CQ5fHhw8_oVHdwiCgfWVjdu8uct1GAi-tIcV5FyI-jhGT6D4j7aXs4EXF56",
-                              "website_url": null,
-                              "about_me": "Tech",
-                              "socket_id": "1BMB3l2bEEnZRpryAAKY",
-                              "online": true,
-                              "level": "1",
-                              "consecutive_days": "4",
-                              "last_login_at": "2024-05-24 03:57:42",
-                              "login_type": "google",
-                              "created_at": "2024-05-21T11:34:40.000000Z",
-                              "updated_at": "2024-05-24T04:00:26.000000Z"
-                            }
-                          }
-                        }
-                        """
-
-            SocketManager.socket?.on("user_got_online") {
-                CoroutineScope(Dispatchers.Main).launch {
-                    val jsonObject = it[0]
-                    jsonObject.let {
-                        val gson = Gson()
-                        val apiResponse = gson.fromJson(json, UserGotOnlineResponse::class.java)
-                        Utils.socketId = apiResponse.data?.response?.socketId
-                        Log.i(TAG, "main socket:: user_got_online ${Utils.socketId}")
-                    }
-
-                }
-            }
-            SocketManager.socket?.on("get_conversation") {
-                CoroutineScope(Dispatchers.Main).launch {
-                    getOneToOneChat()
-                }
             }
 
             emmitOnlineEvent()
@@ -332,17 +333,51 @@ class ChatFragment : Fragment() {
             "main socket:: emmitMessageEvent ${currentUser?.id.toString()}   ${Utils.receiverId}"
         )
 
-        val jSONObject = JSONObject()
-        jSONObject.put("message", message)
-        jSONObject.put("sender_id", currentUser?.id.toString())
-        jSONObject.put("receiver_id", Utils.receiverId)
-        jSONObject.put("receiver_socket_id", Utils.socketId)
-        jSONObject.put(
-            "token",
-            "Bearer " + currentUser?.token.toString()
-        )
-        SocketManager.socket?.emit("send_message_user", jSONObject)
-        Log.i(TAG, "main socket:: emit $jsonObject")
+
+        if (newReceiverSocketId != null) {
+
+            if (Utils.receiverId == newUserId) {
+                val jSONObject = JSONObject()
+                jSONObject.put("message", message)
+                jSONObject.put("sender_id", currentUser?.id.toString())
+                jSONObject.put("receiver_id", Utils.receiverId)
+                jSONObject.put("receiver_socket_id", newReceiverSocketId)
+                jSONObject.put(
+                    "token",
+                    "Bearer " + currentUser?.token.toString()
+                )
+                SocketManager.socket?.emit("send_message_user", jSONObject)
+                Log.i(TAG, "main socket:: newReceiverSocketId $jSONObject")
+            } else {
+                val jSONObject = JSONObject()
+                jSONObject.put("message", message)
+                jSONObject.put("sender_id", currentUser?.id.toString())
+                jSONObject.put("receiver_id", Utils.receiverId)
+                jSONObject.put("receiver_socket_id", newSenderSocketId)
+                jSONObject.put(
+                    "token",
+                    "Bearer " + currentUser?.token.toString()
+                )
+                SocketManager.socket?.emit("send_message_user", jSONObject)
+                Log.i(TAG, "main socket:: newSenderSocketId $jSONObject")
+            }
+
+
+        } else {
+            val jSONObject = JSONObject()
+            jSONObject.put("message", message)
+            jSONObject.put("sender_id", currentUser?.id.toString())
+            jSONObject.put("receiver_id", Utils.receiverId)
+            jSONObject.put("receiver_socket_id", Utils.socketId)
+            jSONObject.put(
+                "token",
+                "Bearer " + currentUser?.token.toString()
+            )
+            SocketManager.socket?.emit("send_message_user", jSONObject)
+            Log.i(TAG, "main socket:: jsonObject $jSONObject")
+        }
+
+
 
         getOneToOneChat()
     }
@@ -355,7 +390,7 @@ class ChatFragment : Fragment() {
                         activity.runOnUiThread {
 
                             getOneToOneChat()
-                            Log.i(TAG, "main socket:: message ${it[0]}")
+//                            Log.i(TAG, "main socket:: message ${it[0]}")
                         }
                     }
                     SocketManager.socket?.on(Socket.EVENT_CONNECT_ERROR) { error ->
