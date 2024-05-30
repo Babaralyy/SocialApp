@@ -12,14 +12,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import com.codecoy.mvpflycollab.databinding.FragmentWelcomeBinding
 import com.codecoy.mvpflycollab.datamodels.UserLoginBody
+import com.codecoy.mvpflycollab.datamodels.UserLoginResponse
 import com.codecoy.mvpflycollab.network.ApiCall
 import com.codecoy.mvpflycollab.repo.MvpRepository
 import com.codecoy.mvpflycollab.ui.activities.MainActivity
@@ -38,6 +39,7 @@ import com.google.android.gms.tasks.Task
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.launch
+import retrofit2.Response
 
 
 class WelcomeFragment : Fragment() {
@@ -97,32 +99,35 @@ class WelcomeFragment : Fragment() {
     }
 
     private fun clickListeners() {
+        val navigateWithAction: (NavDirections) -> Unit = { action ->
+            try {
+                findNavController().navigate(action)
+            } catch (e: Exception) {
+                Log.i(TAG, "navControllerException:: ${e.message}")
+            }
+        }
+
         mBinding.btnLogin.setOnClickListener {
-            try {
-                val action = WelcomeFragmentDirections.actionWelcomeFragmentToSignInFragment()
-                findNavController().navigate(action)
-            } catch (e: Exception) {
-                Log.i(TAG, "navControllerException:: ${e.message}")
-            }
+            val action = WelcomeFragmentDirections.actionWelcomeFragmentToSignInFragment()
+            navigateWithAction(action)
         }
+
         mBinding.btnSignUp.setOnClickListener {
-            try {
-                val action = WelcomeFragmentDirections.actionWelcomeFragmentToSignUpFragment()
-                findNavController().navigate(action)
-            } catch (e: Exception) {
-                Log.i(TAG, "navControllerException:: ${e.message}")
-            }
+            val action = WelcomeFragmentDirections.actionWelcomeFragmentToSignUpFragment()
+            navigateWithAction(action)
         }
+
         mBinding.googleLay.setOnClickListener {
             dialog?.show()
             val signInIntent = mGoogleSignInClient?.signInIntent
             someActivityResultContract.launch(signInIntent)
-
         }
+
         mBinding.facebookLay.setOnClickListener {
             showSnackBar(mBinding.root, "Pending")
         }
     }
+
 
     private fun setUpViewModel() {
 
@@ -135,7 +140,7 @@ class WelcomeFragment : Fragment() {
         )[UserLoginViewModel::class.java]
     }
 
-    private fun responseFromViewModel() {
+    /*private fun responseFromViewModel() {
         viewModel.loading.observe(this) { isLoading ->
             if (isLoading) {
                 dialog?.show()
@@ -188,6 +193,64 @@ class WelcomeFragment : Fragment() {
                 dialog?.dismiss()
             }
         }
+    }*/
+
+    private fun responseFromViewModel() {
+        viewModel.apply {
+            loading.observe(viewLifecycleOwner) { isLoading ->
+                if (isLoading) {
+                    dialog?.show()
+                } else {
+                    dialog?.dismiss()
+                }
+            }
+
+            userLoginResponseLiveData.observe(viewLifecycleOwner) { response ->
+                Log.i(TAG, "registerUser:: response $response")
+
+                when (response.code()) {
+                    200 -> handleSuccessfulResponse(response)
+                    401 -> handleUnauthorizedResponse()
+                    else -> showSnackBar(mBinding.root, response.body()?.message.toString())
+                }
+            }
+
+            exceptionLiveData.observe(viewLifecycleOwner) { exception ->
+                exception?.let {
+                    showSnackBar(mBinding.root, it.message.toString())
+                    dialog?.dismiss()
+                }
+            }
+        }
+    }
+
+    private fun handleSuccessfulResponse(response: Response<UserLoginResponse>) {
+        val userData = response.body()
+        if (userData?.success == true && userData.user != null) {
+            lifecycleScope.launch {
+                try {
+                    userData.user?.let {
+                        Utils.saveUserToSharedPreferences(requireContext(), it)
+                        Utils.saveNotificationStateIntoPref(requireContext(), true)
+                    }
+
+                    val action = if (userData.user?.profileImg == "Google_Login") {
+                        WelcomeFragmentDirections.actionWelcomeFragmentToCompleteProfileFragment()
+                    } else {
+                        WelcomeFragmentDirections.actionWelcomeFragmentToMainFragment()
+                    }
+                    findNavController().navigate(action)
+                } catch (e: Exception) {
+                    Log.i(TAG, "navControllerException:: ${e.message}")
+                }
+            }
+        } else {
+            showSnackBar(mBinding.root, userData?.message.toString())
+        }
+    }
+
+    private fun handleUnauthorizedResponse() {
+        // Handle 401 Unauthorized response here, if needed
     }
     private fun configureGoogleSignIn() {
         // Configure sign-in to request the user's ID, email address, and basic

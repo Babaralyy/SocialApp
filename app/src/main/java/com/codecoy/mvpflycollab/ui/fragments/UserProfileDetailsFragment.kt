@@ -8,8 +8,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
@@ -68,45 +68,46 @@ class UserProfileDetailsFragment : Fragment(), UserProfilePostCallback {
 
     private fun responseFromViewModel() {
         viewModel.loading.observe(this) { isLoading ->
-            if (isLoading) {
-                dialog?.show()
-            } else {
-                dialog?.dismiss()
+            dialog?.apply {
+                if (isLoading) show() else dismiss()
             }
         }
 
         viewModel.usersProfileResponseLiveData.observe(this) { response ->
-
             Log.i(Constant.TAG, "registerUser:: response $response")
 
-            if (response.code() == 200) {
-                val userProfileResponse = response.body()
-                if (userProfileResponse != null && userProfileResponse.success == true) {
-
-                    try {
-                        setUpProfileData(userProfileResponse)
-                    } catch (e: Exception) {
-                        Log.i(Constant.TAG, "navControllerException:: ${e.message}")
+            when (response.code()) {
+                200 -> {
+                    response.body()?.let { userProfileResponse ->
+                        if (userProfileResponse.success == true) {
+                            try {
+                                setUpProfileData(userProfileResponse)
+                            } catch (e: Exception) {
+                                Log.e(Constant.TAG, "navControllerException:: ${e.message}")
+                            }
+                        } else {
+                            Log.i(Constant.TAG, "responseFromViewModel:: ${response.message()}")
+                        }
                     }
-
-                } else {
-                    Log.i(Constant.TAG, "responseFromViewModel:: ${response.message()}")
                 }
-            } else if (response.code() == 401) {
-
-            } else {
-                showSnackBar(mBinding.root, response.errorBody().toString())
+                401 -> {
+                    // Handle unauthorized error if necessary
+                }
+                else -> {
+                    showSnackBar(mBinding.root, response.errorBody().toString())
+                }
             }
         }
 
-
         viewModel.exceptionLiveData.observe(this) { exception ->
-            if (exception != null) {
-                showSnackBar(mBinding.root, exception.message.toString())
+            exception?.let {
+                showSnackBar(mBinding.root, it.message.toString())
                 dialog?.dismiss()
             }
         }
     }
+
+
     private fun showSnackBar(view: View, message: String) {
         Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show()
     }
@@ -126,32 +127,19 @@ class UserProfileDetailsFragment : Fragment(), UserProfilePostCallback {
         Log.i(Constant.TAG, "getProfileData:: ${currentUser?.name} ${currentUser?.id}")
     }
 
+
     private fun clickListeners() {
-        mBinding.journeyLay.setOnClickListener {
+        setClickListener(mBinding.journeyLay, UserProfileDetailsFragmentDirections.actionUserProfileDetailsFragmentToJourneyFragment())
+        setClickListener(mBinding.playlistLay, UserProfileDetailsFragmentDirections.actionUserProfileDetailsFragmentToPlayListFragment())
+        setClickListener(mBinding.followingLay, UserProfileDetailsFragmentDirections.actionUserProfileDetailsFragmentToUserFollowingFragment())
+        setClickListener(mBinding.collaborateLay, UserProfileDetailsFragmentDirections.actionUserProfileDetailsFragmentToMembersFragment())
+    }
+
+    private fun setClickListener(view: View, direction: NavDirections) {
+        view.setOnClickListener {
             try {
-                findNavController().navigate(UserProfileDetailsFragmentDirections.actionUserProfileDetailsFragmentToJourneyFragment())
-            } catch (e: Exception){
-                Log.i(Constant.TAG, "clickListeners:: ${e.message}")
-            }
-        }
-        mBinding.playlistLay.setOnClickListener {
-            try {
-                findNavController().navigate(UserProfileDetailsFragmentDirections.actionUserProfileDetailsFragmentToPlayListFragment())
-            } catch (e: Exception){
-                Log.i(Constant.TAG, "clickListeners:: ${e.message}")
-            }
-        }
-        mBinding.followingLay.setOnClickListener {
-            try {
-                findNavController().navigate(UserProfileDetailsFragmentDirections.actionUserProfileDetailsFragmentToUserFollowingFragment())
-            } catch (e: Exception){
-                Log.i(Constant.TAG, "clickListeners:: ${e.message}")
-            }
-        }
-        mBinding.collaborateLay.setOnClickListener {
-            try {
-                findNavController().navigate(UserProfileDetailsFragmentDirections.actionUserProfileDetailsFragmentToMembersFragment())
-            } catch (e: Exception){
+                findNavController().navigate(direction)
+            } catch (e: Exception) {
                 Log.i(Constant.TAG, "clickListeners:: ${e.message}")
             }
         }

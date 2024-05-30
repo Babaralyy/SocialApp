@@ -56,7 +56,7 @@ class LevelsFragment : Fragment() {
         mBinding.tvLevelFour.setOnClickListener {
             val text = mBinding.tvLevelFour.text.toString()
             if (text.isEmpty()){
-                showSnackBar(mBinding.root, "To reach level four, continue using the app consecutively for 70 days.")
+                showSnackBar(mBinding.root, "To reach level four, continue using the app consecutively for 90 days.")
             }
         }
 
