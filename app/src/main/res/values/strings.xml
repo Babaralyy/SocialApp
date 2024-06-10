@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MVP Fly Collab</string>
+    <string name="app_name">Fly Collab</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
@@ -153,7 +153,6 @@
     <string name="delete">Delete</string>
     <string name="followers">Followers</string>
     <string name="people">People</string>
-    <string name="google_maps_key">AIzaSyAnxKP2t1MupyAcsRd0nu5wi05ijy-YOJQ</string>
     <string name="message">Message</string>
     <string name="messages">Messages</string>
     <string name="get_started">Get Started</string>

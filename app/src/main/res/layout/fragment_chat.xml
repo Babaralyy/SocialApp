@@ -66,7 +66,8 @@
         android:src="@drawable/ic_3dots"
         app:layout_constraintBottom_toBottomOf="@+id/tvChat"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tvChat" />
+        app:layout_constraintTop_toTopOf="@+id/tvChat"
+        android:visibility="invisible"/>
 
     <LinearLayout
         android:id="@+id/ChatlinearLayout"

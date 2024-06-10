@@ -16,6 +16,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "MVP Fly Collab"
+rootProject.name = "Fly Collab"
 include(":app")
  

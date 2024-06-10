@@ -208,7 +208,7 @@ class MainFragment : Fragment(), ImageClickCallback, VideoClickCallback {
         activity.replaceFragment(HomeFragment())
 
         // Initialize Places API
-        Places.initialize(requireContext(), getString(R.string.google_maps_key))
+        Places.initialize(requireContext(), getString(R.string.map_api_key))
         placesClient = Places.createClient(requireContext())
 
         setUpBottomDialog()

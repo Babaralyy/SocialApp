@@ -3,7 +3,9 @@ package com.codecoy.mvpflycollab.ui.fragments
 import android.Manifest
 import android.app.Dialog
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -571,11 +573,11 @@ class HomeFragment: Fragment(), HomeCallback, StoryCallback {
         }
 
         setDrawerItemClick(R.id.iShareUs) {
-            showToast("Clicked")
+            openPlayStore(activity.packageName)
         }
 
         setDrawerItemClick(R.id.iRateUs) {
-            showToast("Clicked")
+            openPlayStore(activity.packageName)
         }
 
         setDrawerItemClick(R.id.iLogout) {
@@ -587,6 +589,21 @@ class HomeFragment: Fragment(), HomeCallback, StoryCallback {
             Utils.clearSharedPreferences(requireContext())
             Utils.saveNotificationStateIntoPref(activity, false)
             navigateTo { MainFragmentDirections.actionMainFragmentToSignInFragment() }
+        }
+    }
+
+
+    private fun openPlayStore(appPackageName: String) {
+        try {
+            // Try to open in Play Store app
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$appPackageName"))
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+        } catch (e: Exception) {
+            // Fallback to browser if Play Store app is not installed
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$appPackageName"))
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
         }
     }
 

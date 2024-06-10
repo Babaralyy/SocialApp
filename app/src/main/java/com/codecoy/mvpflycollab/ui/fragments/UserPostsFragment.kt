@@ -38,7 +38,6 @@ import com.codecoy.mvpflycollab.viewmodels.PostsViewModel
 import com.codecoy.mvpflycollab.viewmodels.UserViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
-import retrofit2.Response
 import java.util.Calendar
 import java.util.Date
 

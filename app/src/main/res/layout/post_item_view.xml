@@ -180,7 +180,8 @@
             android:layout_height="@dimen/_20sdp"
             android:layout_weight="1"
             android:src="@drawable/ic_send"
-            app:tint="@color/white" />
+            app:tint="@color/white"
+            android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/ivSaveImage"

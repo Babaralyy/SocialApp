@@ -389,5 +389,15 @@
             app:popUpTo="@id/nav_graph.xml"
             app:popUpToInclusive="true" />
     </fragment>
+    <fragment
+        android:id="@+id/viewStoryFragment"
+        android:name="com.codecoy.mvpflycollab.ui.fragments.ViewStoryFragment"
+        android:label="fragment_view_story"
+        tools:layout="@layout/fragment_view_story" />
+    <fragment
+        android:id="@+id/notificationsFragment"
+        android:name="com.codecoy.mvpflycollab.ui.fragments.NotificationsFragment"
+        android:label="fragment_notifications"
+        tools:layout="@layout/fragment_notifications" />
 
 </navigation>
