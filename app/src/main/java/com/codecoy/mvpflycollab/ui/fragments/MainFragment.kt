@@ -253,7 +253,6 @@ class MainFragment : Fragment(), ImageClickCallback, VideoClickCallback {
                             Log.i(TAG, "main socket:: message $jsonObject")
                         }
                     }
-
                     SocketManager.socket?.on(Socket.EVENT_CONNECT_ERROR) { error ->
                         CoroutineScope(Dispatchers.Main).launch {
                             Log.i(TAG, "main socket:: $error ")
